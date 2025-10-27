@@ -1,0 +1,19 @@
+.lang-switch-btn {
+  margin-right: 8px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background: #fff;
+  cursor: pointer;
+}
+
+.lang-switch-btn:disabled {
+  background: #eee;
+  color: #888;
+  cursor: not-allowed;
+}
+
+.language-switcher {
+  display: flex;
+  align-items: center;
+}
