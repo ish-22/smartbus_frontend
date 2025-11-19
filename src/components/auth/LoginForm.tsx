@@ -1,7 +1,7 @@
 'use client'; // For Next.js client-side interactivity
 
-import { Lock, Mail } from 'lucide-react'; // For icons
-import Button from '@/components/common/Button';
+import { LockClosedIcon, EnvelopeIcon } from '@heroicons/react/24/outline'; // For icons
+import { Button } from '@/components/ui/Button';
 import Input from '@/components/common/Input';
 import { FormEvent, useState } from 'react';
 import Link from 'next/link';
@@ -31,7 +31,7 @@ export default function LoginForm() {
       <div className="max-w-lg w-full bg-white rounded-2xl shadow-xl p-8 text-center transition-transform hover:scale-[1.02] duration-300">
         {/* Icon and Heading */}
         <div className="flex justify-center mb-4">
-          <Lock className="w-12 h-12 text-blue-600" />
+          <LockClosedIcon className="w-12 h-12 text-blue-600" />
         </div>
         <h1 className="text-3xl font-bold text-gray-800">Login to SmartBus</h1>
         <p className="mt-3 text-gray-500 text-lg">
@@ -41,7 +41,7 @@ export default function LoginForm() {
         {/* Login Form */}
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
           <div className="relative">
-            <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <EnvelopeIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             <Input
               type="email"
               placeholder="Email"
@@ -52,7 +52,7 @@ export default function LoginForm() {
             />
           </div>
           <div className="relative">
-            <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <LockClosedIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             <Input
               type="password"
               placeholder="Password"

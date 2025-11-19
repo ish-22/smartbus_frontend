@@ -1,0 +1,113 @@
+/* Navigation Animations */
+.sidebar-enter {
+  transform: translateX(-100%);
+}
+
+.sidebar-enter-active {
+  transform: translateX(0);
+  transition: transform 300ms ease-in-out;
+}
+
+.sidebar-exit {
+  transform: translateX(0);
+}
+
+.sidebar-exit-active {
+  transform: translateX(-100%);
+  transition: transform 300ms ease-in-out;
+}
+
+/* Active Navigation Item Animation */
+.nav-item-active {
+  position: relative;
+  animation: slideIn 0.2s ease-out;
+}
+
+.nav-item-active::before {
+  content: '';
+  position: absolute;
+  left: -16px;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: currentColor;
+  border-radius: 0 2px 2px 0;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-4px);
+    opacity: 0.8;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Mobile Navigation Overlay */
+.mobile-overlay {
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Hover Effects */
+.nav-item:hover {
+  transform: translateX(2px);
+  transition: transform 0.15s ease-out;
+}
+
+/* Role Color Variants */
+.role-admin {
+  --role-color: #dc2626;
+  --role-color-light: #fef2f2;
+  --role-color-text: #991b1b;
+}
+
+.role-owner {
+  --role-color: #9333ea;
+  --role-color-light: #faf5ff;
+  --role-color-text: #6b21a8;
+}
+
+.role-passenger {
+  --role-color: #2563eb;
+  --role-color-light: #eff6ff;
+  --role-color-text: #1d4ed8;
+}
+
+.role-driver {
+  --role-color: #059669;
+  --role-color-light: #f0fdf4;
+  --role-color-text: #047857;
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 1024px) {
+  .sidebar-desktop {
+    display: none;
+  }
+  
+  .main-content {
+    margin-left: 0;
+  }
+}
+
+@media (min-width: 1024px) {
+  .sidebar-mobile {
+    display: none;
+  }
+  
+  .main-content {
+    margin-left: 256px;
+  }
+}
