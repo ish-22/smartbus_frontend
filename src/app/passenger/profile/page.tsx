@@ -33,6 +33,7 @@ export default function PassengerProfilePage() {
             <input
               type="email"
               value="john@example.com"
+              readOnly
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -44,6 +45,7 @@ export default function PassengerProfilePage() {
             <input
               type="tel"
               value="+94 77 123 4567"
+              readOnly
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -55,6 +57,7 @@ export default function PassengerProfilePage() {
             <textarea
               rows={3}
               value="123 Main Street, Colombo 07, Sri Lanka"
+              readOnly
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
             />
           </div>
