@@ -22,6 +22,7 @@ export default function Sidebar() {
 				<Link href="/admin/routes">{t('routes', lang)}</Link>
 				<Link href="/admin/analytics">{t('analytics', lang)}</Link>
 				<Link href="/admin/feedback">{t('feedback', lang)}</Link>
+				<Link href="/admin/admins">Admins</Link>
 				<Link href="/admin/settings">{t('settings', lang)}</Link>
 				<button onClick={handleLogout} className="mt-4 px-3 py-2 rounded bg-red-500 text-white font-semibold hover:bg-red-600">Logout</button>
 			</nav>
