@@ -43,6 +43,7 @@ export const navigationConfig = {
     { name: 'Lost & Found', href: '/admin/lost-found', icon: ArchiveBoxIcon },
     { name: 'Reports', href: '/admin/reports', icon: DocumentTextIcon },
     { name: 'Security', href: '/admin/security', icon: ShieldCheckIcon },
+    { name: 'Manage Admins', href: '/admin/admins', icon: ShieldCheckIcon },
     { name: 'Settings', href: '/admin/settings', icon: CogIcon },
   ],
   owner: [

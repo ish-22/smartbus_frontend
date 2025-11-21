@@ -19,6 +19,13 @@ export default function LoginForm() {
       // Add your login logic here (e.g., API call)
       await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulated delay
       console.log('Login attempted with:', { email, password });
+      
+      // Redirect based on user role (simulate admin check)
+      if (email === 'admin@smartbus.lk') {
+        window.location.href = '/admin/dashboard';
+      } else {
+        window.location.href = '/dashboard';
+      }
     } catch (error) {
       console.error('Login failed:', error);
     } finally {
