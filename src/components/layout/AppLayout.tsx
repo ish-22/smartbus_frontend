@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { usePathname } from 'next/navigation'
 import ModernSidebar from './ModernSidebar'
 
@@ -9,6 +10,7 @@ interface AppLayoutProps {
 
 export default function AppLayout({ children }: AppLayoutProps) {
   const pathname = usePathname()
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   
   // Determine role from pathname
   const getRole = (): 'admin' | 'owner' | 'passenger' | 'driver' | null => {
@@ -28,10 +30,12 @@ export default function AppLayout({ children }: AppLayoutProps) {
 
   return (
     <div className="flex h-screen bg-gray-50">
-      <ModernSidebar role={role} />
-      <main className="flex-1 overflow-auto ml-0 lg:ml-60">
-        <div className="min-h-full bg-gray-50">
-          <div className="p-8 lg:p-12">
+      <ModernSidebar role={role} onCollapseChange={setSidebarCollapsed} />
+      <main className={`flex-1 overflow-auto transition-all duration-300 ml-0 ${
+        sidebarCollapsed ? 'lg:ml-16' : 'lg:ml-64'
+      }`}>
+        <div className="min-h-full">
+          <div className="p-6 lg:p-8">
             {children}
           </div>
         </div>
