@@ -32,9 +32,9 @@ export default function DriverQRScannerPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-responsive-md no-scroll-x">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">QR Code Scanner</h1>
+        <h1 className="text-responsive-2xl font-bold text-gray-900">QR Code Scanner</h1>
         <p className="text-gray-600">Scan passenger tickets for validation</p>
       </div>
 
@@ -42,11 +42,11 @@ export default function DriverQRScannerPage() {
         <div className="max-w-md mx-auto">
           {!scanResult ? (
             <>
-              <div className="w-32 h-32 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-6">
+              <div className="w-32 h-32 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-responsive-lg">
                 <QrCodeIcon className="h-16 w-16 text-gray-400" />
               </div>
-              <h3 className="text-lg font-semibold mb-2">Ready to Scan</h3>
-              <p className="text-gray-600 mb-6">Position the QR code within the camera frame</p>
+              <h3 className="text-responsive-lg font-semibold mb-2">Ready to Scan</h3>
+              <p className="text-gray-600 mb-responsive-lg">Position the QR code within the camera frame</p>
               <Button 
                 className="bg-green-600 hover:bg-green-700"
                 onClick={mockScan}
@@ -56,23 +56,23 @@ export default function DriverQRScannerPage() {
               </Button>
             </>
           ) : (
-            <div className="space-y-4">
+            <div className="space-responsive-sm">
               <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto ${
                 scanResult.valid ? 'bg-green-100' : 'bg-red-100'
               }`}>
                 {scanResult.valid ? (
-                  <CheckCircleIcon className="h-8 w-8 text-green-600" />
+                  <CheckCircleIcon className="icon-responsive-lg text-green-600" />
                 ) : (
-                  <XCircleIcon className="h-8 w-8 text-red-600" />
+                  <XCircleIcon className="icon-responsive-lg text-red-600" />
                 )}
               </div>
-              <h3 className={`text-lg font-semibold ${
+              <h3 className={`text-responsive-lg font-semibold ${
                 scanResult.valid ? 'text-green-600' : 'text-red-600'
               }`}>
                 {scanResult.valid ? 'Valid Ticket' : 'Invalid Ticket'}
               </h3>
               <div className="bg-gray-50 p-4 rounded-lg text-left">
-                <div className="space-y-2 text-sm">
+                <div className="space-y-2 text-responsive-sm">
                   <div><span className="font-medium">Ticket ID:</span> {scanResult.ticketId}</div>
                   <div><span className="font-medium">Passenger:</span> {scanResult.passenger}</div>
                   <div><span className="font-medium">Seat:</span> {scanResult.seat}</div>
@@ -94,8 +94,8 @@ export default function DriverQRScannerPage() {
         </div>
       </Card>
 
-      <Card className="p-6">
-        <h3 className="text-lg font-semibold mb-4">Recent Scans</h3>
+      <Card className="card-responsive">
+        <h3 className="text-responsive-lg font-semibold mb-responsive-md">Recent Scans</h3>
         <div className="space-y-3">
           {[
             { id: 'SB001', passenger: 'John Doe', time: '10:30 AM', status: 'Valid' },
@@ -108,7 +108,7 @@ export default function DriverQRScannerPage() {
                 <span className="text-gray-500 ml-2">{scan.passenger}</span>
               </div>
               <div className="flex items-center space-x-3">
-                <span className="text-sm text-gray-500">{scan.time}</span>
+                <span className="text-responsive-sm text-gray-500">{scan.time}</span>
                 <span className={`px-2 py-1 text-xs rounded-full ${
                   scan.status === 'Valid' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                 }`}>

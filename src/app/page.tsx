@@ -2,18 +2,18 @@ import Link from 'next/link'
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-gray-100 flex items-center justify-center p-6">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-gray-100 flex items-center justify-center card-responsive">
       <div className="max-w-lg w-full bg-white rounded-2xl shadow-xl p-8 text-center transition-transform hover:scale-[1.02] duration-300">
-        <div className="flex justify-center mb-4">
+        <div className="flex justify-center mb-responsive-md">
           <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center">
-            <span className="text-white text-2xl">🚌</span>
+            <span className="text-white text-responsive-2xl">🚌</span>
           </div>
         </div>
         <h1 className="text-3xl font-bold text-gray-800">SmartBus Tracker</h1>
-        <p className="mt-3 text-gray-500 text-lg">
+        <p className="mt-3 text-gray-500 text-responsive-lg">
           Track buses in real-time, plan your journey, and travel smarter.
         </p>
-        <div className="mt-6 flex flex-col sm:flex-row gap-4 justify-center">
+        <div className="mt-6 flex flex-col sm:flex-row gap-responsive-sm justify-center">
           <Link
             href="/passenger"
             className="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors duration-200 shadow-md"
@@ -28,7 +28,7 @@ export default function HomePage() {
             Login
           </Link>
         </div>
-        <p className="mt-6 text-sm text-gray-400">
+        <p className="mt-6 text-responsive-sm text-gray-400">
           New to SmartBus?{' '}
           <Link href="/auth/register" className="text-blue-600 hover:underline">
             Sign up now

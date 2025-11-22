@@ -4,10 +4,10 @@ import { ArchiveBoxIcon, PlusIcon, EyeIcon } from '@heroicons/react/24/outline'
 
 export default function PassengerLostFoundPage() {
   return (
-    <div className="space-y-8">
+    <div className="space-responsive-lg no-scroll-x">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Lost & Found</h1>
+          <h1 className="text-responsive-2xl font-bold text-gray-900">Lost & Found</h1>
           <p className="text-gray-600">Report lost items and track your claims</p>
         </div>
         <Button className="bg-blue-600 hover:bg-blue-700">
@@ -16,47 +16,47 @@ export default function PassengerLostFoundPage() {
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="p-6">
+      <div className="grid-responsive-3 gap-responsive-md">
+        <Card className="card-responsive">
           <div className="flex items-center">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <ArchiveBoxIcon className="h-6 w-6 text-blue-600" />
+            <div className="p-2 bg-blue-100 rounded-lg flex-shrink-0">
+              <ArchiveBoxIcon className="icon-responsive-md text-blue-600" />
             </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">My Claims</p>
-              <p className="text-2xl font-bold text-gray-900">3</p>
+            <div className="ml-3 min-w-0">
+              <p className="text-responsive-xs font-medium text-gray-600 truncate">My Claims</p>
+              <p className="text-responsive-lg font-bold text-gray-900">3</p>
             </div>
           </div>
         </Card>
-        <Card className="p-6">
+        <Card className="card-responsive">
           <div className="flex items-center">
-            <div className="p-2 bg-yellow-100 rounded-lg">
-              <ArchiveBoxIcon className="h-6 w-6 text-yellow-600" />
+            <div className="p-2 bg-yellow-100 rounded-lg flex-shrink-0">
+              <ArchiveBoxIcon className="icon-responsive-md text-yellow-600" />
             </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Pending</p>
-              <p className="text-2xl font-bold text-gray-900">2</p>
+            <div className="ml-3 min-w-0">
+              <p className="text-responsive-xs font-medium text-gray-600 truncate">Pending</p>
+              <p className="text-responsive-lg font-bold text-gray-900">2</p>
             </div>
           </div>
         </Card>
-        <Card className="p-6">
+        <Card className="card-responsive">
           <div className="flex items-center">
-            <div className="p-2 bg-green-100 rounded-lg">
-              <ArchiveBoxIcon className="h-6 w-6 text-green-600" />
+            <div className="p-2 bg-green-100 rounded-lg flex-shrink-0">
+              <ArchiveBoxIcon className="icon-responsive-md text-green-600" />
             </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Resolved</p>
-              <p className="text-2xl font-bold text-gray-900">1</p>
+            <div className="ml-3 min-w-0">
+              <p className="text-responsive-xs font-medium text-gray-600 truncate">Resolved</p>
+              <p className="text-responsive-lg font-bold text-gray-900">1</p>
             </div>
           </div>
         </Card>
       </div>
 
       <Card className="p-8">
-        <h3 className="text-lg font-semibold text-gray-900 mb-6">Report Lost Item</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <h3 className="text-responsive-lg font-semibold text-gray-900 mb-responsive-lg">Report Lost Item</h3>
+        <div className="grid-responsive-2 gap-responsive-md">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Item Description</label>
+            <label className="block text-responsive-sm font-medium text-gray-700 mb-2">Item Description</label>
             <input
               type="text"
               placeholder="e.g., Black leather wallet"
@@ -64,7 +64,7 @@ export default function PassengerLostFoundPage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Route/Bus Number</label>
+            <label className="block text-responsive-sm font-medium text-gray-700 mb-2">Route/Bus Number</label>
             <input
               type="text"
               placeholder="e.g., Route 12A or Bus SB-001"
@@ -72,14 +72,14 @@ export default function PassengerLostFoundPage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Date Lost</label>
+            <label className="block text-responsive-sm font-medium text-gray-700 mb-2">Date Lost</label>
             <input
               type="date"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Contact Number</label>
+            <label className="block text-responsive-sm font-medium text-gray-700 mb-2">Contact Number</label>
             <input
               type="tel"
               placeholder="+94 77 123 4567"
@@ -87,7 +87,7 @@ export default function PassengerLostFoundPage() {
             />
           </div>
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-2">Additional Details</label>
+            <label className="block text-responsive-sm font-medium text-gray-700 mb-2">Additional Details</label>
             <textarea
               rows={3}
               placeholder="Any additional information about the lost item..."
@@ -103,8 +103,8 @@ export default function PassengerLostFoundPage() {
       </Card>
 
       <Card className="overflow-hidden">
-        <div className="p-6 border-b border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900">My Claims</h3>
+        <div className="card-responsive border-b border-gray-200">
+          <h3 className="text-responsive-lg font-semibold text-gray-900">My Claims</h3>
         </div>
         <div className="divide-y divide-gray-200">
           {[
@@ -130,14 +130,14 @@ export default function PassengerLostFoundPage() {
               status: 'Resolved'
             }
           ].map((claim, index) => (
-            <div key={index} className="p-6 flex items-center justify-between">
+            <div key={index} className="card-responsive flex items-center justify-between">
               <div className="flex items-center space-x-4">
-                <div className="p-2 bg-gray-100 rounded-lg">
-                  <ArchiveBoxIcon className="h-6 w-6 text-gray-600" />
+                <div className="p-2 bg-gray-100 rounded-lg flex-shrink-0">
+                  <ArchiveBoxIcon className="icon-responsive-md text-gray-600" />
                 </div>
                 <div>
                   <h4 className="font-medium text-gray-900">{claim.item}</h4>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-responsive-sm text-gray-600">
                     Claim ID: {claim.id} • {claim.route} • {claim.date}
                   </p>
                 </div>

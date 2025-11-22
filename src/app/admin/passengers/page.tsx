@@ -55,64 +55,64 @@ export default function AdminPassengersPage() {
   ]
 
   return (
-    <div className="space-y-6">
+    <div className="space-responsive-md no-scroll-x">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Passenger Management</h1>
+        <h1 className="text-responsive-2xl font-bold text-gray-900">Passenger Management</h1>
         <p className="text-gray-600">Complete control over passenger accounts, feedback, and services</p>
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card className="p-6">
+      <div className="grid-responsive-4 gap-responsive-md">
+        <Card className="card-responsive">
           <div className="flex items-center">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <UserGroupIcon className="h-6 w-6 text-blue-600" />
+            <div className="p-2 bg-blue-100 rounded-lg flex-shrink-0">
+              <UserGroupIcon className="icon-responsive-md text-blue-600" />
             </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Passengers</p>
-              <p className="text-2xl font-bold text-gray-900">12,543</p>
+            <div className="ml-3 min-w-0">
+              <p className="text-responsive-xs font-medium text-gray-600 truncate">Total Passengers</p>
+              <p className="text-responsive-lg font-bold text-gray-900">12,543</p>
             </div>
           </div>
         </Card>
-        <Card className="p-6">
+        <Card className="card-responsive">
           <div className="flex items-center">
-            <div className="p-2 bg-green-100 rounded-lg">
-              <CalendarIcon className="h-6 w-6 text-green-600" />
+            <div className="p-2 bg-green-100 rounded-lg flex-shrink-0">
+              <CalendarIcon className="icon-responsive-md text-green-600" />
             </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Monthly Bookings</p>
-              <p className="text-2xl font-bold text-gray-900">2,567</p>
+            <div className="ml-3 min-w-0">
+              <p className="text-responsive-xs font-medium text-gray-600 truncate">Monthly Bookings</p>
+              <p className="text-responsive-lg font-bold text-gray-900">2,567</p>
             </div>
           </div>
         </Card>
-        <Card className="p-6">
+        <Card className="card-responsive">
           <div className="flex items-center">
-            <div className="p-2 bg-purple-100 rounded-lg">
-              <ChatBubbleLeftRightIcon className="h-6 w-6 text-purple-600" />
+            <div className="p-2 bg-purple-100 rounded-lg flex-shrink-0">
+              <ChatBubbleLeftRightIcon className="icon-responsive-md text-purple-600" />
             </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Feedback Items</p>
-              <p className="text-2xl font-bold text-gray-900">156</p>
+            <div className="ml-3 min-w-0">
+              <p className="text-responsive-xs font-medium text-gray-600 truncate">Feedback Items</p>
+              <p className="text-responsive-lg font-bold text-gray-900">156</p>
             </div>
           </div>
         </Card>
-        <Card className="p-6">
+        <Card className="card-responsive">
           <div className="flex items-center">
-            <div className="p-2 bg-yellow-100 rounded-lg">
-              <StarIcon className="h-6 w-6 text-yellow-600" />
+            <div className="p-2 bg-yellow-100 rounded-lg flex-shrink-0">
+              <StarIcon className="icon-responsive-md text-yellow-600" />
             </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Active Rewards</p>
-              <p className="text-2xl font-bold text-gray-900">89</p>
+            <div className="ml-3 min-w-0">
+              <p className="text-responsive-xs font-medium text-gray-600 truncate">Active Rewards</p>
+              <p className="text-responsive-lg font-bold text-gray-900">89</p>
             </div>
           </div>
         </Card>
       </div>
 
       {/* Management Sections */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid-responsive-2 lg:grid-cols-3 gap-responsive-md">
         {passengerSections.map((section) => (
-          <Card key={section.title} className="p-6 hover:shadow-lg transition-shadow">
+          <Card key={section.title} className="card-responsive hover:shadow-lg transition-shadow">
             <div className="flex items-start justify-between">
               <div className="flex-1">
                 <div className="flex items-center space-x-3 mb-3">
@@ -123,7 +123,7 @@ export default function AdminPassengersPage() {
                     section.color === 'yellow' ? 'bg-yellow-100' :
                     'bg-red-100'
                   }`}>
-                    <section.icon className={`h-6 w-6 ${
+                    <section.icon className={`icon-responsive-md ${
                       section.color === 'blue' ? 'text-blue-600' :
                       section.color === 'purple' ? 'text-purple-600' :
                       section.color === 'green' ? 'text-green-600' :
@@ -131,10 +131,10 @@ export default function AdminPassengersPage() {
                       'text-red-600'
                     }`} />
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900">{section.title}</h3>
+                  <h3 className="text-responsive-lg font-semibold text-gray-900">{section.title}</h3>
                 </div>
-                <p className="text-gray-600 mb-4">{section.description}</p>
-                <p className="text-sm font-medium text-gray-500 mb-4">{section.stats}</p>
+                <p className="text-gray-600 mb-responsive-md">{section.description}</p>
+                <p className="text-responsive-sm font-medium text-gray-500 mb-responsive-md">{section.stats}</p>
               </div>
             </div>
             <Link href={section.href}>

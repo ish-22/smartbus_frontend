@@ -61,16 +61,16 @@ export default function ModernSidebar({ role, onCollapseChange }: ModernSidebarP
         flex flex-col shadow-lg
       `}>
         {/* Header */}
-        <div className="p-6 border-b border-gray-100">
+        <div className="p-4 sm:p-6 border-b border-gray-100">
           {/* Logo Section */}
-          <div className="flex items-center justify-center mb-4">
-            <div className={`w-10 h-10 ${getRoleColor()} rounded-lg flex items-center justify-center flex-shrink-0`}>
-              <span className="text-white text-lg font-bold">🚌</span>
+          <div className="flex items-center justify-center mb-3 sm:mb-4">
+            <div className={`w-8 h-8 sm:w-10 sm:h-10 ${getRoleColor()} rounded-lg flex items-center justify-center flex-shrink-0`}>
+              <span className="text-white text-base sm:text-lg font-bold">🚌</span>
             </div>
             {!isCollapsed && (
               <div className="ml-3 min-w-0">
-                <h2 className="text-lg font-bold text-gray-900 truncate">SmartBus</h2>
-                <p className="text-sm text-gray-500 capitalize truncate">{role} Panel</p>
+                <h2 className="text-base sm:text-lg font-bold text-gray-900 truncate">SmartBus</h2>
+                <p className="text-xs sm:text-sm text-gray-500 capitalize truncate">{role} Panel</p>
               </div>
             )}
           </div>
@@ -82,16 +82,16 @@ export default function ModernSidebar({ role, onCollapseChange }: ModernSidebarP
                 setIsCollapsed(newCollapsed)
                 onCollapseChange?.(newCollapsed)
               }}
-              className="hidden lg:block p-2 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+              className="hidden lg:block p-1.5 sm:p-2 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
               aria-label="Toggle sidebar"
             >
-              <Bars3Icon className="h-5 w-5" />
+              <Bars3Icon className="h-4 w-4 sm:h-5 sm:w-5" />
             </button>
           </div>
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
+        <nav className="flex-1 px-3 sm:px-4 py-4 sm:py-6 space-y-1 overflow-y-auto">
           {navigation.map((item) => {
             const active = isActive(item.href)
             return (
@@ -100,33 +100,33 @@ export default function ModernSidebar({ role, onCollapseChange }: ModernSidebarP
                 href={item.href}
                 onClick={() => setIsMobileOpen(false)}
                 className={`
-                  flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 group
+                  flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-lg transition-all duration-200 group
                   ${active
                     ? `${getRoleColor()} text-white shadow-sm` 
                     : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
                   }
-                  ${isCollapsed ? 'justify-center' : 'space-x-3'}
+                  ${isCollapsed ? 'justify-center' : 'space-x-2 sm:space-x-3'}
                 `}
               >
-                <item.icon className={`h-5 w-5 flex-shrink-0 ${active ? 'text-white' : 'text-gray-500 group-hover:text-gray-700'}`} />
-                {!isCollapsed && <span className="truncate">{item.name}</span>}
+                <item.icon className={`h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0 ${active ? 'text-white' : 'text-gray-500 group-hover:text-gray-700'}`} />
+                {!isCollapsed && <span className="truncate text-xs sm:text-sm">{item.name}</span>}
               </Link>
             )
           })}
         </nav>
 
         {/* Footer */}
-        <div className="p-4 border-t border-gray-100">
+        <div className="p-3 sm:p-4 border-t border-gray-100">
           <button
             onClick={() => window.location.href = '/'}
             className={`
-              w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors
+              w-full flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-lg transition-colors
               text-red-600 hover:bg-red-50 hover:text-red-700
-              ${isCollapsed ? 'justify-center' : 'space-x-3'}
+              ${isCollapsed ? 'justify-center' : 'space-x-2 sm:space-x-3'}
             `}
           >
-            <ArrowRightOnRectangleIcon className="h-5 w-5 flex-shrink-0" />
-            {!isCollapsed && <span>Logout</span>}
+            <ArrowRightOnRectangleIcon className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
+            {!isCollapsed && <span className="text-xs sm:text-sm">Logout</span>}
           </button>
         </div>
       </div>

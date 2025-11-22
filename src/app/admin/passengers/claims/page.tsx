@@ -47,67 +47,67 @@ export default function PassengerClaimsPage() {
   ]
 
   return (
-    <div className="space-y-6">
+    <div className="space-responsive-md no-scroll-x">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Lost & Found Claims</h1>
+        <h1 className="text-responsive-2xl font-bold text-gray-900">Lost & Found Claims</h1>
         <p className="text-gray-600">Process passenger claims for lost items</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card className="p-6">
+      <div className="grid-responsive-4 gap-responsive-md">
+        <Card className="card-responsive">
           <div className="flex items-center">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <ArchiveBoxIcon className="h-6 w-6 text-blue-600" />
+            <div className="p-2 bg-blue-100 rounded-lg flex-shrink-0">
+              <ArchiveBoxIcon className="icon-responsive-md text-blue-600" />
             </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Claims</p>
-              <p className="text-2xl font-bold text-gray-900">89</p>
+            <div className="ml-3 min-w-0">
+              <p className="text-responsive-xs font-medium text-gray-600 truncate">Total Claims</p>
+              <p className="text-responsive-lg font-bold text-gray-900">89</p>
             </div>
           </div>
         </Card>
-        <Card className="p-6">
+        <Card className="card-responsive">
           <div className="flex items-center">
-            <div className="p-2 bg-yellow-100 rounded-lg">
-              <ClockIcon className="h-6 w-6 text-yellow-600" />
+            <div className="p-2 bg-yellow-100 rounded-lg flex-shrink-0">
+              <ClockIcon className="icon-responsive-md text-yellow-600" />
             </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Pending</p>
-              <p className="text-2xl font-bold text-gray-900">23</p>
+            <div className="ml-3 min-w-0">
+              <p className="text-responsive-xs font-medium text-gray-600 truncate">Pending</p>
+              <p className="text-responsive-lg font-bold text-gray-900">23</p>
             </div>
           </div>
         </Card>
-        <Card className="p-6">
+        <Card className="card-responsive">
           <div className="flex items-center">
-            <div className="p-2 bg-green-100 rounded-lg">
-              <CheckCircleIcon className="h-6 w-6 text-green-600" />
+            <div className="p-2 bg-green-100 rounded-lg flex-shrink-0">
+              <CheckCircleIcon className="icon-responsive-md text-green-600" />
             </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Resolved</p>
-              <p className="text-2xl font-bold text-gray-900">56</p>
+            <div className="ml-3 min-w-0">
+              <p className="text-responsive-xs font-medium text-gray-600 truncate">Resolved</p>
+              <p className="text-responsive-lg font-bold text-gray-900">56</p>
             </div>
           </div>
         </Card>
-        <Card className="p-6">
+        <Card className="card-responsive">
           <div className="flex items-center">
-            <div className="p-2 bg-red-100 rounded-lg">
-              <XCircleIcon className="h-6 w-6 text-red-600" />
+            <div className="p-2 bg-red-100 rounded-lg flex-shrink-0">
+              <XCircleIcon className="icon-responsive-md text-red-600" />
             </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Closed</p>
-              <p className="text-2xl font-bold text-gray-900">10</p>
+            <div className="ml-3 min-w-0">
+              <p className="text-responsive-xs font-medium text-gray-600 truncate">Closed</p>
+              <p className="text-responsive-lg font-bold text-gray-900">10</p>
             </div>
           </div>
         </Card>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-responsive-sm">
         {claims.map((claim) => (
-          <Card key={claim.id} className="p-6">
+          <Card key={claim.id} className="card-responsive">
             <div className="flex justify-between items-start">
               <div className="flex-1">
                 <div className="flex items-center space-x-3 mb-2">
                   <h3 className="font-semibold text-gray-900">{claim.itemName}</h3>
-                  <span className="text-sm text-gray-500">#{claim.id}</span>
+                  <span className="text-responsive-sm text-gray-500">#{claim.id}</span>
                   <span className={`px-2 py-1 text-xs rounded-full ${
                     claim.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
                     claim.status === 'Found' ? 'bg-blue-100 text-blue-800' :
@@ -118,7 +118,7 @@ export default function PassengerClaimsPage() {
                   </span>
                 </div>
                 <p className="text-gray-600 mb-3">{claim.description}</p>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-500">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-responsive-sm text-responsive-sm text-gray-500">
                   <div>
                     <span className="font-medium">Passenger:</span> {claim.passenger}
                   </div>
@@ -132,7 +132,7 @@ export default function PassengerClaimsPage() {
                     <span className="font-medium">Reported:</span> {claim.reportedDate}
                   </div>
                 </div>
-                <div className="mt-2 text-sm text-gray-500">
+                <div className="mt-2 text-responsive-sm text-gray-500">
                   <span className="font-medium">Contact:</span> {claim.contactInfo}
                 </div>
               </div>
