@@ -3,9 +3,9 @@ import { DocumentTextIcon } from '@heroicons/react/24/outline'
 
 export default function OwnerReportsPage() {
   return (
-    <div className="space-responsive-lg no-scroll-x">
+    <div className="space-y-6 sm:space-y-8 overflow-x-hidden">
       <div>
-        <h1 className="text-responsive-2xl font-bold text-gray-900">Reports</h1>
+        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">Reports</h1>
         <p className="text-gray-600">Generate business and operational reports</p>
       </div>
       <Card className="p-8">

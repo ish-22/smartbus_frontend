@@ -4,52 +4,52 @@ import { CalendarIcon, TicketIcon, MapPinIcon, ClockIcon } from '@heroicons/reac
 
 export default function PassengerBookingsPage() {
   return (
-    <div className="space-responsive-lg no-scroll-x">
+    <div className="space-y-6 sm:space-y-8 overflow-x-hidden">
       <div>
-        <h1 className="text-responsive-2xl font-bold text-gray-900">Bookings & Tickets</h1>
+        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">Bookings & Tickets</h1>
         <p className="text-gray-600">Manage your bus bookings and e-tickets</p>
       </div>
 
-      <div className="grid-responsive-3 gap-responsive-md">
-        <Card className="card-responsive">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        <Card className="p-3 sm:p-4 lg:p-6">
           <div className="flex items-center">
             <div className="p-2 bg-blue-100 rounded-lg flex-shrink-0">
-              <TicketIcon className="icon-responsive-md text-blue-600" />
+              <TicketIcon className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
             </div>
             <div className="ml-3 min-w-0">
-              <p className="text-responsive-xs font-medium text-gray-600 truncate">Active Tickets</p>
-              <p className="text-responsive-lg font-bold text-gray-900">3</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Active Tickets</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">3</p>
             </div>
           </div>
         </Card>
-        <Card className="card-responsive">
+        <Card className="p-3 sm:p-4 lg:p-6">
           <div className="flex items-center">
             <div className="p-2 bg-green-100 rounded-lg flex-shrink-0">
-              <CalendarIcon className="icon-responsive-md text-green-600" />
+              <CalendarIcon className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
             </div>
             <div className="ml-3 min-w-0">
-              <p className="text-responsive-xs font-medium text-gray-600 truncate">Total Bookings</p>
-              <p className="text-responsive-lg font-bold text-gray-900">45</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Bookings</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">45</p>
             </div>
           </div>
         </Card>
-        <Card className="card-responsive">
+        <Card className="p-3 sm:p-4 lg:p-6">
           <div className="flex items-center">
             <div className="p-2 bg-purple-100 rounded-lg flex-shrink-0">
-              <span className="text-purple-600 text-responsive-xl">₹</span>
+              <span className="text-purple-600 text-lg sm:text-xl lg:text-2xl">₹</span>
             </div>
             <div className="ml-3 min-w-0">
-              <p className="text-responsive-xs font-medium text-gray-600 truncate">Total Spent</p>
-              <p className="text-responsive-lg font-bold text-gray-900">₹12,450</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Spent</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">₹12,450</p>
             </div>
           </div>
         </Card>
       </div>
 
-      <div className="space-responsive-md">
+      <div className="space-y-4 sm:space-y-6">
         <div>
-          <h2 className="text-responsive-xl font-semibold text-gray-900 mb-responsive-md">Upcoming Trips</h2>
-          <div className="space-responsive-sm">
+          <h2 className="text-lg sm:text-xl lg:text-2xl font-semibold text-gray-900 mb-3 sm:mb-4">Upcoming Trips</h2>
+          <div className="space-y-3 sm:space-y-4">
             {[
               {
                 id: 'TKT-001234',
@@ -74,20 +74,20 @@ export default function PassengerBookingsPage() {
                 status: 'Confirmed'
               }
             ].map((booking, index) => (
-              <Card key={index} className="card-responsive">
+              <Card key={index} className="p-3 sm:p-4 lg:p-6">
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
                     <div className="flex items-center space-x-4 mb-3">
                       <div className="p-2 bg-blue-100 rounded-lg flex-shrink-0">
-                        <TicketIcon className="icon-responsive-md text-blue-600" />
+                        <TicketIcon className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
                       </div>
                       <div>
-                        <h3 className="text-responsive-lg font-semibold text-gray-900">{booking.route}</h3>
-                        <p className="text-responsive-sm text-gray-600">Ticket ID: {booking.id}</p>
+                        <h3 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900">{booking.route}</h3>
+                        <p className="text-sm sm:text-base text-gray-600">Ticket ID: {booking.id}</p>
                       </div>
                     </div>
                     
-                    <div className="grid-responsive-4 gap-responsive-sm text-responsive-sm">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 text-sm sm:text-base">
                       <div className="flex items-center">
                         <MapPinIcon className="h-4 w-4 text-gray-400 mr-2" />
                         <span>{booking.from} → {booking.to}</span>
@@ -107,7 +107,7 @@ export default function PassengerBookingsPage() {
                   </div>
                   
                   <div className="text-right ml-6">
-                    <p className="text-responsive-lg font-bold text-gray-900">{booking.price}</p>
+                    <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">{booking.price}</p>
                     <span className="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">
                       {booking.status}
                     </span>
@@ -127,10 +127,10 @@ export default function PassengerBookingsPage() {
         </div>
 
         <div>
-          <h2 className="text-responsive-xl font-semibold text-gray-900 mb-responsive-md">Booking History</h2>
-          <Card className="card-responsive">
+          <h2 className="text-lg sm:text-xl lg:text-2xl font-semibold text-gray-900 mb-3 sm:mb-4">Booking History</h2>
+          <Card className="p-3 sm:p-4 lg:p-6">
             <div className="text-center py-8">
-              <CalendarIcon className="h-12 w-12 text-gray-400 mx-auto mb-responsive-md" />
+              <CalendarIcon className="h-12 w-12 text-gray-400 mx-auto mb-3 sm:mb-4" />
               <p className="text-gray-500">Your booking history will appear here</p>
             </div>
           </Card>

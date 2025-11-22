@@ -3,67 +3,67 @@ import { TruckIcon, ChartBarIcon, CurrencyDollarIcon, ClockIcon } from '@heroico
 
 export default function OwnerDashboard() {
   return (
-    <div className="space-responsive-md no-scroll-x">
+    <div className="space-y-4 sm:space-y-6 overflow-x-hidden">
       <div>
-        <h1 className="text-responsive-2xl font-bold text-gray-900">Owner Dashboard</h1>
+        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">Owner Dashboard</h1>
         <p className="text-gray-600">Fleet management and business overview</p>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid-responsive-2 lg:grid-cols-4 gap-responsive-md">
-        <Card className="card-responsive">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <Card className="p-3 sm:p-4 lg:p-6">
           <div className="flex items-center">
             <div className="p-2 bg-purple-100 rounded-lg flex-shrink-0">
-              <TruckIcon className="icon-responsive-md text-purple-600" />
+              <TruckIcon className="h-5 w-5 sm:h-6 sm:w-6 text-purple-600" />
             </div>
             <div className="ml-3 min-w-0">
-              <p className="text-responsive-xs font-medium text-gray-600 truncate">Total Buses</p>
-              <p className="text-responsive-lg font-bold text-gray-900">24</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Buses</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">24</p>
             </div>
           </div>
         </Card>
 
-        <Card className="card-responsive">
+        <Card className="p-3 sm:p-4 lg:p-6">
           <div className="flex items-center">
             <div className="p-2 bg-green-100 rounded-lg flex-shrink-0">
-              <CurrencyDollarIcon className="icon-responsive-md text-green-600" />
+              <CurrencyDollarIcon className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
             </div>
             <div className="ml-3 min-w-0">
-              <p className="text-responsive-xs font-medium text-gray-600 truncate">Today's Revenue</p>
-              <p className="text-responsive-lg font-bold text-gray-900">₹45,230</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Today's Revenue</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">₹45,230</p>
             </div>
           </div>
         </Card>
 
-        <Card className="card-responsive">
+        <Card className="p-3 sm:p-4 lg:p-6">
           <div className="flex items-center">
             <div className="p-2 bg-blue-100 rounded-lg flex-shrink-0">
-              <ChartBarIcon className="icon-responsive-md text-blue-600" />
+              <ChartBarIcon className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
             </div>
             <div className="ml-3 min-w-0">
-              <p className="text-responsive-xs font-medium text-gray-600 truncate">Active Trips</p>
-              <p className="text-responsive-lg font-bold text-gray-900">18</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Active Trips</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">18</p>
             </div>
           </div>
         </Card>
 
-        <Card className="card-responsive">
+        <Card className="p-3 sm:p-4 lg:p-6">
           <div className="flex items-center">
             <div className="p-2 bg-orange-100 rounded-lg flex-shrink-0">
-              <ClockIcon className="icon-responsive-md text-orange-600" />
+              <ClockIcon className="h-5 w-5 sm:h-6 sm:w-6 text-orange-600" />
             </div>
             <div className="ml-3 min-w-0">
-              <p className="text-responsive-xs font-medium text-gray-600 truncate">On-Time Rate</p>
-              <p className="text-responsive-lg font-bold text-gray-900">94%</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">On-Time Rate</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">94%</p>
             </div>
           </div>
         </Card>
       </div>
 
       {/* Fleet Status */}
-      <Card className="card-responsive">
-        <h3 className="text-responsive-lg font-semibold text-gray-900 mb-responsive-md">Fleet Status</h3>
-        <div className="space-responsive-sm">
+      <Card className="p-3 sm:p-4 lg:p-6">
+        <h3 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">Fleet Status</h3>
+        <div className="space-y-3 sm:space-y-4">
           {[
             { bus: 'Bus #001', route: 'Route 12A', status: 'Active', passengers: '32/45' },
             { bus: 'Bus #002', route: 'Route 15B', status: 'Active', passengers: '28/40' },
@@ -81,7 +81,7 @@ export default function OwnerDashboard() {
                 }`}>
                   {bus.status}
                 </span>
-                <span className="text-responsive-sm text-gray-500">{bus.passengers}</span>
+                <span className="text-sm sm:text-base text-gray-500">{bus.passengers}</span>
               </div>
             </div>
           ))}

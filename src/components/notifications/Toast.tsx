@@ -32,7 +32,7 @@ export default function Toast() {
 	const Icon = iconMap[toast.type as keyof typeof iconMap];
 
 	return (
-		<div className="fixed top-4 right-4 z-50 animate-slide-in-right">
+		<div className="fixed top-4 right-4 z-50 animate-animate-slide-in-right">
 			<div className={`${bgColorValue} text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 min-w-[300px] max-w-md`}>
 				<Icon className="w-6 h-6 flex-shrink-0" />
 				<p className="flex-1 text-sm font-medium">{toast.message}</p>

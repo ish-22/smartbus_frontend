@@ -30,68 +30,68 @@ export default function DriverSchedulePage() {
   ]
 
   return (
-    <div className="space-responsive-md no-scroll-x">
+    <div className="space-y-4 sm:space-y-6 overflow-x-hidden">
       <div>
-        <h1 className="text-responsive-2xl font-bold text-gray-900">My Schedule</h1>
-        <p className="text-responsive-sm text-gray-600 mt-1">Today's routes and timings</p>
+        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">My Schedule</h1>
+        <p className="text-sm sm:text-base text-gray-600 mt-1">Today's routes and timings</p>
       </div>
 
-      <div className="grid-responsive-3 gap-responsive-md">
-        <Card className="card-responsive">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        <Card className="p-3 sm:p-4 lg:p-6">
           <div className="flex items-center">
             <div className="p-2 bg-blue-100 rounded-lg flex-shrink-0">
-              <CalendarIcon className="icon-responsive-md text-blue-600" />
+              <CalendarIcon className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
             </div>
             <div className="ml-3 min-w-0">
-              <p className="text-responsive-xs font-medium text-gray-600 truncate">Today's Trips</p>
-              <p className="text-responsive-lg font-bold text-gray-900">2</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Today's Trips</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">2</p>
             </div>
           </div>
         </Card>
-        <Card className="card-responsive">
+        <Card className="p-3 sm:p-4 lg:p-6">
           <div className="flex items-center">
             <div className="p-2 bg-green-100 rounded-lg flex-shrink-0">
-              <ClockIcon className="icon-responsive-md text-green-600" />
+              <ClockIcon className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
             </div>
             <div className="ml-3 min-w-0">
-              <p className="text-responsive-xs font-medium text-gray-600 truncate">Total Hours</p>
-              <p className="text-responsive-lg font-bold text-gray-900">6</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Hours</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">6</p>
             </div>
           </div>
         </Card>
-        <Card className="card-responsive">
+        <Card className="p-3 sm:p-4 lg:p-6">
           <div className="flex items-center">
             <div className="p-2 bg-purple-100 rounded-lg flex-shrink-0">
-              <MapPinIcon className="icon-responsive-md text-purple-600" />
+              <MapPinIcon className="h-5 w-5 sm:h-6 sm:w-6 text-purple-600" />
             </div>
             <div className="ml-3 min-w-0">
-              <p className="text-responsive-xs font-medium text-gray-600 truncate">Distance</p>
-              <p className="text-responsive-lg font-bold text-gray-900">230 km</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Distance</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">230 km</p>
             </div>
           </div>
         </Card>
       </div>
 
-      <div className="space-responsive-sm">
+      <div className="space-y-3 sm:space-y-4">
         {schedules.map((schedule) => (
-          <Card key={schedule.id} className="card-responsive">
+          <Card key={schedule.id} className="p-3 sm:p-4 lg:p-6">
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-3 sm:space-y-0">
               <div className="flex-1 min-w-0">
-                <h3 className="text-responsive-base font-semibold text-gray-900 truncate">{schedule.route}</h3>
+                <h3 className="text-sm sm:text-base lg:text-lg font-semibold text-gray-900 truncate">{schedule.route}</h3>
                 <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 mt-2 space-y-1 sm:space-y-0">
-                  <span className="text-responsive-xs text-gray-600">Departure: {schedule.departureTime}</span>
-                  <span className="text-responsive-xs text-gray-600">Arrival: {schedule.arrivalTime}</span>
-                  <span className="text-responsive-xs text-gray-600">Passengers: {schedule.passengers}</span>
+                  <span className="text-xs sm:text-sm text-gray-600">Departure: {schedule.departureTime}</span>
+                  <span className="text-xs sm:text-sm text-gray-600">Arrival: {schedule.arrivalTime}</span>
+                  <span className="text-xs sm:text-sm text-gray-600">Passengers: {schedule.passengers}</span>
                 </div>
               </div>
               <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-3">
-                <span className={`px-2 sm:px-3 py-1 rounded-full text-responsive-xs ${
+                <span className={`px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm ${
                   schedule.status === 'Upcoming' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'
                 }`}>
                   {schedule.status}
                 </span>
                 {schedule.status === 'Upcoming' && (
-                  <Button className="bg-green-600 hover:bg-green-700 btn-responsive-sm">
+                  <Button className="bg-green-600 hover:bg-green-700 px-3 py-2 text-sm sm:px-4 sm:py-2 sm:text-base-sm">
                     <PlayIcon className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
                     <span className="hidden sm:inline">Start Trip</span>
                     <span className="sm:hidden">Start</span>

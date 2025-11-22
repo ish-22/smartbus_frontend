@@ -42,10 +42,10 @@ export default function AdminDriversPage() {
   ]
 
   return (
-    <div className="space-responsive-md no-scroll-x">
+    <div className="space-y-4 sm:space-y-6 overflow-x-hidden">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-responsive-2xl font-bold text-gray-900">Driver Management</h1>
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">Driver Management</h1>
           <p className="text-gray-600">Manage driver accounts and approvals</p>
         </div>
         <Button className="bg-red-600 hover:bg-red-700">
@@ -54,48 +54,48 @@ export default function AdminDriversPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid-responsive-4 gap-responsive-md">
-        <Card className="card-responsive">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <Card className="p-3 sm:p-4 lg:p-6">
           <div className="flex items-center">
             <div className="p-2 bg-blue-100 rounded-lg flex-shrink-0">
-              <UserIcon className="icon-responsive-md text-blue-600" />
+              <UserIcon className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
             </div>
             <div className="ml-3 min-w-0">
-              <p className="text-responsive-xs font-medium text-gray-600 truncate">Total Drivers</p>
-              <p className="text-responsive-lg font-bold text-gray-900">89</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Drivers</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">89</p>
             </div>
           </div>
         </Card>
-        <Card className="card-responsive">
+        <Card className="p-3 sm:p-4 lg:p-6">
           <div className="flex items-center">
             <div className="p-2 bg-green-100 rounded-lg flex-shrink-0">
-              <CheckCircleIcon className="icon-responsive-md text-green-600" />
+              <CheckCircleIcon className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
             </div>
             <div className="ml-3 min-w-0">
-              <p className="text-responsive-xs font-medium text-gray-600 truncate">Active</p>
-              <p className="text-responsive-lg font-bold text-gray-900">76</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Active</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">76</p>
             </div>
           </div>
         </Card>
-        <Card className="card-responsive">
+        <Card className="p-3 sm:p-4 lg:p-6">
           <div className="flex items-center">
             <div className="p-2 bg-yellow-100 rounded-lg flex-shrink-0">
-              <ShieldCheckIcon className="icon-responsive-md text-yellow-600" />
+              <ShieldCheckIcon className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-600" />
             </div>
             <div className="ml-3 min-w-0">
-              <p className="text-responsive-xs font-medium text-gray-600 truncate">Pending</p>
-              <p className="text-responsive-lg font-bold text-gray-900">8</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Pending</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">8</p>
             </div>
           </div>
         </Card>
-        <Card className="card-responsive">
+        <Card className="p-3 sm:p-4 lg:p-6">
           <div className="flex items-center">
             <div className="p-2 bg-purple-100 rounded-lg flex-shrink-0">
-              <StarIcon className="icon-responsive-md text-purple-600" />
+              <StarIcon className="h-5 w-5 sm:h-6 sm:w-6 text-purple-600" />
             </div>
             <div className="ml-3 min-w-0">
-              <p className="text-responsive-xs font-medium text-gray-600 truncate">Avg Rating</p>
-              <p className="text-responsive-lg font-bold text-gray-900">4.7</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Avg Rating</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">4.7</p>
             </div>
           </div>
         </Card>
@@ -136,7 +136,7 @@ export default function AdminDriversPage() {
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
                       <div className="h-10 w-10 bg-gray-200 rounded-full flex items-center justify-center">
-                        <UserIcon className="icon-responsive-md text-gray-600" />
+                        <UserIcon className="h-5 w-5 sm:h-6 sm:w-6 text-gray-600" />
                       </div>
                       <div className="ml-3 min-w-0">
                         <div className="font-medium text-gray-900">{driver.name}</div>
@@ -167,7 +167,7 @@ export default function AdminDriversPage() {
                   <td className="px-6 py-4 whitespace-nowrap text-gray-900">
                     {driver.trips}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-responsive-sm font-medium">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm sm:text-base font-medium">
                     <div className="flex space-x-2">
                       <Button variant="secondary" size="sm">
                         View

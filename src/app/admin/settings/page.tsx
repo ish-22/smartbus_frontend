@@ -28,19 +28,19 @@ export default function AdminSettingsPage() {
     switch (activeTab) {
       case 'general':
         return (
-          <Card className="card-responsive">
-            <h3 className="text-responsive-lg font-semibold mb-responsive-md">General Settings</h3>
-            <div className="space-responsive-sm">
+          <Card className="p-3 sm:p-4 lg:p-6">
+            <h3 className="text-base sm:text-lg lg:text-xl font-semibold mb-3 sm:mb-4">General Settings</h3>
+            <div className="space-y-3 sm:space-y-4">
               <div>
-                <label className="block text-responsive-sm font-medium text-gray-700 mb-2">System Name</label>
+                <label className="block text-sm sm:text-base font-medium text-gray-700 mb-2">System Name</label>
                 <input type="text" defaultValue="SmartBus Tracker" className="w-full border border-gray-300 rounded-md px-3 py-2" />
               </div>
               <div>
-                <label className="block text-responsive-sm font-medium text-gray-700 mb-2">Admin Email</label>
+                <label className="block text-sm sm:text-base font-medium text-gray-700 mb-2">Admin Email</label>
                 <input type="email" defaultValue="admin@smartbus.lk" className="w-full border border-gray-300 rounded-md px-3 py-2" />
               </div>
               <div>
-                <label className="block text-responsive-sm font-medium text-gray-700 mb-2">Maintenance Mode</label>
+                <label className="block text-sm sm:text-base font-medium text-gray-700 mb-2">Maintenance Mode</label>
                 <select className="w-full border border-gray-300 rounded-md px-3 py-2">
                   <option>Disabled</option>
                   <option>Enabled</option>
@@ -51,9 +51,9 @@ export default function AdminSettingsPage() {
         )
       case 'notifications':
         return (
-          <Card className="card-responsive">
-            <h3 className="text-responsive-lg font-semibold mb-responsive-md">Notification Settings</h3>
-            <div className="space-responsive-sm">
+          <Card className="p-3 sm:p-4 lg:p-6">
+            <h3 className="text-base sm:text-lg lg:text-xl font-semibold mb-3 sm:mb-4">Notification Settings</h3>
+            <div className="space-y-3 sm:space-y-4">
               <div className="flex items-center justify-between">
                 <span>Email Notifications</span>
                 <input type="checkbox" defaultChecked className="rounded" />
@@ -71,11 +71,11 @@ export default function AdminSettingsPage() {
         )
       case 'security':
         return (
-          <Card className="card-responsive">
-            <h3 className="text-responsive-lg font-semibold mb-responsive-md">Security Settings</h3>
-            <div className="space-responsive-sm">
+          <Card className="p-3 sm:p-4 lg:p-6">
+            <h3 className="text-base sm:text-lg lg:text-xl font-semibold mb-3 sm:mb-4">Security Settings</h3>
+            <div className="space-y-3 sm:space-y-4">
               <div>
-                <label className="block text-responsive-sm font-medium text-gray-700 mb-2">Session Timeout (minutes)</label>
+                <label className="block text-sm sm:text-base font-medium text-gray-700 mb-2">Session Timeout (minutes)</label>
                 <input type="number" defaultValue="30" className="w-full border border-gray-300 rounded-md px-3 py-2" />
               </div>
               <div className="flex items-center justify-between">
@@ -91,19 +91,19 @@ export default function AdminSettingsPage() {
         )
       case 'api':
         return (
-          <Card className="card-responsive">
-            <h3 className="text-responsive-lg font-semibold mb-responsive-md">API Configuration</h3>
-            <div className="space-responsive-sm">
+          <Card className="p-3 sm:p-4 lg:p-6">
+            <h3 className="text-base sm:text-lg lg:text-xl font-semibold mb-3 sm:mb-4">API Configuration</h3>
+            <div className="space-y-3 sm:space-y-4">
               <div>
-                <label className="block text-responsive-sm font-medium text-gray-700 mb-2">Google Maps API Key</label>
+                <label className="block text-sm sm:text-base font-medium text-gray-700 mb-2">Google Maps API Key</label>
                 <input type="password" placeholder="Enter API key" className="w-full border border-gray-300 rounded-md px-3 py-2" />
               </div>
               <div>
-                <label className="block text-responsive-sm font-medium text-gray-700 mb-2">Firebase Server Key</label>
+                <label className="block text-sm sm:text-base font-medium text-gray-700 mb-2">Firebase Server Key</label>
                 <input type="password" placeholder="Enter server key" className="w-full border border-gray-300 rounded-md px-3 py-2" />
               </div>
               <div>
-                <label className="block text-responsive-sm font-medium text-gray-700 mb-2">Rate Limit (requests/minute)</label>
+                <label className="block text-sm sm:text-base font-medium text-gray-700 mb-2">Rate Limit (requests/minute)</label>
                 <input type="number" defaultValue="100" className="w-full border border-gray-300 rounded-md px-3 py-2" />
               </div>
             </div>
@@ -111,15 +111,15 @@ export default function AdminSettingsPage() {
         )
       case 'payment':
         return (
-          <Card className="card-responsive">
-            <h3 className="text-responsive-lg font-semibold mb-responsive-md">Payment Settings</h3>
-            <div className="space-responsive-sm">
+          <Card className="p-3 sm:p-4 lg:p-6">
+            <h3 className="text-base sm:text-lg lg:text-xl font-semibold mb-3 sm:mb-4">Payment Settings</h3>
+            <div className="space-y-3 sm:space-y-4">
               <div>
-                <label className="block text-responsive-sm font-medium text-gray-700 mb-2">PayHere Merchant ID</label>
+                <label className="block text-sm sm:text-base font-medium text-gray-700 mb-2">PayHere Merchant ID</label>
                 <input type="text" placeholder="Enter merchant ID" className="w-full border border-gray-300 rounded-md px-3 py-2" />
               </div>
               <div>
-                <label className="block text-responsive-sm font-medium text-gray-700 mb-2">Stripe Publishable Key</label>
+                <label className="block text-sm sm:text-base font-medium text-gray-700 mb-2">Stripe Publishable Key</label>
                 <input type="password" placeholder="Enter publishable key" className="w-full border border-gray-300 rounded-md px-3 py-2" />
               </div>
               <div className="flex items-center justify-between">
@@ -131,11 +131,11 @@ export default function AdminSettingsPage() {
         )
       case 'localization':
         return (
-          <Card className="card-responsive">
-            <h3 className="text-responsive-lg font-semibold mb-responsive-md">Localization Settings</h3>
-            <div className="space-responsive-sm">
+          <Card className="p-3 sm:p-4 lg:p-6">
+            <h3 className="text-base sm:text-lg lg:text-xl font-semibold mb-3 sm:mb-4">Localization Settings</h3>
+            <div className="space-y-3 sm:space-y-4">
               <div>
-                <label className="block text-responsive-sm font-medium text-gray-700 mb-2">Default Language</label>
+                <label className="block text-sm sm:text-base font-medium text-gray-700 mb-2">Default Language</label>
                 <select className="w-full border border-gray-300 rounded-md px-3 py-2">
                   <option>English</option>
                   <option>Sinhala</option>
@@ -143,14 +143,14 @@ export default function AdminSettingsPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-responsive-sm font-medium text-gray-700 mb-2">Currency</label>
+                <label className="block text-sm sm:text-base font-medium text-gray-700 mb-2">Currency</label>
                 <select className="w-full border border-gray-300 rounded-md px-3 py-2">
                   <option>LKR (Sri Lankan Rupee)</option>
                   <option>USD (US Dollar)</option>
                 </select>
               </div>
               <div>
-                <label className="block text-responsive-sm font-medium text-gray-700 mb-2">Timezone</label>
+                <label className="block text-sm sm:text-base font-medium text-gray-700 mb-2">Timezone</label>
                 <select className="w-full border border-gray-300 rounded-md px-3 py-2">
                   <option>Asia/Colombo</option>
                   <option>UTC</option>
@@ -165,9 +165,9 @@ export default function AdminSettingsPage() {
   }
 
   return (
-    <div className="space-responsive-md no-scroll-x">
+    <div className="space-y-4 sm:space-y-6 overflow-x-hidden">
       <div>
-        <h1 className="text-responsive-2xl font-bold text-gray-900">System Settings</h1>
+        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">System Settings</h1>
         <p className="text-gray-600">Configure system-wide settings and preferences</p>
       </div>
 
@@ -179,13 +179,13 @@ export default function AdminSettingsPage() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`py-2 px-1 border-b-2 font-medium text-responsive-sm flex items-center space-x-2 ${
+                className={`py-2 px-1 border-b-2 font-medium text-sm sm:text-base flex items-center space-x-2 ${
                   activeTab === tab.id
                     ? 'border-red-500 text-red-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700'
                 }`}
               >
-                <Icon className="icon-responsive-sm" />
+                <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
                 <span>{tab.label}</span>
               </button>
             )

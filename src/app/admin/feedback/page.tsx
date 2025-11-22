@@ -46,10 +46,10 @@ export default function AdminFeedbackPage() {
   ]
 
   return (
-    <div className="space-responsive-md no-scroll-x">
+    <div className="space-y-4 sm:space-y-6 overflow-x-hidden">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-responsive-2xl font-bold text-gray-900">Feedback Management</h1>
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">Feedback Management</h1>
           <p className="text-gray-600">Monitor and respond to passenger feedback</p>
         </div>
         <Button className="bg-red-600 hover:bg-red-700">
@@ -58,48 +58,48 @@ export default function AdminFeedbackPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid-responsive-4 gap-responsive-md">
-        <Card className="card-responsive">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <Card className="p-3 sm:p-4 lg:p-6">
           <div className="flex items-center">
             <div className="p-2 bg-red-100 rounded-lg flex-shrink-0">
-              <ExclamationTriangleIcon className="icon-responsive-md text-red-600" />
+              <ExclamationTriangleIcon className="h-5 w-5 sm:h-6 sm:w-6 text-red-600" />
             </div>
             <div className="ml-3 min-w-0">
-              <p className="text-responsive-xs font-medium text-gray-600 truncate">Complaints</p>
-              <p className="text-responsive-lg font-bold text-gray-900">23</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Complaints</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">23</p>
             </div>
           </div>
         </Card>
-        <Card className="card-responsive">
+        <Card className="p-3 sm:p-4 lg:p-6">
           <div className="flex items-center">
             <div className="p-2 bg-blue-100 rounded-lg flex-shrink-0">
-              <ChatBubbleLeftRightIcon className="icon-responsive-md text-blue-600" />
+              <ChatBubbleLeftRightIcon className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
             </div>
             <div className="ml-3 min-w-0">
-              <p className="text-responsive-xs font-medium text-gray-600 truncate">Suggestions</p>
-              <p className="text-responsive-lg font-bold text-gray-900">15</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Suggestions</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">15</p>
             </div>
           </div>
         </Card>
-        <Card className="card-responsive">
+        <Card className="p-3 sm:p-4 lg:p-6">
           <div className="flex items-center">
             <div className="p-2 bg-green-100 rounded-lg flex-shrink-0">
-              <HandThumbUpIcon className="icon-responsive-md text-green-600" />
+              <HandThumbUpIcon className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
             </div>
             <div className="ml-3 min-w-0">
-              <p className="text-responsive-xs font-medium text-gray-600 truncate">Praise</p>
-              <p className="text-responsive-lg font-bold text-gray-900">42</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Praise</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">42</p>
             </div>
           </div>
         </Card>
-        <Card className="card-responsive">
+        <Card className="p-3 sm:p-4 lg:p-6">
           <div className="flex items-center">
             <div className="p-2 bg-yellow-100 rounded-lg flex-shrink-0">
-              <ClockIcon className="icon-responsive-md text-yellow-600" />
+              <ClockIcon className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-600" />
             </div>
             <div className="ml-3 min-w-0">
-              <p className="text-responsive-xs font-medium text-gray-600 truncate">Pending</p>
-              <p className="text-responsive-lg font-bold text-gray-900">8</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Pending</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">8</p>
             </div>
           </div>
         </Card>
@@ -112,7 +112,7 @@ export default function AdminFeedbackPage() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`py-2 px-1 border-b-2 font-medium text-responsive-sm capitalize ${
+              className={`py-2 px-1 border-b-2 font-medium text-sm sm:text-base capitalize ${
                 activeTab === tab
                   ? 'border-red-500 text-red-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
@@ -125,13 +125,13 @@ export default function AdminFeedbackPage() {
       </div>
 
       {/* Feedback List */}
-      <div className="space-responsive-sm">
+      <div className="space-y-3 sm:space-y-4">
         {feedback.map((item) => (
-          <Card key={item.id} className="card-responsive">
+          <Card key={item.id} className="p-3 sm:p-4 lg:p-6">
             <div className="flex items-start justify-between">
               <div className="flex-1">
                 <div className="flex items-center space-x-3 mb-2">
-                  <UserIcon className="icon-responsive-sm text-gray-400" />
+                  <UserIcon className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
                   <span className="font-medium text-gray-900">{item.passenger}</span>
                   <span className={`px-2 py-1 text-xs rounded-full ${
                     item.type === 'Complaint' ? 'bg-red-100 text-red-800' :
@@ -148,8 +148,8 @@ export default function AdminFeedbackPage() {
                     {item.priority}
                   </span>
                 </div>
-                <h3 className="text-responsive-lg font-medium text-gray-900 mb-2">{item.subject}</h3>
-                <div className="flex items-center space-x-4 text-responsive-sm text-gray-500">
+                <h3 className="text-base sm:text-lg lg:text-xl font-medium text-gray-900 mb-2">{item.subject}</h3>
+                <div className="flex items-center space-x-4 text-sm sm:text-base text-gray-500">
                   <span>{item.date}</span>
                   <span className={`px-2 py-1 rounded-full ${
                     item.status === 'Resolved' ? 'bg-green-100 text-green-800' :

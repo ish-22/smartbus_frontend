@@ -46,64 +46,64 @@ export default function AdminOwnersPage() {
   ]
 
   return (
-    <div className="space-responsive-md no-scroll-x">
+    <div className="space-y-4 sm:space-y-6 overflow-x-hidden">
       <div>
-        <h1 className="text-responsive-2xl font-bold text-gray-900">Bus Owner Management</h1>
+        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">Bus Owner Management</h1>
         <p className="text-gray-600">Complete control over bus owners, registrations, and fleet operations</p>
       </div>
 
       {/* Quick Stats */}
-      <div className="grid-responsive-4 gap-responsive-md">
-        <Card className="card-responsive">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <Card className="p-3 sm:p-4 lg:p-6">
           <div className="flex items-center">
             <div className="p-2 bg-purple-100 rounded-lg flex-shrink-0">
-              <BuildingOfficeIcon className="icon-responsive-md text-purple-600" />
+              <BuildingOfficeIcon className="h-5 w-5 sm:h-6 sm:w-6 text-purple-600" />
             </div>
             <div className="ml-3 min-w-0">
-              <p className="text-responsive-xs font-medium text-gray-600 truncate">Total Owners</p>
-              <p className="text-responsive-lg font-bold text-gray-900">45</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Owners</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">45</p>
             </div>
           </div>
         </Card>
-        <Card className="card-responsive">
+        <Card className="p-3 sm:p-4 lg:p-6">
           <div className="flex items-center">
             <div className="p-2 bg-blue-100 rounded-lg flex-shrink-0">
-              <TruckIcon className="icon-responsive-md text-blue-600" />
+              <TruckIcon className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
             </div>
             <div className="ml-3 min-w-0">
-              <p className="text-responsive-xs font-medium text-gray-600 truncate">Total Fleet</p>
-              <p className="text-responsive-lg font-bold text-gray-900">156</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Fleet</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">156</p>
             </div>
           </div>
         </Card>
-        <Card className="card-responsive">
+        <Card className="p-3 sm:p-4 lg:p-6">
           <div className="flex items-center">
             <div className="p-2 bg-green-100 rounded-lg flex-shrink-0">
-              <CurrencyDollarIcon className="icon-responsive-md text-green-600" />
+              <CurrencyDollarIcon className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
             </div>
             <div className="ml-3 min-w-0">
-              <p className="text-responsive-xs font-medium text-gray-600 truncate">Monthly Revenue</p>
-              <p className="text-responsive-lg font-bold text-gray-900">₹2.3M</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Monthly Revenue</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">₹2.3M</p>
             </div>
           </div>
         </Card>
-        <Card className="card-responsive">
+        <Card className="p-3 sm:p-4 lg:p-6">
           <div className="flex items-center">
             <div className="p-2 bg-yellow-100 rounded-lg flex-shrink-0">
-              <ArrowRightOnRectangleIcon className="icon-responsive-md text-yellow-600" />
+              <ArrowRightOnRectangleIcon className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-600" />
             </div>
             <div className="ml-3 min-w-0">
-              <p className="text-responsive-xs font-medium text-gray-600 truncate">Pending Actions</p>
-              <p className="text-responsive-lg font-bold text-gray-900">15</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Pending Actions</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">15</p>
             </div>
           </div>
         </Card>
       </div>
 
       {/* Management Sections */}
-      <div className="grid-responsive-2 gap-responsive-md">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
         {ownerSections.map((section) => (
-          <Card key={section.title} className="card-responsive hover:shadow-lg transition-shadow">
+          <Card key={section.title} className="p-3 sm:p-4 lg:p-6 hover:shadow-lg transition-shadow">
             <div className="flex items-start justify-between">
               <div className="flex-1">
                 <div className="flex items-center space-x-3 mb-3">
@@ -113,17 +113,17 @@ export default function AdminOwnersPage() {
                     section.color === 'green' ? 'bg-green-100' :
                     'bg-yellow-100'
                   }`}>
-                    <section.icon className={`icon-responsive-md ${
+                    <section.icon className={`h-5 w-5 sm:h-6 sm:w-6 ${
                       section.color === 'purple' ? 'text-purple-600' :
                       section.color === 'blue' ? 'text-blue-600' :
                       section.color === 'green' ? 'text-green-600' :
                       'text-yellow-600'
                     }`} />
                   </div>
-                  <h3 className="text-responsive-lg font-semibold text-gray-900">{section.title}</h3>
+                  <h3 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900">{section.title}</h3>
                 </div>
-                <p className="text-gray-600 mb-responsive-md">{section.description}</p>
-                <p className="text-responsive-sm font-medium text-gray-500 mb-responsive-md">{section.stats}</p>
+                <p className="text-gray-600 mb-3 sm:mb-4">{section.description}</p>
+                <p className="text-sm sm:text-base font-medium text-gray-500 mb-3 sm:mb-4">{section.stats}</p>
               </div>
             </div>
             <Link href={section.href}>
@@ -137,8 +137,8 @@ export default function AdminOwnersPage() {
       </div>
 
       {/* Recent Activity */}
-      <Card className="card-responsive">
-        <h3 className="text-responsive-lg font-semibold text-gray-900 mb-responsive-md">Recent Owner Activity</h3>
+      <Card className="p-3 sm:p-4 lg:p-6">
+        <h3 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">Recent Owner Activity</h3>
         <div className="space-y-3">
           {[
             { action: 'New owner registration: Metro Bus Co', time: '2 hours ago', type: 'info' },
@@ -148,7 +148,7 @@ export default function AdminOwnersPage() {
           ].map((activity, index) => (
             <div key={index} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-b-0">
               <span className="text-gray-700">{activity.action}</span>
-              <span className="text-responsive-sm text-gray-500">{activity.time}</span>
+              <span className="text-sm sm:text-base text-gray-500">{activity.time}</span>
             </div>
           ))}
         </div>

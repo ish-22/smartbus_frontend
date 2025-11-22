@@ -4,10 +4,10 @@ import { MapIcon, PlusIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/ou
 
 export default function AdminRoutesPage() {
   return (
-    <div className="space-responsive-lg no-scroll-x">
+    <div className="space-y-6 sm:space-y-8 overflow-x-hidden">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-responsive-2xl font-bold text-gray-900">Routes Management</h1>
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">Routes Management</h1>
           <p className="text-gray-600">Manage bus routes and schedules</p>
         </div>
         <Button className="bg-red-600 hover:bg-red-700">
@@ -16,37 +16,37 @@ export default function AdminRoutesPage() {
         </Button>
       </div>
 
-      <div className="grid-responsive-3 gap-responsive-md">
-        <Card className="card-responsive">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        <Card className="p-3 sm:p-4 lg:p-6">
           <div className="flex items-center">
             <div className="p-2 bg-blue-100 rounded-lg flex-shrink-0">
-              <MapIcon className="icon-responsive-md text-blue-600" />
+              <MapIcon className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
             </div>
             <div className="ml-3 min-w-0">
-              <p className="text-responsive-xs font-medium text-gray-600 truncate">Total Routes</p>
-              <p className="text-responsive-lg font-bold text-gray-900">45</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Routes</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">45</p>
             </div>
           </div>
         </Card>
-        <Card className="card-responsive">
+        <Card className="p-3 sm:p-4 lg:p-6">
           <div className="flex items-center">
             <div className="p-2 bg-green-100 rounded-lg flex-shrink-0">
-              <MapIcon className="icon-responsive-md text-green-600" />
+              <MapIcon className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
             </div>
             <div className="ml-3 min-w-0">
-              <p className="text-responsive-xs font-medium text-gray-600 truncate">Active Routes</p>
-              <p className="text-responsive-lg font-bold text-gray-900">42</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Active Routes</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">42</p>
             </div>
           </div>
         </Card>
-        <Card className="card-responsive">
+        <Card className="p-3 sm:p-4 lg:p-6">
           <div className="flex items-center">
             <div className="p-2 bg-yellow-100 rounded-lg flex-shrink-0">
-              <MapIcon className="icon-responsive-md text-yellow-600" />
+              <MapIcon className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-600" />
             </div>
             <div className="ml-3 min-w-0">
-              <p className="text-responsive-xs font-medium text-gray-600 truncate">Under Review</p>
-              <p className="text-responsive-lg font-bold text-gray-900">3</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Under Review</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">3</p>
             </div>
           </div>
         </Card>
@@ -97,7 +97,7 @@ export default function AdminRoutesPage() {
                       {route.status}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-responsive-sm font-medium">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm sm:text-base font-medium">
                     <div className="flex space-x-2">
                       <button className="text-blue-600 hover:text-blue-900">
                         <PencilIcon className="h-4 w-4" />

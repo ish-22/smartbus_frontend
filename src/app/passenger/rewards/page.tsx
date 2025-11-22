@@ -1,34 +1,34 @@
 export default function PassengerRewards() {
   return (
-    <div className="card-responsive max-w-6xl mx-auto">
-      <h1 className="text-3xl font-bold mb-responsive-lg text-gray-800">🎁 My Rewards</h1>
+    <div className="p-3 sm:p-4 lg:p-6 max-w-6xl mx-auto">
+      <h1 className="text-3xl font-bold mb-4 sm:mb-6 text-gray-800">🎁 My Rewards</h1>
       
-      <div className="grid-responsive-3 gap-responsive-md mb-8">
-        <div className="bg-gradient-to-r from-yellow-400 to-yellow-500 card-responsive rounded-lg text-white">
-          <h2 className="text-responsive-lg font-semibold mb-2">Total Points</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
+        <div className="bg-gradient-to-r from-yellow-400 to-yellow-500 p-3 sm:p-4 lg:p-6 rounded-lg text-white">
+          <h2 className="text-base sm:text-lg lg:text-xl font-semibold mb-2">Total Points</h2>
           <p className="text-3xl font-bold">2,450</p>
-          <p className="text-responsive-sm opacity-90">Earned from 45 trips</p>
+          <p className="text-sm sm:text-base opacity-90">Earned from 45 trips</p>
         </div>
-        <div className="bg-gradient-to-r from-green-400 to-green-500 card-responsive rounded-lg text-white">
-          <h2 className="text-responsive-lg font-semibold mb-2">Distance Traveled</h2>
+        <div className="bg-gradient-to-r from-green-400 to-green-500 p-3 sm:p-4 lg:p-6 rounded-lg text-white">
+          <h2 className="text-base sm:text-lg lg:text-xl font-semibold mb-2">Distance Traveled</h2>
           <p className="text-3xl font-bold">1,250 km</p>
-          <p className="text-responsive-sm opacity-90">This month</p>
+          <p className="text-sm sm:text-base opacity-90">This month</p>
         </div>
-        <div className="bg-gradient-to-r from-blue-400 to-blue-500 card-responsive rounded-lg text-white">
-          <h2 className="text-responsive-lg font-semibold mb-2">Savings</h2>
+        <div className="bg-gradient-to-r from-blue-400 to-blue-500 p-3 sm:p-4 lg:p-6 rounded-lg text-white">
+          <h2 className="text-base sm:text-lg lg:text-xl font-semibold mb-2">Savings</h2>
           <p className="text-3xl font-bold">Rs. 850</p>
-          <p className="text-responsive-sm opacity-90">From rewards</p>
+          <p className="text-sm sm:text-base opacity-90">From rewards</p>
         </div>
       </div>
 
-      <div className="grid-responsive-1 lg:grid-cols-2 gap-responsive-lg">
-        <div className="bg-white rounded-lg shadow card-responsive">
-          <h2 className="text-responsive-xl font-semibold mb-responsive-md">🏆 Available Rewards</h2>
-          <div className="space-responsive-sm">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
+        <div className="bg-white rounded-lg shadow p-3 sm:p-4 lg:p-6">
+          <h2 className="text-lg sm:text-xl lg:text-2xl font-semibold mb-3 sm:mb-4">🏆 Available Rewards</h2>
+          <div className="space-y-3 sm:space-y-4">
             <div className="border rounded-lg p-4 flex justify-between items-center">
               <div>
                 <h3 className="font-medium">10% Discount</h3>
-                <p className="text-responsive-sm text-gray-600">Valid for next booking</p>
+                <p className="text-sm sm:text-base text-gray-600">Valid for next booking</p>
               </div>
               <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
                 Redeem (500 pts)
@@ -37,7 +37,7 @@ export default function PassengerRewards() {
             <div className="border rounded-lg p-4 flex justify-between items-center">
               <div>
                 <h3 className="font-medium">Free Trip</h3>
-                <p className="text-responsive-sm text-gray-600">Up to Rs. 200 value</p>
+                <p className="text-sm sm:text-base text-gray-600">Up to Rs. 200 value</p>
               </div>
               <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
                 Redeem (1000 pts)
@@ -46,19 +46,19 @@ export default function PassengerRewards() {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow card-responsive">
-          <h2 className="text-responsive-xl font-semibold mb-responsive-md">📈 Recent Activity</h2>
+        <div className="bg-white rounded-lg shadow p-3 sm:p-4 lg:p-6">
+          <h2 className="text-lg sm:text-xl lg:text-2xl font-semibold mb-3 sm:mb-4">📈 Recent Activity</h2>
           <div className="space-y-3">
             <div className="flex justify-between items-center py-2 border-b">
-              <span className="text-responsive-sm">Trip to Kandy</span>
+              <span className="text-sm sm:text-base">Trip to Kandy</span>
               <span className="text-green-600 font-medium">+50 pts</span>
             </div>
             <div className="flex justify-between items-center py-2 border-b">
-              <span className="text-responsive-sm">Trip to Galle</span>
+              <span className="text-sm sm:text-base">Trip to Galle</span>
               <span className="text-green-600 font-medium">+75 pts</span>
             </div>
             <div className="flex justify-between items-center py-2 border-b">
-              <span className="text-responsive-sm">Redeemed discount</span>
+              <span className="text-sm sm:text-base">Redeemed discount</span>
               <span className="text-red-600 font-medium">-500 pts</span>
             </div>
           </div>

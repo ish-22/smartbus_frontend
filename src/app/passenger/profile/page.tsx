@@ -4,9 +4,9 @@ import { UserIcon, EnvelopeIcon, PhoneIcon, MapPinIcon } from '@heroicons/react/
 
 export default function PassengerProfilePage() {
   return (
-    <div className="space-responsive-lg no-scroll-x">
+    <div className="space-y-6 sm:space-y-8 overflow-x-hidden">
       <div>
-        <h1 className="text-responsive-2xl font-bold text-gray-900">Profile</h1>
+        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">Profile</h1>
         <p className="text-gray-600">Manage your account information</p>
       </div>
 
@@ -16,7 +16,7 @@ export default function PassengerProfilePage() {
             <UserIcon className="h-12 w-12 text-blue-600" />
           </div>
           <div>
-            <h2 className="text-responsive-2xl font-bold text-gray-900">John Doe</h2>
+            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">John Doe</h2>
             <p className="text-gray-600">Passenger since January 2024</p>
             <Button size="sm" className="mt-2 bg-blue-600 hover:bg-blue-700">
               Change Photo
@@ -24,9 +24,9 @@ export default function PassengerProfilePage() {
           </div>
         </div>
 
-        <div className="grid-responsive-2 gap-responsive-md">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
           <div>
-            <label className="block text-responsive-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm sm:text-base font-medium text-gray-700 mb-2">
               <EnvelopeIcon className="h-4 w-4 inline mr-2" />
               Email
             </label>
@@ -38,7 +38,7 @@ export default function PassengerProfilePage() {
             />
           </div>
           <div>
-            <label className="block text-responsive-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm sm:text-base font-medium text-gray-700 mb-2">
               <PhoneIcon className="h-4 w-4 inline mr-2" />
               Phone
             </label>
@@ -50,7 +50,7 @@ export default function PassengerProfilePage() {
             />
           </div>
           <div className="md:col-span-2">
-            <label className="block text-responsive-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm sm:text-base font-medium text-gray-700 mb-2">
               <MapPinIcon className="h-4 w-4 inline mr-2" />
               Address
             </label>
@@ -70,20 +70,20 @@ export default function PassengerProfilePage() {
         </div>
       </Card>
 
-      <Card className="card-responsive">
-        <h3 className="text-responsive-lg font-semibold text-gray-900 mb-responsive-md">Travel Statistics</h3>
-        <div className="grid-responsive-3 gap-responsive-md">
+      <Card className="p-3 sm:p-4 lg:p-6">
+        <h3 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">Travel Statistics</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           <div className="text-center">
             <div className="text-3xl font-bold text-blue-600">45</div>
-            <div className="text-responsive-sm text-gray-600">Total Trips</div>
+            <div className="text-sm sm:text-base text-gray-600">Total Trips</div>
           </div>
           <div className="text-center">
             <div className="text-3xl font-bold text-green-600">₹12,450</div>
-            <div className="text-responsive-sm text-gray-600">Total Spent</div>
+            <div className="text-sm sm:text-base text-gray-600">Total Spent</div>
           </div>
           <div className="text-center">
             <div className="text-3xl font-bold text-purple-600">850</div>
-            <div className="text-responsive-sm text-gray-600">Reward Points</div>
+            <div className="text-sm sm:text-base text-gray-600">Reward Points</div>
           </div>
         </div>
       </Card>
