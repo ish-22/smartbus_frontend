@@ -69,12 +69,12 @@ export const navigationConfig = {
     { name: 'Profile', href: '/passenger/profile', icon: UserIcon },
   ],
   driver: [
-    { name: 'Dashboard', href: '/driver', icon: HomeIcon },
-    { name: 'Start Trip', href: '/driver/trip', icon: PlayIcon },
-    { name: 'Live Location Sharing', href: '/driver/location', icon: MapPinIcon },
-    { name: 'QR Scanner', href: '/driver/scanner', icon: QrCodeIcon },
-    { name: 'Found Items', href: '/driver/found-items', icon: ArchiveBoxIcon },
-    { name: 'Trip History', href: '/driver/history', icon: ClockIcon },
+    { name: 'Dashboard', href: '/driver/dashboard', icon: HomeIcon },
+    { name: 'Schedule', href: '/driver/schedule', icon: CalendarIcon },
+    { name: 'Passengers', href: '/driver/passengers', icon: UserGroupIcon },
+    { name: 'QR Scanner', href: '/driver/qr-scanner', icon: QrCodeIcon },
+    { name: 'Lost & Found', href: '/driver/lost-found', icon: ArchiveBoxIcon },
+    { name: 'Incidents', href: '/driver/incidents', icon: ShieldCheckIcon },
     { name: 'Notifications', href: '/driver/notifications', icon: BellIcon },
     { name: 'Profile', href: '/driver/profile', icon: UserIcon },
   ]
