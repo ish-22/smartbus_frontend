@@ -14,23 +14,23 @@ export default function PassengerFeedbackPage() {
   const [message, setMessage] = useState('')
 
   return (
-    <div className="space-y-8">
+    <div className="space-responsive-lg no-scroll-x">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Feedback</h1>
+        <h1 className="text-responsive-2xl font-bold text-gray-900">Feedback</h1>
         <p className="text-gray-600">Share your experience and help us improve</p>
       </div>
 
       {/* Feedback Form */}
       <Card className="p-8">
-        <h3 className="text-lg font-semibold text-gray-900 mb-6">Submit Feedback</h3>
+        <h3 className="text-responsive-lg font-semibold text-gray-900 mb-responsive-lg">Submit Feedback</h3>
         
-        <div className="space-y-6">
+        <div className="space-responsive-md">
           {/* Feedback Type */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">
+            <label className="block text-responsive-sm font-medium text-gray-700 mb-3">
               Feedback Type
             </label>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid-responsive-3 gap-responsive-sm">
               <button
                 onClick={() => setFeedbackType('complaint')}
                 className={`p-4 rounded-lg border-2 transition-colors ${
@@ -39,7 +39,7 @@ export default function PassengerFeedbackPage() {
                     : 'border-gray-200 hover:border-gray-300'
                 }`}
               >
-                <ExclamationTriangleIcon className="h-6 w-6 mx-auto mb-2" />
+                <ExclamationTriangleIcon className="icon-responsive-md mx-auto mb-2" />
                 <span className="block font-medium">Complaint</span>
               </button>
               <button
@@ -50,7 +50,7 @@ export default function PassengerFeedbackPage() {
                     : 'border-gray-200 hover:border-gray-300'
                 }`}
               >
-                <ChatBubbleLeftRightIcon className="h-6 w-6 mx-auto mb-2" />
+                <ChatBubbleLeftRightIcon className="icon-responsive-md mx-auto mb-2" />
                 <span className="block font-medium">Suggestion</span>
               </button>
               <button
@@ -61,7 +61,7 @@ export default function PassengerFeedbackPage() {
                     : 'border-gray-200 hover:border-gray-300'
                 }`}
               >
-                <StarIcon className="h-6 w-6 mx-auto mb-2" />
+                <StarIcon className="icon-responsive-md mx-auto mb-2" />
                 <span className="block font-medium">Praise</span>
               </button>
             </div>
@@ -69,7 +69,7 @@ export default function PassengerFeedbackPage() {
 
           {/* Message */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-responsive-sm font-medium text-gray-700 mb-2">
               Your Message
             </label>
             <textarea
@@ -92,8 +92,8 @@ export default function PassengerFeedbackPage() {
 
       {/* Previous Feedback */}
       <Card className="p-8">
-        <h3 className="text-lg font-semibold text-gray-900 mb-6">Your Previous Feedback</h3>
-        <div className="space-y-4">
+        <h3 className="text-responsive-lg font-semibold text-gray-900 mb-responsive-lg">Your Previous Feedback</h3>
+        <div className="space-responsive-sm">
           {[
             { type: 'Complaint', message: 'Bus was late by 30 minutes', status: 'Resolved', date: '2024-01-10' },
             { type: 'Suggestion', message: 'Add more buses on Route 12A', status: 'Under Review', date: '2024-01-08' },
@@ -115,7 +115,7 @@ export default function PassengerFeedbackPage() {
                 </span>
               </div>
               <p className="text-gray-700 mb-2">{item.message}</p>
-              <p className="text-sm text-gray-500">{item.date}</p>
+              <p className="text-responsive-sm text-gray-500">{item.date}</p>
             </div>
           ))}
         </div>

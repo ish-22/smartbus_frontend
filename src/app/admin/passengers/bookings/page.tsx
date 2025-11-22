@@ -47,54 +47,54 @@ export default function PassengerBookingsPage() {
   ]
 
   return (
-    <div className="space-y-6">
+    <div className="space-responsive-md no-scroll-x">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Passenger Bookings</h1>
+        <h1 className="text-responsive-2xl font-bold text-gray-900">Passenger Bookings</h1>
         <p className="text-gray-600">Monitor all passenger bookings and transactions</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card className="p-6">
+      <div className="grid-responsive-4 gap-responsive-md">
+        <Card className="card-responsive">
           <div className="flex items-center">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <CalendarIcon className="h-6 w-6 text-blue-600" />
+            <div className="p-2 bg-blue-100 rounded-lg flex-shrink-0">
+              <CalendarIcon className="icon-responsive-md text-blue-600" />
             </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Bookings</p>
-              <p className="text-2xl font-bold text-gray-900">2,567</p>
+            <div className="ml-3 min-w-0">
+              <p className="text-responsive-xs font-medium text-gray-600 truncate">Total Bookings</p>
+              <p className="text-responsive-lg font-bold text-gray-900">2,567</p>
             </div>
           </div>
         </Card>
-        <Card className="p-6">
+        <Card className="card-responsive">
           <div className="flex items-center">
-            <div className="p-2 bg-green-100 rounded-lg">
-              <CheckCircleIcon className="h-6 w-6 text-green-600" />
+            <div className="p-2 bg-green-100 rounded-lg flex-shrink-0">
+              <CheckCircleIcon className="icon-responsive-md text-green-600" />
             </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Confirmed</p>
-              <p className="text-2xl font-bold text-gray-900">2,234</p>
+            <div className="ml-3 min-w-0">
+              <p className="text-responsive-xs font-medium text-gray-600 truncate">Confirmed</p>
+              <p className="text-responsive-lg font-bold text-gray-900">2,234</p>
             </div>
           </div>
         </Card>
-        <Card className="p-6">
+        <Card className="card-responsive">
           <div className="flex items-center">
-            <div className="p-2 bg-red-100 rounded-lg">
-              <XCircleIcon className="h-6 w-6 text-red-600" />
+            <div className="p-2 bg-red-100 rounded-lg flex-shrink-0">
+              <XCircleIcon className="icon-responsive-md text-red-600" />
             </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Cancelled</p>
-              <p className="text-2xl font-bold text-gray-900">156</p>
+            <div className="ml-3 min-w-0">
+              <p className="text-responsive-xs font-medium text-gray-600 truncate">Cancelled</p>
+              <p className="text-responsive-lg font-bold text-gray-900">156</p>
             </div>
           </div>
         </Card>
-        <Card className="p-6">
+        <Card className="card-responsive">
           <div className="flex items-center">
-            <div className="p-2 bg-yellow-100 rounded-lg">
-              <CurrencyDollarIcon className="h-6 w-6 text-yellow-600" />
+            <div className="p-2 bg-yellow-100 rounded-lg flex-shrink-0">
+              <CurrencyDollarIcon className="icon-responsive-md text-yellow-600" />
             </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Revenue</p>
-              <p className="text-2xl font-bold text-gray-900">₹1.2M</p>
+            <div className="ml-3 min-w-0">
+              <p className="text-responsive-xs font-medium text-gray-600 truncate">Revenue</p>
+              <p className="text-responsive-lg font-bold text-gray-900">₹1.2M</p>
             </div>
           </div>
         </Card>

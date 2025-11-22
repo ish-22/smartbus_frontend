@@ -4,10 +4,10 @@ import { UserIcon, PhoneIcon, MapIcon } from '@heroicons/react/24/outline'
 
 export default function OwnerDriversPage() {
   return (
-    <div className="space-y-8">
+    <div className="space-responsive-lg no-scroll-x">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Driver Assignments</h1>
+          <h1 className="text-responsive-2xl font-bold text-gray-900">Driver Assignments</h1>
           <p className="text-gray-600">Manage your drivers and assignments</p>
         </div>
         <Button className="bg-purple-600 hover:bg-purple-700">Add Driver</Button>

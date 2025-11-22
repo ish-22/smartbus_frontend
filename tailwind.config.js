@@ -6,6 +6,14 @@ module.exports = {
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
+    screens: {
+      'xs': '320px',
+      'sm': '375px',
+      'md': '414px',
+      'lg': '768px',
+      'xl': '1024px',
+      '2xl': '1280px',
+    },
     extend: {
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
@@ -24,6 +32,10 @@ module.exports = {
           900: '#1e3a8a',
         },
       },
+      spacing: {
+        '18': '4.5rem',
+        '88': '22rem',
+      },
       animation: {
         'pulse': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
         'flash': 'flash 0.5s ease-in-out',
@@ -37,5 +49,7 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/line-clamp'),
+  ],
 }

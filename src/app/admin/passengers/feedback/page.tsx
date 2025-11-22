@@ -45,62 +45,62 @@ export default function PassengerFeedbackPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-responsive-md no-scroll-x">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Passenger Feedback</h1>
+        <h1 className="text-responsive-2xl font-bold text-gray-900">Passenger Feedback</h1>
         <p className="text-gray-600">Review and respond to passenger feedback</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card className="p-6">
+      <div className="grid-responsive-4 gap-responsive-md">
+        <Card className="card-responsive">
           <div className="flex items-center">
-            <div className="p-2 bg-yellow-100 rounded-lg">
-              <ChatBubbleLeftRightIcon className="h-6 w-6 text-yellow-600" />
+            <div className="p-2 bg-yellow-100 rounded-lg flex-shrink-0">
+              <ChatBubbleLeftRightIcon className="icon-responsive-md text-yellow-600" />
             </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Feedback</p>
-              <p className="text-2xl font-bold text-gray-900">156</p>
+            <div className="ml-3 min-w-0">
+              <p className="text-responsive-xs font-medium text-gray-600 truncate">Total Feedback</p>
+              <p className="text-responsive-lg font-bold text-gray-900">156</p>
             </div>
           </div>
         </Card>
-        <Card className="p-6">
+        <Card className="card-responsive">
           <div className="flex items-center">
-            <div className="p-2 bg-red-100 rounded-lg">
-              <ExclamationTriangleIcon className="h-6 w-6 text-red-600" />
+            <div className="p-2 bg-red-100 rounded-lg flex-shrink-0">
+              <ExclamationTriangleIcon className="icon-responsive-md text-red-600" />
             </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Complaints</p>
-              <p className="text-2xl font-bold text-gray-900">23</p>
+            <div className="ml-3 min-w-0">
+              <p className="text-responsive-xs font-medium text-gray-600 truncate">Complaints</p>
+              <p className="text-responsive-lg font-bold text-gray-900">23</p>
             </div>
           </div>
         </Card>
-        <Card className="p-6">
+        <Card className="card-responsive">
           <div className="flex items-center">
-            <div className="p-2 bg-green-100 rounded-lg">
-              <CheckCircleIcon className="h-6 w-6 text-green-600" />
+            <div className="p-2 bg-green-100 rounded-lg flex-shrink-0">
+              <CheckCircleIcon className="icon-responsive-md text-green-600" />
             </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Resolved</p>
-              <p className="text-2xl font-bold text-gray-900">89</p>
+            <div className="ml-3 min-w-0">
+              <p className="text-responsive-xs font-medium text-gray-600 truncate">Resolved</p>
+              <p className="text-responsive-lg font-bold text-gray-900">89</p>
             </div>
           </div>
         </Card>
-        <Card className="p-6">
+        <Card className="card-responsive">
           <div className="flex items-center">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <StarIcon className="h-6 w-6 text-blue-600" />
+            <div className="p-2 bg-blue-100 rounded-lg flex-shrink-0">
+              <StarIcon className="icon-responsive-md text-blue-600" />
             </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Avg Rating</p>
-              <p className="text-2xl font-bold text-gray-900">4.2</p>
+            <div className="ml-3 min-w-0">
+              <p className="text-responsive-xs font-medium text-gray-600 truncate">Avg Rating</p>
+              <p className="text-responsive-lg font-bold text-gray-900">4.2</p>
             </div>
           </div>
         </Card>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-responsive-sm">
         {feedback.map((item) => (
-          <Card key={item.id} className="p-6">
+          <Card key={item.id} className="card-responsive">
             <div className="flex justify-between items-start">
               <div className="flex-1">
                 <div className="flex items-center space-x-3 mb-2">
@@ -114,7 +114,7 @@ export default function PassengerFeedbackPage() {
                   </span>
                 </div>
                 <p className="text-gray-600 mb-3">{item.message}</p>
-                <div className="flex items-center space-x-4 text-sm text-gray-500">
+                <div className="flex items-center space-x-4 text-responsive-sm text-gray-500">
                   <span>By: {item.passenger}</span>
                   <span>Bus: {item.busNumber}</span>
                   <span>Date: {item.date}</span>

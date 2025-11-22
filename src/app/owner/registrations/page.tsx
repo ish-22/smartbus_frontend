@@ -16,10 +16,10 @@ export default function OwnerRegistrationsPage() {
   ]
 
   return (
-    <div className="space-y-8">
+    <div className="space-responsive-lg no-scroll-x">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Bus Registrations</h1>
+          <h1 className="text-responsive-2xl font-bold text-gray-900">Bus Registrations</h1>
           <p className="text-gray-600">Manage your bus registration applications</p>
         </div>
         <Button className="bg-purple-600 hover:bg-purple-700">
@@ -29,37 +29,37 @@ export default function OwnerRegistrationsPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="p-6">
+      <div className="grid-responsive-3 gap-responsive-md">
+        <Card className="card-responsive">
           <div className="flex items-center">
-            <div className="p-2 bg-green-100 rounded-lg">
-              <CheckCircleIcon className="h-6 w-6 text-green-600" />
+            <div className="p-2 bg-green-100 rounded-lg flex-shrink-0">
+              <CheckCircleIcon className="icon-responsive-md text-green-600" />
             </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Approved</p>
-              <p className="text-2xl font-bold text-gray-900">8</p>
+            <div className="ml-3 min-w-0">
+              <p className="text-responsive-xs font-medium text-gray-600 truncate">Approved</p>
+              <p className="text-responsive-lg font-bold text-gray-900">8</p>
             </div>
           </div>
         </Card>
-        <Card className="p-6">
+        <Card className="card-responsive">
           <div className="flex items-center">
-            <div className="p-2 bg-yellow-100 rounded-lg">
-              <ClockIcon className="h-6 w-6 text-yellow-600" />
+            <div className="p-2 bg-yellow-100 rounded-lg flex-shrink-0">
+              <ClockIcon className="icon-responsive-md text-yellow-600" />
             </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Pending</p>
-              <p className="text-2xl font-bold text-gray-900">3</p>
+            <div className="ml-3 min-w-0">
+              <p className="text-responsive-xs font-medium text-gray-600 truncate">Pending</p>
+              <p className="text-responsive-lg font-bold text-gray-900">3</p>
             </div>
           </div>
         </Card>
-        <Card className="p-6">
+        <Card className="card-responsive">
           <div className="flex items-center">
-            <div className="p-2 bg-purple-100 rounded-lg">
-              <TruckIcon className="h-6 w-6 text-purple-600" />
+            <div className="p-2 bg-purple-100 rounded-lg flex-shrink-0">
+              <TruckIcon className="icon-responsive-md text-purple-600" />
             </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Buses</p>
-              <p className="text-2xl font-bold text-gray-900">11</p>
+            <div className="ml-3 min-w-0">
+              <p className="text-responsive-xs font-medium text-gray-600 truncate">Total Buses</p>
+              <p className="text-responsive-lg font-bold text-gray-900">11</p>
             </div>
           </div>
         </Card>
@@ -67,8 +67,8 @@ export default function OwnerRegistrationsPage() {
 
       {/* Registrations Table */}
       <Card className="overflow-hidden">
-        <div className="p-6 border-b border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900">Registration Status</h3>
+        <div className="card-responsive border-b border-gray-200">
+          <h3 className="text-responsive-lg font-semibold text-gray-900">Registration Status</h3>
         </div>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
@@ -96,7 +96,7 @@ export default function OwnerRegistrationsPage() {
                 <tr key={registration.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
-                      <TruckIcon className="h-5 w-5 text-gray-400 mr-3" />
+                      <TruckIcon className="icon-responsive-sm text-gray-400 mr-3" />
                       <span className="font-medium text-gray-900">{registration.busNumber}</span>
                     </div>
                   </td>
@@ -115,7 +115,7 @@ export default function OwnerRegistrationsPage() {
                   <td className="px-6 py-4 whitespace-nowrap text-gray-900">
                     {registration.date}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  <td className="px-6 py-4 whitespace-nowrap text-responsive-sm font-medium">
                     <Button variant="secondary" size="sm">
                       <DocumentTextIcon className="h-4 w-4 mr-1" />
                       View Details

@@ -3,61 +3,61 @@ import { ShieldCheckIcon, ExclamationTriangleIcon, KeyIcon, EyeIcon } from '@her
 
 export default function AdminSecurityPage() {
   return (
-    <div className="space-y-8">
+    <div className="space-responsive-lg no-scroll-x">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Security</h1>
+        <h1 className="text-responsive-2xl font-bold text-gray-900">Security</h1>
         <p className="text-gray-600">System security monitoring and controls</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card className="p-6">
+      <div className="grid-responsive-4 gap-responsive-md">
+        <Card className="card-responsive">
           <div className="flex items-center">
-            <div className="p-2 bg-green-100 rounded-lg">
-              <ShieldCheckIcon className="h-6 w-6 text-green-600" />
+            <div className="p-2 bg-green-100 rounded-lg flex-shrink-0">
+              <ShieldCheckIcon className="icon-responsive-md text-green-600" />
             </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Security Score</p>
-              <p className="text-2xl font-bold text-gray-900">98%</p>
+            <div className="ml-3 min-w-0">
+              <p className="text-responsive-xs font-medium text-gray-600 truncate">Security Score</p>
+              <p className="text-responsive-lg font-bold text-gray-900">98%</p>
             </div>
           </div>
         </Card>
-        <Card className="p-6">
+        <Card className="card-responsive">
           <div className="flex items-center">
-            <div className="p-2 bg-red-100 rounded-lg">
-              <ExclamationTriangleIcon className="h-6 w-6 text-red-600" />
+            <div className="p-2 bg-red-100 rounded-lg flex-shrink-0">
+              <ExclamationTriangleIcon className="icon-responsive-md text-red-600" />
             </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Threats Blocked</p>
-              <p className="text-2xl font-bold text-gray-900">23</p>
+            <div className="ml-3 min-w-0">
+              <p className="text-responsive-xs font-medium text-gray-600 truncate">Threats Blocked</p>
+              <p className="text-responsive-lg font-bold text-gray-900">23</p>
             </div>
           </div>
         </Card>
-        <Card className="p-6">
+        <Card className="card-responsive">
           <div className="flex items-center">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <KeyIcon className="h-6 w-6 text-blue-600" />
+            <div className="p-2 bg-blue-100 rounded-lg flex-shrink-0">
+              <KeyIcon className="icon-responsive-md text-blue-600" />
             </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Active Sessions</p>
-              <p className="text-2xl font-bold text-gray-900">156</p>
+            <div className="ml-3 min-w-0">
+              <p className="text-responsive-xs font-medium text-gray-600 truncate">Active Sessions</p>
+              <p className="text-responsive-lg font-bold text-gray-900">156</p>
             </div>
           </div>
         </Card>
-        <Card className="p-6">
+        <Card className="card-responsive">
           <div className="flex items-center">
-            <div className="p-2 bg-purple-100 rounded-lg">
-              <EyeIcon className="h-6 w-6 text-purple-600" />
+            <div className="p-2 bg-purple-100 rounded-lg flex-shrink-0">
+              <EyeIcon className="icon-responsive-md text-purple-600" />
             </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Audit Logs</p>
-              <p className="text-2xl font-bold text-gray-900">1,234</p>
+            <div className="ml-3 min-w-0">
+              <p className="text-responsive-xs font-medium text-gray-600 truncate">Audit Logs</p>
+              <p className="text-responsive-lg font-bold text-gray-900">1,234</p>
             </div>
           </div>
         </Card>
       </div>
 
-      <Card className="p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Security Events</h3>
+      <Card className="card-responsive">
+        <h3 className="text-responsive-lg font-semibold text-gray-900 mb-responsive-md">Security Events</h3>
         <div className="space-y-3">
           {[
             { event: 'Failed login attempt blocked', time: '2 minutes ago', severity: 'high' },
@@ -74,7 +74,7 @@ export default function AdminSecurityPage() {
                 }`}>
                   {item.severity}
                 </span>
-                <span className="text-sm text-gray-500">{item.time}</span>
+                <span className="text-responsive-sm text-gray-500">{item.time}</span>
               </div>
             </div>
           ))}

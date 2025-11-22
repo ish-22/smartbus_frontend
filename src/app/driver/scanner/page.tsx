@@ -4,32 +4,32 @@ import { QrCodeIcon, CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/ou
 
 export default function DriverScannerPage() {
   return (
-    <div className="space-y-8">
+    <div className="space-responsive-lg no-scroll-x">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">QR Scanner</h1>
+        <h1 className="text-responsive-2xl font-bold text-gray-900">QR Scanner</h1>
         <p className="text-gray-600">Scan passenger tickets and validate bookings</p>
       </div>
 
       <Card className="p-8">
         <div className="text-center">
-          <div className="w-64 h-64 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-6">
+          <div className="w-64 h-64 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-responsive-lg">
             <div className="text-center">
-              <QrCodeIcon className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+              <QrCodeIcon className="h-16 w-16 text-gray-400 mx-auto mb-responsive-md" />
               <p className="text-gray-500">QR Code Scanner</p>
-              <p className="text-sm text-gray-400">Camera view would appear here</p>
+              <p className="text-responsive-sm text-gray-400">Camera view would appear here</p>
             </div>
           </div>
           
           <Button className="bg-green-600 hover:bg-green-700 px-8 py-3">
-            <QrCodeIcon className="h-5 w-5 mr-2" />
+            <QrCodeIcon className="icon-responsive-sm mr-2" />
             Start Scanning
           </Button>
         </div>
       </Card>
 
-      <Card className="p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Scans</h3>
-        <div className="space-y-4">
+      <Card className="card-responsive">
+        <h3 className="text-responsive-lg font-semibold text-gray-900 mb-responsive-md">Recent Scans</h3>
+        <div className="space-responsive-sm">
           {[
             { 
               ticketId: 'TKT-001234', 
@@ -59,14 +59,14 @@ export default function DriverScannerPage() {
                   scan.status === 'Valid' ? 'bg-green-100' : 'bg-red-100'
                 }`}>
                   {scan.status === 'Valid' ? (
-                    <CheckCircleIcon className="h-6 w-6 text-green-600" />
+                    <CheckCircleIcon className="icon-responsive-md text-green-600" />
                   ) : (
-                    <XCircleIcon className="h-6 w-6 text-red-600" />
+                    <XCircleIcon className="icon-responsive-md text-red-600" />
                   )}
                 </div>
                 <div>
                   <h4 className="font-medium text-gray-900">{scan.ticketId}</h4>
-                  <p className="text-sm text-gray-600">{scan.passenger} • Seat {scan.seat}</p>
+                  <p className="text-responsive-sm text-gray-600">{scan.passenger} • Seat {scan.seat}</p>
                 </div>
               </div>
               <div className="text-right">
@@ -75,7 +75,7 @@ export default function DriverScannerPage() {
                 }`}>
                   {scan.status}
                 </span>
-                <p className="text-sm text-gray-500 mt-1">{scan.time}</p>
+                <p className="text-responsive-sm text-gray-500 mt-1">{scan.time}</p>
               </div>
             </div>
           ))}

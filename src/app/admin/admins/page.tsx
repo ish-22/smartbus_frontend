@@ -63,10 +63,10 @@ export default function AdminManagementPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-responsive-md no-scroll-x">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Admin Management</h1>
+          <h1 className="text-responsive-2xl font-bold text-gray-900">Admin Management</h1>
           <p className="text-gray-600">Manage system administrators</p>
         </div>
         <Button 
@@ -78,48 +78,48 @@ export default function AdminManagementPage() {
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="p-6">
+      <div className="grid-responsive-3 gap-responsive-md">
+        <Card className="card-responsive">
           <div className="flex items-center">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <ShieldCheckIcon className="h-6 w-6 text-blue-600" />
+            <div className="p-2 bg-blue-100 rounded-lg flex-shrink-0">
+              <ShieldCheckIcon className="icon-responsive-md text-blue-600" />
             </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Admins</p>
-              <p className="text-2xl font-bold text-gray-900">{admins.length}</p>
+            <div className="ml-3 min-w-0">
+              <p className="text-responsive-xs font-medium text-gray-600 truncate">Total Admins</p>
+              <p className="text-responsive-lg font-bold text-gray-900">{admins.length}</p>
             </div>
           </div>
         </Card>
-        <Card className="p-6">
+        <Card className="card-responsive">
           <div className="flex items-center">
-            <div className="p-2 bg-green-100 rounded-lg">
-              <ShieldCheckIcon className="h-6 w-6 text-green-600" />
+            <div className="p-2 bg-green-100 rounded-lg flex-shrink-0">
+              <ShieldCheckIcon className="icon-responsive-md text-green-600" />
             </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Active</p>
-              <p className="text-2xl font-bold text-gray-900">{admins.filter(a => a.status === 'Active').length}</p>
+            <div className="ml-3 min-w-0">
+              <p className="text-responsive-xs font-medium text-gray-600 truncate">Active</p>
+              <p className="text-responsive-lg font-bold text-gray-900">{admins.filter(a => a.status === 'Active').length}</p>
             </div>
           </div>
         </Card>
-        <Card className="p-6">
+        <Card className="card-responsive">
           <div className="flex items-center">
-            <div className="p-2 bg-purple-100 rounded-lg">
-              <ShieldCheckIcon className="h-6 w-6 text-purple-600" />
+            <div className="p-2 bg-purple-100 rounded-lg flex-shrink-0">
+              <ShieldCheckIcon className="icon-responsive-md text-purple-600" />
             </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Super Admins</p>
-              <p className="text-2xl font-bold text-gray-900">{admins.filter(a => a.role === 'Super Admin').length}</p>
+            <div className="ml-3 min-w-0">
+              <p className="text-responsive-xs font-medium text-gray-600 truncate">Super Admins</p>
+              <p className="text-responsive-lg font-bold text-gray-900">{admins.filter(a => a.role === 'Super Admin').length}</p>
             </div>
           </div>
         </Card>
       </div>
 
       {showAddForm && (
-        <Card className="p-6">
-          <h3 className="text-lg font-semibold mb-4">Add New Admin</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Card className="card-responsive">
+          <h3 className="text-responsive-lg font-semibold mb-responsive-md">Add New Admin</h3>
+          <div className="grid-responsive-2 gap-responsive-sm">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Name</label>
+              <label className="block text-responsive-sm font-medium text-gray-700 mb-2">Name</label>
               <input
                 type="text"
                 value={newAdmin.name}
@@ -128,7 +128,7 @@ export default function AdminManagementPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+              <label className="block text-responsive-sm font-medium text-gray-700 mb-2">Email</label>
               <input
                 type="email"
                 value={newAdmin.email}
@@ -137,7 +137,7 @@ export default function AdminManagementPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
+              <label className="block text-responsive-sm font-medium text-gray-700 mb-2">Password</label>
               <input
                 type="password"
                 value={newAdmin.password}
@@ -146,7 +146,7 @@ export default function AdminManagementPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Role</label>
+              <label className="block text-responsive-sm font-medium text-gray-700 mb-2">Role</label>
               <select
                 value={newAdmin.role}
                 onChange={(e) => setNewAdmin({...newAdmin, role: e.target.value})}
@@ -186,7 +186,7 @@ export default function AdminManagementPage() {
                 <tr key={admin.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="font-medium text-gray-900">{admin.name}</div>
-                    <div className="text-sm text-gray-500">ID: {admin.id}</div>
+                    <div className="text-responsive-sm text-gray-500">ID: {admin.id}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-gray-900">
                     {admin.email}
@@ -203,10 +203,10 @@ export default function AdminManagementPage() {
                       {admin.status}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-6 py-4 whitespace-nowrap text-responsive-sm text-gray-900">
                     {admin.lastLogin}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  <td className="px-6 py-4 whitespace-nowrap text-responsive-sm font-medium">
                     <div className="flex space-x-2">
                       <button className="text-blue-600 hover:text-blue-900">
                         <EyeIcon className="h-4 w-4" />

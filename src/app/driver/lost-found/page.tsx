@@ -49,22 +49,22 @@ export default function DriverLostFoundPage() {
   );
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Lost & Found</h1>
+    <div className="card-responsive">
+      <div className="flex justify-between items-center mb-responsive-lg">
+        <h1 className="text-responsive-2xl font-bold text-gray-900">Lost & Found</h1>
         <button
           onClick={() => setShowReportForm(true)}
           className="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-green-700"
         >
-          <PlusIcon className="h-5 w-5" />
+          <PlusIcon className="icon-responsive-sm" />
           Report Found Item
         </button>
       </div>
 
       {/* Search */}
-      <div className="mb-6">
+      <div className="mb-responsive-lg">
         <div className="relative">
-          <MagnifyingGlassIcon className="h-5 w-5 absolute left-3 top-3 text-gray-400" />
+          <MagnifyingGlassIcon className="icon-responsive-sm absolute left-3 top-3 text-gray-400" />
           <input
             type="text"
             placeholder="Search found items..."
@@ -78,15 +78,15 @@ export default function DriverLostFoundPage() {
       {/* Found Items List */}
       <div className="bg-white rounded-lg shadow">
         <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">Found Items</h2>
+          <h2 className="text-responsive-lg font-semibold text-gray-900">Found Items</h2>
         </div>
         <div className="divide-y divide-gray-200">
           {filteredItems.map((item) => (
-            <div key={item.id} className="p-6 flex items-center justify-between">
+            <div key={item.id} className="card-responsive flex items-center justify-between">
               <div className="flex-1">
-                <h3 className="text-sm font-medium text-gray-900">{item.description}</h3>
-                <p className="text-sm text-gray-500">Found at: {item.location}</p>
-                <p className="text-sm text-gray-500">Date: {item.date}</p>
+                <h3 className="text-responsive-sm font-medium text-gray-900">{item.description}</h3>
+                <p className="text-responsive-sm text-gray-500">Found at: {item.location}</p>
+                <p className="text-responsive-sm text-gray-500">Date: {item.date}</p>
               </div>
               <div className="flex items-center gap-3">
                 <span className={`px-2 py-1 text-xs font-medium rounded-full ${
@@ -96,7 +96,7 @@ export default function DriverLostFoundPage() {
                 }`}>
                   {item.status}
                 </span>
-                <button className="text-green-600 hover:text-green-800 text-sm font-medium">
+                <button className="text-green-600 hover:text-green-800 text-responsive-sm font-medium">
                   View Details
                 </button>
               </div>
@@ -108,11 +108,11 @@ export default function DriverLostFoundPage() {
       {/* Report Form Modal */}
       {showReportForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
-            <h2 className="text-lg font-semibold mb-4">Report Found Item</h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="bg-white rounded-lg card-responsive w-full max-w-md">
+            <h2 className="text-responsive-lg font-semibold mb-responsive-md">Report Found Item</h2>
+            <form onSubmit={handleSubmit} className="space-responsive-sm">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-responsive-sm font-medium text-gray-700 mb-1">
                   Description
                 </label>
                 <textarea
@@ -124,7 +124,7 @@ export default function DriverLostFoundPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-responsive-sm font-medium text-gray-700 mb-1">
                   Location Found
                 </label>
                 <input
@@ -136,7 +136,7 @@ export default function DriverLostFoundPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-responsive-sm font-medium text-gray-700 mb-1">
                   Category
                 </label>
                 <select
@@ -152,12 +152,12 @@ export default function DriverLostFoundPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-responsive-sm font-medium text-gray-700 mb-1">
                   Photo (Optional)
                 </label>
                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
-                  <PhotoIcon className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-                  <p className="text-sm text-gray-500">Click to upload photo</p>
+                  <PhotoIcon className="icon-responsive-lg text-gray-400 mx-auto mb-2" />
+                  <p className="text-responsive-sm text-gray-500">Click to upload photo</p>
                 </div>
               </div>
               <div className="flex gap-3 pt-4">

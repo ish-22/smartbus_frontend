@@ -55,28 +55,28 @@ export default function DriverNotificationsPage() {
 
   const getIcon = (type: string) => {
     switch (type) {
-      case 'warning': return <ExclamationTriangleIcon className="h-6 w-6 text-yellow-500" />;
-      case 'success': return <CheckIcon className="h-6 w-6 text-green-500" />;
-      default: return <InformationCircleIcon className="h-6 w-6 text-blue-500" />;
+      case 'warning': return <ExclamationTriangleIcon className="icon-responsive-md text-yellow-500" />;
+      case 'success': return <CheckIcon className="icon-responsive-md text-green-500" />;
+      default: return <InformationCircleIcon className="icon-responsive-md text-blue-500" />;
     }
   };
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
+    <div className="card-responsive">
+      <div className="flex justify-between items-center mb-responsive-lg">
         <div className="flex items-center gap-3">
-          <BellIcon className="h-8 w-8 text-green-600" />
+          <BellIcon className="icon-responsive-lg text-green-600" />
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Notifications</h1>
-            <p className="text-sm text-gray-500">{unreadCount} unread notifications</p>
+            <h1 className="text-responsive-2xl font-bold text-gray-900">Notifications</h1>
+            <p className="text-responsive-sm text-gray-500">{unreadCount} unread notifications</p>
           </div>
         </div>
         {unreadCount > 0 && (
           <button
             onClick={markAllAsRead}
-            className="text-green-600 hover:text-green-800 text-sm font-medium"
+            className="text-green-600 hover:text-green-800 text-responsive-sm font-medium"
           >
             Mark all as read
           </button>
@@ -88,23 +88,23 @@ export default function DriverNotificationsPage() {
           {notifications.map((notification) => (
             <div
               key={notification.id}
-              className={`p-6 hover:bg-gray-50 cursor-pointer ${
+              className={`card-responsive hover:bg-gray-50 cursor-pointer ${
                 !notification.read ? 'bg-green-50' : ''
               }`}
               onClick={() => markAsRead(notification.id)}
             >
-              <div className="flex items-start gap-4">
+              <div className="flex items-start gap-responsive-sm">
                 {getIcon(notification.type)}
                 <div className="flex-1">
                   <div className="flex items-center justify-between">
-                    <h3 className={`text-sm font-medium ${
+                    <h3 className={`text-responsive-sm font-medium ${
                       !notification.read ? 'text-gray-900' : 'text-gray-700'
                     }`}>
                       {notification.title}
                     </h3>
                     <span className="text-xs text-gray-500">{notification.time}</span>
                   </div>
-                  <p className="text-sm text-gray-600 mt-1">{notification.message}</p>
+                  <p className="text-responsive-sm text-gray-600 mt-1">{notification.message}</p>
                   {!notification.read && (
                     <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
                   )}
