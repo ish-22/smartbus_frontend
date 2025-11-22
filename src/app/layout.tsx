@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import { AuthProvider } from '@/providers/auth-provider'
-import AppLayout from '../components/layout/AppLayout'
+import AppLayout from '@/components/layout/AppLayout'
 
 export const metadata: Metadata = {
   title: 'SmartBus - Smart Public Transport System',

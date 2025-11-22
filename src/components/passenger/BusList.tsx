@@ -1,5 +1,5 @@
 import { useBusStore } from '@/store/busStore';
-import Card from '@/components/common/Card';
+import { Card } from '@/components/ui/Card';
 
 export default function BusList(){
 	const { buses, isLoading } = useBusStore();

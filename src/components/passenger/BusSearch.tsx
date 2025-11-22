@@ -1,6 +1,6 @@
 import { useBusStore } from '@/store/busStore';
 import Input from '@/components/common/Input';
-import Button from '@/components/common/Button';
+import { Button } from '@/components/ui/Button';
 import { useState } from 'react';
 import { useLangStore } from '@/store/langStore';
 import { t } from '@/utils/i18n';
