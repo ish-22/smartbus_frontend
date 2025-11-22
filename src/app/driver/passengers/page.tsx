@@ -31,69 +31,69 @@ export default function DriverPassengersPage() {
   ]
 
   return (
-    <div className="space-responsive-md no-scroll-x">
+    <div className="space-y-4 sm:space-y-6 overflow-x-hidden">
       <div>
-        <h1 className="text-responsive-2xl font-bold text-gray-900">Passenger Management</h1>
-        <p className="text-responsive-sm text-gray-600 mt-1">Current trip passenger list</p>
+        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">Passenger Management</h1>
+        <p className="text-sm sm:text-base text-gray-600 mt-1">Current trip passenger list</p>
       </div>
 
-      <div className="grid-responsive-3 gap-responsive-md">
-        <Card className="card-responsive">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        <Card className="p-3 sm:p-4 lg:p-6">
           <div className="flex items-center">
             <div className="p-2 bg-blue-100 rounded-lg flex-shrink-0">
-              <UsersIcon className="icon-responsive-md text-blue-600" />
+              <UsersIcon className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
             </div>
             <div className="ml-3 min-w-0">
-              <p className="text-responsive-xs font-medium text-gray-600 truncate">Total Passengers</p>
-              <p className="text-responsive-lg font-bold text-gray-900">45</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Passengers</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">45</p>
             </div>
           </div>
         </Card>
-        <Card className="card-responsive">
+        <Card className="p-3 sm:p-4 lg:p-6">
           <div className="flex items-center">
             <div className="p-2 bg-green-100 rounded-lg flex-shrink-0">
-              <CheckCircleIcon className="icon-responsive-md text-green-600" />
+              <CheckCircleIcon className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
             </div>
             <div className="ml-3 min-w-0">
-              <p className="text-responsive-xs font-medium text-gray-600 truncate">Boarded</p>
-              <p className="text-responsive-lg font-bold text-gray-900">38</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Boarded</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">38</p>
             </div>
           </div>
         </Card>
-        <Card className="card-responsive">
+        <Card className="p-3 sm:p-4 lg:p-6">
           <div className="flex items-center">
             <div className="p-2 bg-yellow-100 rounded-lg flex-shrink-0">
-              <QrCodeIcon className="icon-responsive-md text-yellow-600" />
+              <QrCodeIcon className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-600" />
             </div>
             <div className="ml-3 min-w-0">
-              <p className="text-responsive-xs font-medium text-gray-600 truncate">Pending</p>
-              <p className="text-responsive-lg font-bold text-gray-900">7</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Pending</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">7</p>
             </div>
           </div>
         </Card>
       </div>
 
       {/* Mobile Card View */}
-      <div className="lg:hidden space-responsive-sm">
+      <div className="lg:hidden space-y-3 sm:space-y-4">
         {passengers.map((passenger) => (
-          <Card key={passenger.id} className="card-responsive">
+          <Card key={passenger.id} className="p-3 sm:p-4 lg:p-6">
             <div className="flex justify-between items-start">
               <div className="flex-1 min-w-0">
-                <h3 className="text-responsive-sm font-semibold text-gray-900 truncate">{passenger.name}</h3>
+                <h3 className="text-sm sm:text-base font-semibold text-gray-900 truncate">{passenger.name}</h3>
                 <div className="mt-1 space-y-1">
-                  <p className="text-responsive-xs text-gray-600">Seat: {passenger.seat}</p>
-                  <p className="text-responsive-xs text-gray-600">{passenger.from} → {passenger.to}</p>
-                  <p className="text-responsive-xs text-gray-600">Ticket: {passenger.ticketId}</p>
+                  <p className="text-xs sm:text-sm text-gray-600">Seat: {passenger.seat}</p>
+                  <p className="text-xs sm:text-sm text-gray-600">{passenger.from} → {passenger.to}</p>
+                  <p className="text-xs sm:text-sm text-gray-600">Ticket: {passenger.ticketId}</p>
                 </div>
               </div>
               <div className="flex flex-col items-end space-y-2">
-                <span className={`px-2 py-1 text-responsive-xs rounded-full ${
+                <span className={`px-2 py-1 text-xs sm:text-sm rounded-full ${
                   passenger.status === 'Boarded' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
                 }`}>
                   {passenger.status}
                 </span>
                 {passenger.status === 'Pending' && (
-                  <Button size="sm" className="bg-green-600 hover:bg-green-700 btn-responsive-sm">
+                  <Button size="sm" className="bg-green-600 hover:bg-green-700 px-3 py-2 text-sm sm:px-4 sm:py-2 sm:text-base-sm">
                     <QrCodeIcon className="h-3 w-3 mr-1" />
                     Scan
                   </Button>
@@ -106,7 +106,7 @@ export default function DriverPassengersPage() {
 
       {/* Desktop Table View */}
       <Card className="hidden lg:block overflow-hidden">
-        <div className="table-responsive">
+        <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>

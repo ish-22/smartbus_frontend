@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import './globals.css'
-import '../styles/design-system.css'
 import { AuthProvider } from '@/providers/auth-provider'
 import AppLayout from '../components/layout/AppLayout'
 

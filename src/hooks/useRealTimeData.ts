@@ -198,9 +198,9 @@ export function useRealTimeUpdates<T>(
     // Flash animation for visual feedback
     const element = document.querySelector(`[data-update-key="${updateKey}"]`)
     if (element) {
-      element.classList.add('update-flash')
+      element.classList.add('animate-flash')
       setTimeout(() => {
-        element.classList.remove('update-flash')
+        element.classList.remove('animate-flash')
       }, 500)
     }
   }, [updateKey])

@@ -13,10 +13,10 @@ import {
 
 export default function AdminReportsPage() {
   return (
-    <div className="space-responsive-md no-scroll-x">
+    <div className="space-y-4 sm:space-y-6 overflow-x-hidden">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-responsive-2xl font-bold text-gray-900">Analytics & Reports</h1>
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">Analytics & Reports</h1>
           <p className="text-gray-600">System performance and business insights</p>
         </div>
         <div className="flex space-x-3">
@@ -32,73 +32,73 @@ export default function AdminReportsPage() {
       </div>
 
       {/* Key Metrics */}
-      <div className="grid-responsive-4 gap-responsive-md">
-        <Card className="card-responsive">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <Card className="p-3 sm:p-4 lg:p-6">
           <div className="flex items-center">
             <div className="p-2 bg-blue-100 rounded-lg flex-shrink-0">
-              <TruckIcon className="icon-responsive-md text-blue-600" />
+              <TruckIcon className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
             </div>
             <div className="ml-3 min-w-0">
-              <p className="text-responsive-xs font-medium text-gray-600 truncate">Daily Trips</p>
-              <p className="text-responsive-lg font-bold text-gray-900">1,234</p>
-              <p className="text-responsive-sm text-green-600">+12% from yesterday</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Daily Trips</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">1,234</p>
+              <p className="text-sm sm:text-base text-green-600">+12% from yesterday</p>
             </div>
           </div>
         </Card>
-        <Card className="card-responsive">
+        <Card className="p-3 sm:p-4 lg:p-6">
           <div className="flex items-center">
             <div className="p-2 bg-green-100 rounded-lg flex-shrink-0">
-              <UserGroupIcon className="icon-responsive-md text-green-600" />
+              <UserGroupIcon className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
             </div>
             <div className="ml-3 min-w-0">
-              <p className="text-responsive-xs font-medium text-gray-600 truncate">Active Users</p>
-              <p className="text-responsive-lg font-bold text-gray-900">8,456</p>
-              <p className="text-responsive-sm text-green-600">+5% from last week</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Active Users</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">8,456</p>
+              <p className="text-sm sm:text-base text-green-600">+5% from last week</p>
             </div>
           </div>
         </Card>
-        <Card className="card-responsive">
+        <Card className="p-3 sm:p-4 lg:p-6">
           <div className="flex items-center">
             <div className="p-2 bg-purple-100 rounded-lg flex-shrink-0">
-              <CalendarIcon className="icon-responsive-md text-purple-600" />
+              <CalendarIcon className="h-5 w-5 sm:h-6 sm:w-6 text-purple-600" />
             </div>
             <div className="ml-3 min-w-0">
-              <p className="text-responsive-xs font-medium text-gray-600 truncate">Bookings</p>
-              <p className="text-responsive-lg font-bold text-gray-900">2,567</p>
-              <p className="text-responsive-sm text-green-600">+8% from last week</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Bookings</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">2,567</p>
+              <p className="text-sm sm:text-base text-green-600">+8% from last week</p>
             </div>
           </div>
         </Card>
-        <Card className="card-responsive">
+        <Card className="p-3 sm:p-4 lg:p-6">
           <div className="flex items-center">
             <div className="p-2 bg-yellow-100 rounded-lg flex-shrink-0">
-              <CurrencyDollarIcon className="icon-responsive-md text-yellow-600" />
+              <CurrencyDollarIcon className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-600" />
             </div>
             <div className="ml-3 min-w-0">
-              <p className="text-responsive-xs font-medium text-gray-600 truncate">Revenue</p>
-              <p className="text-responsive-lg font-bold text-gray-900">₹1,23,456</p>
-              <p className="text-responsive-sm text-green-600">+15% from last month</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Revenue</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">₹1,23,456</p>
+              <p className="text-sm sm:text-base text-green-600">+15% from last month</p>
             </div>
           </div>
         </Card>
       </div>
 
       {/* Charts Section */}
-      <div className="grid-responsive-1 lg:grid-cols-2 gap-responsive-md">
-        <Card className="card-responsive">
-          <div className="flex items-center justify-between mb-responsive-md">
-            <h3 className="text-responsive-lg font-semibold text-gray-900">Trip Analytics</h3>
-            <ChartBarIcon className="icon-responsive-sm text-gray-400" />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+        <Card className="p-3 sm:p-4 lg:p-6">
+          <div className="flex items-center justify-between mb-3 sm:mb-4">
+            <h3 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900">Trip Analytics</h3>
+            <ChartBarIcon className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
           </div>
           <div className="h-64 bg-gray-50 rounded-lg flex items-center justify-center">
             <p className="text-gray-500">Trip Analytics Chart</p>
           </div>
         </Card>
 
-        <Card className="card-responsive">
-          <div className="flex items-center justify-between mb-responsive-md">
-            <h3 className="text-responsive-lg font-semibold text-gray-900">User Growth</h3>
-            <ChartBarIcon className="icon-responsive-sm text-gray-400" />
+        <Card className="p-3 sm:p-4 lg:p-6">
+          <div className="flex items-center justify-between mb-3 sm:mb-4">
+            <h3 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900">User Growth</h3>
+            <ChartBarIcon className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
           </div>
           <div className="h-64 bg-gray-50 rounded-lg flex items-center justify-center">
             <p className="text-gray-500">User Growth Chart</p>
@@ -107,27 +107,27 @@ export default function AdminReportsPage() {
       </div>
 
       {/* Performance Metrics */}
-      <Card className="card-responsive">
-        <h3 className="text-responsive-lg font-semibold text-gray-900 mb-responsive-md">System Performance</h3>
-        <div className="grid-responsive-3 gap-responsive-md">
+      <Card className="p-3 sm:p-4 lg:p-6">
+        <h3 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">System Performance</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           <div className="text-center">
             <div className="text-3xl font-bold text-green-600">98.5%</div>
-            <div className="text-responsive-sm text-gray-600">System Uptime</div>
+            <div className="text-sm sm:text-base text-gray-600">System Uptime</div>
           </div>
           <div className="text-center">
             <div className="text-3xl font-bold text-blue-600">2.3s</div>
-            <div className="text-responsive-sm text-gray-600">Avg Response Time</div>
+            <div className="text-sm sm:text-base text-gray-600">Avg Response Time</div>
           </div>
           <div className="text-center">
             <div className="text-3xl font-bold text-purple-600">94.2%</div>
-            <div className="text-responsive-sm text-gray-600">On-Time Performance</div>
+            <div className="text-sm sm:text-base text-gray-600">On-Time Performance</div>
           </div>
         </div>
       </Card>
 
       {/* Recent Activity */}
-      <Card className="card-responsive">
-        <h3 className="text-responsive-lg font-semibold text-gray-900 mb-responsive-md">Recent System Activity</h3>
+      <Card className="p-3 sm:p-4 lg:p-6">
+        <h3 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">Recent System Activity</h3>
         <div className="space-y-3">
           {[
             { action: 'New bus registration approved', time: '5 minutes ago', type: 'success' },
@@ -137,7 +137,7 @@ export default function AdminReportsPage() {
           ].map((activity, index) => (
             <div key={index} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-b-0">
               <span className="text-gray-700">{activity.action}</span>
-              <span className="text-responsive-sm text-gray-500">{activity.time}</span>
+              <span className="text-sm sm:text-base text-gray-500">{activity.time}</span>
             </div>
           ))}
         </div>

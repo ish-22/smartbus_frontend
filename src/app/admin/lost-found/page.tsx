@@ -4,62 +4,62 @@ import { ArchiveBoxIcon, CheckCircleIcon, ClockIcon, EyeIcon } from '@heroicons/
 
 export default function AdminLostFoundPage() {
   return (
-    <div className="space-responsive-lg no-scroll-x">
+    <div className="space-y-6 sm:space-y-8 overflow-x-hidden">
       <div>
-        <h1 className="text-responsive-2xl font-bold text-gray-900">Lost & Found Management</h1>
+        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">Lost & Found Management</h1>
         <p className="text-gray-600">Manage lost items and passenger claims</p>
       </div>
 
-      <div className="grid-responsive-4 gap-responsive-md">
-        <Card className="card-responsive">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <Card className="p-3 sm:p-4 lg:p-6">
           <div className="flex items-center">
             <div className="p-2 bg-blue-100 rounded-lg flex-shrink-0">
-              <ArchiveBoxIcon className="icon-responsive-md text-blue-600" />
+              <ArchiveBoxIcon className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
             </div>
             <div className="ml-3 min-w-0">
-              <p className="text-responsive-xs font-medium text-gray-600 truncate">Total Items</p>
-              <p className="text-responsive-lg font-bold text-gray-900">45</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Items</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">45</p>
             </div>
           </div>
         </Card>
-        <Card className="card-responsive">
+        <Card className="p-3 sm:p-4 lg:p-6">
           <div className="flex items-center">
             <div className="p-2 bg-yellow-100 rounded-lg flex-shrink-0">
-              <ClockIcon className="icon-responsive-md text-yellow-600" />
+              <ClockIcon className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-600" />
             </div>
             <div className="ml-3 min-w-0">
-              <p className="text-responsive-xs font-medium text-gray-600 truncate">Pending Claims</p>
-              <p className="text-responsive-lg font-bold text-gray-900">12</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Pending Claims</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">12</p>
             </div>
           </div>
         </Card>
-        <Card className="card-responsive">
+        <Card className="p-3 sm:p-4 lg:p-6">
           <div className="flex items-center">
             <div className="p-2 bg-green-100 rounded-lg flex-shrink-0">
-              <CheckCircleIcon className="icon-responsive-md text-green-600" />
+              <CheckCircleIcon className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
             </div>
             <div className="ml-3 min-w-0">
-              <p className="text-responsive-xs font-medium text-gray-600 truncate">Resolved</p>
-              <p className="text-responsive-lg font-bold text-gray-900">28</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Resolved</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">28</p>
             </div>
           </div>
         </Card>
-        <Card className="card-responsive">
+        <Card className="p-3 sm:p-4 lg:p-6">
           <div className="flex items-center">
             <div className="p-2 bg-red-100 rounded-lg flex-shrink-0">
-              <ArchiveBoxIcon className="icon-responsive-md text-red-600" />
+              <ArchiveBoxIcon className="h-5 w-5 sm:h-6 sm:w-6 text-red-600" />
             </div>
             <div className="ml-3 min-w-0">
-              <p className="text-responsive-xs font-medium text-gray-600 truncate">Unclaimed</p>
-              <p className="text-responsive-lg font-bold text-gray-900">5</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Unclaimed</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">5</p>
             </div>
           </div>
         </Card>
       </div>
 
       <Card className="overflow-hidden">
-        <div className="card-responsive border-b border-gray-200">
-          <h3 className="text-responsive-lg font-semibold text-gray-900">Recent Lost Items</h3>
+        <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-200">
+          <h3 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900">Recent Lost Items</h3>
         </div>
         <div className="divide-y divide-gray-200">
           {[
@@ -88,14 +88,14 @@ export default function AdminLostFoundPage() {
               status: 'Under Review'
             },
           ].map((item, index) => (
-            <div key={index} className="card-responsive flex items-center justify-between">
+            <div key={index} className="p-3 sm:p-4 lg:p-6 flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 <div className="p-2 bg-gray-100 rounded-lg flex-shrink-0">
-                  <ArchiveBoxIcon className="icon-responsive-md text-gray-600" />
+                  <ArchiveBoxIcon className="h-5 w-5 sm:h-6 sm:w-6 text-gray-600" />
                 </div>
                 <div>
                   <h4 className="font-medium text-gray-900">{item.item}</h4>
-                  <p className="text-responsive-sm text-gray-600">
+                  <p className="text-sm sm:text-base text-gray-600">
                     {item.route} • Reported by {item.reportedBy} • {item.date}
                   </p>
                 </div>

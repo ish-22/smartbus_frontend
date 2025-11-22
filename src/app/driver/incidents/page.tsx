@@ -37,10 +37,10 @@ export default function DriverIncidentsPage() {
   }
 
   return (
-    <div className="space-responsive-md no-scroll-x">
+    <div className="space-y-4 sm:space-y-6 overflow-x-hidden">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-responsive-2xl font-bold text-gray-900">Incident Reports</h1>
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">Incident Reports</h1>
           <p className="text-gray-600">Report issues and emergencies</p>
         </div>
         <Button 
@@ -53,11 +53,11 @@ export default function DriverIncidentsPage() {
       </div>
 
       {showForm && (
-        <Card className="card-responsive">
-          <h3 className="text-responsive-lg font-semibold mb-responsive-md">Report New Incident</h3>
-          <div className="space-responsive-sm">
+        <Card className="p-3 sm:p-4 lg:p-6">
+          <h3 className="text-base sm:text-lg lg:text-xl font-semibold mb-3 sm:mb-4">Report New Incident</h3>
+          <div className="space-y-3 sm:space-y-4">
             <div>
-              <label className="block text-responsive-sm font-medium text-gray-700 mb-2">Incident Type</label>
+              <label className="block text-sm sm:text-base font-medium text-gray-700 mb-2">Incident Type</label>
               <select
                 value={incident.type}
                 onChange={(e) => setIncident({...incident, type: e.target.value})}
@@ -71,7 +71,7 @@ export default function DriverIncidentsPage() {
               </select>
             </div>
             <div>
-              <label className="block text-responsive-sm font-medium text-gray-700 mb-2">Description</label>
+              <label className="block text-sm sm:text-base font-medium text-gray-700 mb-2">Description</label>
               <textarea
                 value={incident.description}
                 onChange={(e) => setIncident({...incident, description: e.target.value})}
@@ -80,7 +80,7 @@ export default function DriverIncidentsPage() {
               />
             </div>
             <div>
-              <label className="block text-responsive-sm font-medium text-gray-700 mb-2">Location</label>
+              <label className="block text-sm sm:text-base font-medium text-gray-700 mb-2">Location</label>
               <input
                 type="text"
                 value={incident.location}
@@ -89,7 +89,7 @@ export default function DriverIncidentsPage() {
               />
             </div>
             <div>
-              <label className="block text-responsive-sm font-medium text-gray-700 mb-2">Severity</label>
+              <label className="block text-sm sm:text-base font-medium text-gray-700 mb-2">Severity</label>
               <select
                 value={incident.severity}
                 onChange={(e) => setIncident({...incident, severity: e.target.value})}
@@ -113,18 +113,18 @@ export default function DriverIncidentsPage() {
         </Card>
       )}
 
-      <div className="space-responsive-sm">
+      <div className="space-y-3 sm:space-y-4">
         {incidents.map((item) => (
-          <Card key={item.id} className="card-responsive">
+          <Card key={item.id} className="p-3 sm:p-4 lg:p-6">
             <div className="flex justify-between items-start">
               <div className="flex items-start space-x-3">
                 <div className="p-2 bg-red-100 rounded-lg flex-shrink-0">
-                  <ExclamationTriangleIcon className="icon-responsive-md text-red-600" />
+                  <ExclamationTriangleIcon className="h-5 w-5 sm:h-6 sm:w-6 text-red-600" />
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900">{item.type}</h3>
                   <p className="text-gray-600 mt-1">{item.description}</p>
-                  <div className="flex items-center space-x-4 mt-2 text-responsive-sm text-gray-500">
+                  <div className="flex items-center space-x-4 mt-2 text-sm sm:text-base text-gray-500">
                     <span>Location: {item.location}</span>
                     <span>Time: {item.time}</span>
                   </div>

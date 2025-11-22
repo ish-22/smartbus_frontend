@@ -3,62 +3,62 @@ import { ClockIcon, MapPinIcon, UserGroupIcon, CheckCircleIcon } from '@heroicon
 
 export default function DriverHistoryPage() {
   return (
-    <div className="space-responsive-lg no-scroll-x">
+    <div className="space-y-6 sm:space-y-8 overflow-x-hidden">
       <div>
-        <h1 className="text-responsive-2xl font-bold text-gray-900">Trip History</h1>
+        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">Trip History</h1>
         <p className="text-gray-600">Your completed trips and performance</p>
       </div>
 
-      <div className="grid-responsive-4 gap-responsive-md">
-        <Card className="card-responsive">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <Card className="p-3 sm:p-4 lg:p-6">
           <div className="flex items-center">
             <div className="p-2 bg-blue-100 rounded-lg flex-shrink-0">
-              <ClockIcon className="icon-responsive-md text-blue-600" />
+              <ClockIcon className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
             </div>
             <div className="ml-3 min-w-0">
-              <p className="text-responsive-xs font-medium text-gray-600 truncate">This Week</p>
-              <p className="text-responsive-lg font-bold text-gray-900">28</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">This Week</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">28</p>
             </div>
           </div>
         </Card>
-        <Card className="card-responsive">
+        <Card className="p-3 sm:p-4 lg:p-6">
           <div className="flex items-center">
             <div className="p-2 bg-green-100 rounded-lg flex-shrink-0">
-              <CheckCircleIcon className="icon-responsive-md text-green-600" />
+              <CheckCircleIcon className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
             </div>
             <div className="ml-3 min-w-0">
-              <p className="text-responsive-xs font-medium text-gray-600 truncate">Completed</p>
-              <p className="text-responsive-lg font-bold text-gray-900">1,234</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Completed</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">1,234</p>
             </div>
           </div>
         </Card>
-        <Card className="card-responsive">
+        <Card className="p-3 sm:p-4 lg:p-6">
           <div className="flex items-center">
             <div className="p-2 bg-purple-100 rounded-lg flex-shrink-0">
-              <UserGroupIcon className="icon-responsive-md text-purple-600" />
+              <UserGroupIcon className="h-5 w-5 sm:h-6 sm:w-6 text-purple-600" />
             </div>
             <div className="ml-3 min-w-0">
-              <p className="text-responsive-xs font-medium text-gray-600 truncate">Total Passengers</p>
-              <p className="text-responsive-lg font-bold text-gray-900">45,678</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Passengers</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">45,678</p>
             </div>
           </div>
         </Card>
-        <Card className="card-responsive">
+        <Card className="p-3 sm:p-4 lg:p-6">
           <div className="flex items-center">
             <div className="p-2 bg-yellow-100 rounded-lg flex-shrink-0">
-              <ClockIcon className="icon-responsive-md text-yellow-600" />
+              <ClockIcon className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-600" />
             </div>
             <div className="ml-3 min-w-0">
-              <p className="text-responsive-xs font-medium text-gray-600 truncate">Total Hours</p>
-              <p className="text-responsive-lg font-bold text-gray-900">2,456</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Hours</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">2,456</p>
             </div>
           </div>
         </Card>
       </div>
 
       <Card className="overflow-hidden">
-        <div className="card-responsive border-b border-gray-200">
-          <h3 className="text-responsive-lg font-semibold text-gray-900">Recent Trips</h3>
+        <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-200">
+          <h3 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900">Recent Trips</h3>
         </div>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
@@ -89,19 +89,19 @@ export default function DriverHistoryPage() {
                 { date: '2024-01-14', route: 'Route 12A', duration: '3h 40m', passengers: 41, status: 'Completed' },
               ].map((trip, index) => (
                 <tr key={index} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-responsive-sm text-gray-900">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm sm:text-base text-gray-900">
                     {trip.date}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
                       <MapPinIcon className="h-4 w-4 text-gray-400 mr-2" />
-                      <span className="text-responsive-sm text-gray-900">{trip.route}</span>
+                      <span className="text-sm sm:text-base text-gray-900">{trip.route}</span>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-responsive-sm text-gray-900">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm sm:text-base text-gray-900">
                     {trip.duration}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-responsive-sm text-gray-900">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm sm:text-base text-gray-900">
                     {trip.passengers}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">

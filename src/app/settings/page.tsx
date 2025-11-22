@@ -17,30 +17,30 @@ export default function SettingsPage() {
   const [darkMode, setDarkMode] = useState(false)
 
   return (
-    <div className="space-responsive-md no-scroll-x">
+    <div className="space-y-4 sm:space-y-6 overflow-x-hidden">
       <div>
-        <h1 className="text-responsive-2xl font-bold text-gray-900">Settings</h1>
+        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">Settings</h1>
         <p className="text-gray-600">Manage your account and app preferences</p>
       </div>
 
       {/* Account Settings */}
-      <Card className="card-responsive">
-        <div className="flex items-center space-x-3 mb-responsive-md">
-          <UserIcon className="icon-responsive-sm text-gray-600" />
-          <h3 className="text-responsive-lg font-semibold text-gray-900">Account</h3>
+      <Card className="p-3 sm:p-4 lg:p-6">
+        <div className="flex items-center space-x-3 mb-3 sm:mb-4">
+          <UserIcon className="h-4 w-4 sm:h-5 sm:w-5 text-gray-600" />
+          <h3 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900">Account</h3>
         </div>
-        <div className="space-responsive-sm">
+        <div className="space-y-3 sm:space-y-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="font-medium text-gray-900">Profile Information</p>
-              <p className="text-responsive-sm text-gray-600">Update your personal details</p>
+              <p className="text-sm sm:text-base text-gray-600">Update your personal details</p>
             </div>
             <Button variant="secondary" size="sm">Edit</Button>
           </div>
           <div className="flex items-center justify-between">
             <div>
               <p className="font-medium text-gray-900">Change Password</p>
-              <p className="text-responsive-sm text-gray-600">Update your account password</p>
+              <p className="text-sm sm:text-base text-gray-600">Update your account password</p>
             </div>
             <Button variant="secondary" size="sm">Change</Button>
           </div>
@@ -48,16 +48,16 @@ export default function SettingsPage() {
       </Card>
 
       {/* Notifications */}
-      <Card className="card-responsive">
-        <div className="flex items-center space-x-3 mb-responsive-md">
-          <BellIcon className="icon-responsive-sm text-gray-600" />
-          <h3 className="text-responsive-lg font-semibold text-gray-900">Notifications</h3>
+      <Card className="p-3 sm:p-4 lg:p-6">
+        <div className="flex items-center space-x-3 mb-3 sm:mb-4">
+          <BellIcon className="h-4 w-4 sm:h-5 sm:w-5 text-gray-600" />
+          <h3 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900">Notifications</h3>
         </div>
-        <div className="space-responsive-sm">
+        <div className="space-y-3 sm:space-y-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="font-medium text-gray-900">Push Notifications</p>
-              <p className="text-responsive-sm text-gray-600">Receive alerts about your trips</p>
+              <p className="text-sm sm:text-base text-gray-600">Receive alerts about your trips</p>
             </div>
             <button
               onClick={() => setNotifications(!notifications)}
@@ -73,7 +73,7 @@ export default function SettingsPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="font-medium text-gray-900">Email Updates</p>
-              <p className="text-responsive-sm text-gray-600">Get updates via email</p>
+              <p className="text-sm sm:text-base text-gray-600">Get updates via email</p>
             </div>
             <Button variant="secondary" size="sm">Configure</Button>
           </div>
@@ -81,16 +81,16 @@ export default function SettingsPage() {
       </Card>
 
       {/* Privacy & Security */}
-      <Card className="card-responsive">
-        <div className="flex items-center space-x-3 mb-responsive-md">
-          <ShieldCheckIcon className="icon-responsive-sm text-gray-600" />
-          <h3 className="text-responsive-lg font-semibold text-gray-900">Privacy & Security</h3>
+      <Card className="p-3 sm:p-4 lg:p-6">
+        <div className="flex items-center space-x-3 mb-3 sm:mb-4">
+          <ShieldCheckIcon className="h-4 w-4 sm:h-5 sm:w-5 text-gray-600" />
+          <h3 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900">Privacy & Security</h3>
         </div>
-        <div className="space-responsive-sm">
+        <div className="space-y-3 sm:space-y-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="font-medium text-gray-900">Location Sharing</p>
-              <p className="text-responsive-sm text-gray-600">Share location for tracking</p>
+              <p className="text-sm sm:text-base text-gray-600">Share location for tracking</p>
             </div>
             <button
               onClick={() => setLocation(!location)}
@@ -106,7 +106,7 @@ export default function SettingsPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="font-medium text-gray-900">Data Privacy</p>
-              <p className="text-responsive-sm text-gray-600">Manage your data preferences</p>
+              <p className="text-sm sm:text-base text-gray-600">Manage your data preferences</p>
             </div>
             <Button variant="secondary" size="sm">Manage</Button>
           </div>
@@ -114,23 +114,23 @@ export default function SettingsPage() {
       </Card>
 
       {/* App Preferences */}
-      <Card className="card-responsive">
-        <div className="flex items-center space-x-3 mb-responsive-md">
-          <DevicePhoneMobileIcon className="icon-responsive-sm text-gray-600" />
-          <h3 className="text-responsive-lg font-semibold text-gray-900">App Preferences</h3>
+      <Card className="p-3 sm:p-4 lg:p-6">
+        <div className="flex items-center space-x-3 mb-3 sm:mb-4">
+          <DevicePhoneMobileIcon className="h-4 w-4 sm:h-5 sm:w-5 text-gray-600" />
+          <h3 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900">App Preferences</h3>
         </div>
-        <div className="space-responsive-sm">
+        <div className="space-y-3 sm:space-y-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="font-medium text-gray-900">Language</p>
-              <p className="text-responsive-sm text-gray-600">English</p>
+              <p className="text-sm sm:text-base text-gray-600">English</p>
             </div>
             <Button variant="secondary" size="sm">Change</Button>
           </div>
           <div className="flex items-center justify-between">
             <div>
               <p className="font-medium text-gray-900">Dark Mode</p>
-              <p className="text-responsive-sm text-gray-600">Switch to dark theme</p>
+              <p className="text-sm sm:text-base text-gray-600">Switch to dark theme</p>
             </div>
             <button
               onClick={() => setDarkMode(!darkMode)}
@@ -147,23 +147,23 @@ export default function SettingsPage() {
       </Card>
 
       {/* Support */}
-      <Card className="card-responsive">
-        <div className="flex items-center space-x-3 mb-responsive-md">
-          <GlobeAltIcon className="icon-responsive-sm text-gray-600" />
-          <h3 className="text-responsive-lg font-semibold text-gray-900">Support</h3>
+      <Card className="p-3 sm:p-4 lg:p-6">
+        <div className="flex items-center space-x-3 mb-3 sm:mb-4">
+          <GlobeAltIcon className="h-4 w-4 sm:h-5 sm:w-5 text-gray-600" />
+          <h3 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900">Support</h3>
         </div>
-        <div className="space-responsive-sm">
+        <div className="space-y-3 sm:space-y-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="font-medium text-gray-900">Help Center</p>
-              <p className="text-responsive-sm text-gray-600">Get help and support</p>
+              <p className="text-sm sm:text-base text-gray-600">Get help and support</p>
             </div>
             <Button variant="secondary" size="sm">Visit</Button>
           </div>
           <div className="flex items-center justify-between">
             <div>
               <p className="font-medium text-gray-900">Contact Us</p>
-              <p className="text-responsive-sm text-gray-600">Reach out to our team</p>
+              <p className="text-sm sm:text-base text-gray-600">Reach out to our team</p>
             </div>
             <Button variant="secondary" size="sm">Contact</Button>
           </div>
