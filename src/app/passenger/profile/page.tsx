@@ -34,6 +34,7 @@ export default function PassengerProfilePage() {
               type="email"
               value="john@example.com"
               readOnly
+              title="Email address"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -46,6 +47,7 @@ export default function PassengerProfilePage() {
               type="tel"
               value="+94 77 123 4567"
               readOnly
+              title="Phone number"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -58,6 +60,7 @@ export default function PassengerProfilePage() {
               rows={3}
               value="123 Main Street, Colombo 07, Sri Lanka"
               readOnly
+              title="Home address"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -78,7 +81,7 @@ export default function PassengerProfilePage() {
             <div className="text-sm sm:text-base text-gray-600">Total Trips</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl font-bold text-green-600">₹12,450</div>
+            <div className="text-3xl font-bold text-green-600">LKR 12,450</div>
             <div className="text-sm sm:text-base text-gray-600">Total Spent</div>
           </div>
           <div className="text-center">

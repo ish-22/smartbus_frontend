@@ -32,6 +32,7 @@ export default function PassengerSearchPage() {
             <label className="block text-sm sm:text-base font-medium text-gray-700 mb-2">Date</label>
             <input
               type="date"
+              title="Select travel date"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -44,8 +45,8 @@ export default function PassengerSearchPage() {
 
       <div className="space-y-3 sm:space-y-4">
         {[
-          { route: 'Route 12A', from: 'Colombo Fort', to: 'Kandy', time: '08:30 AM', duration: '3h 30m', price: '₹250' },
-          { route: 'Route 15B', from: 'Colombo Fort', to: 'Kandy', time: '10:00 AM', duration: '3h 45m', price: '₹280' },
+          { route: 'Route 12A', from: 'Colombo Fort', to: 'Kandy', time: '08:30 AM', duration: '3h 30m', price: 'LKR 250' },
+          { route: 'Route 15B', from: 'Colombo Fort', to: 'Kandy', time: '10:00 AM', duration: '3h 45m', price: 'LKR 280' },
         ].map((bus, index) => (
           <Card key={index} className="p-3 sm:p-4 lg:p-6">
             <div className="flex items-center justify-between">

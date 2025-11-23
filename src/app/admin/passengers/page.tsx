@@ -41,7 +41,7 @@ export default function AdminPassengersPage() {
       description: 'Manage loyalty points, rewards, and redemption system',
       href: '/admin/passengers/rewards',
       icon: StarIcon,
-      stats: '₹45,230 Redeemed',
+      stats: 'LKR 45,230 Redeemed',
       color: 'yellow'
     },
     {

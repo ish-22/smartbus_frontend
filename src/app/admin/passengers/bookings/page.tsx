@@ -1,7 +1,7 @@
 'use client'
 
 import { Card } from '@/components/ui/Card'
-import { Button } from '@/components/ui/Button'
+
 import { 
   CalendarIcon,
   CurrencyDollarIcon,
@@ -19,7 +19,7 @@ export default function PassengerBookingsPage() {
       date: '2024-01-15',
       time: '08:30 AM',
       seats: 2,
-      amount: '₹500',
+      amount: 'LKR 500',
       status: 'Confirmed'
     },
     {
@@ -30,7 +30,7 @@ export default function PassengerBookingsPage() {
       date: '2024-01-14',
       time: '09:00 AM',
       seats: 1,
-      amount: '₹300',
+      amount: 'LKR 300',
       status: 'Completed'
     },
     {
@@ -41,7 +41,7 @@ export default function PassengerBookingsPage() {
       date: '2024-01-13',
       time: '02:00 PM',
       seats: 3,
-      amount: '₹750',
+      amount: 'LKR 750',
       status: 'Cancelled'
     }
   ]
@@ -94,7 +94,7 @@ export default function PassengerBookingsPage() {
             </div>
             <div className="ml-3 min-w-0">
               <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Revenue</p>
-              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">₹1.2M</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">LKR 1.2M</p>
             </div>
           </div>
         </Card>

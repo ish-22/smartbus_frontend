@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { LanguageCode, SUPPORTED_LANGUAGES } from '@/utils/translator';
+import { LanguageCode } from '@/utils/translator';
 
 interface TranslationState {
   currentLanguage: LanguageCode;

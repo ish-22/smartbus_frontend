@@ -76,7 +76,7 @@ export default function AdminReportsPage() {
             </div>
             <div className="ml-3 min-w-0">
               <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Revenue</p>
-              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">₹1,23,456</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">LKR 1,23,456</p>
               <p className="text-sm sm:text-base text-green-600">+15% from last month</p>
             </div>
           </div>

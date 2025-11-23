@@ -36,11 +36,11 @@ export default function PassengerBookingsPage() {
         <Card className="p-3 sm:p-4 lg:p-6">
           <div className="flex items-center">
             <div className="p-2 bg-purple-100 rounded-lg flex-shrink-0">
-              <span className="text-purple-600 text-lg sm:text-xl lg:text-2xl">₹</span>
+              <span className="text-purple-600 text-lg sm:text-xl lg:text-2xl">LKR </span>
             </div>
             <div className="ml-3 min-w-0">
               <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Spent</p>
-              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">₹12,450</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">LKR 12,450</p>
             </div>
           </div>
         </Card>
@@ -59,7 +59,7 @@ export default function PassengerBookingsPage() {
                 date: '2024-01-20',
                 time: '08:30 AM',
                 seat: 'A12',
-                price: '₹250',
+                price: 'LKR 250',
                 status: 'Confirmed'
               },
               {
@@ -70,7 +70,7 @@ export default function PassengerBookingsPage() {
                 date: '2024-01-22',
                 time: '02:15 PM',
                 seat: 'B08',
-                price: '₹180',
+                price: 'LKR 180',
                 status: 'Confirmed'
               }
             ].map((booking, index) => (

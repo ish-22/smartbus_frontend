@@ -1,11 +1,12 @@
 'use client';
 
+import React from 'react';
 import { useTranslatedText } from '@/hooks/useTranslation';
 
 interface TranslatedTextProps {
   text: string;
   className?: string;
-  as?: keyof JSX.IntrinsicElements;
+  as?: keyof React.JSX.IntrinsicElements;
   children?: never;
 }
 
@@ -16,11 +17,7 @@ export default function TranslatedText({
 }: TranslatedTextProps) {
   const translatedText = useTranslatedText(text);
 
-  return (
-    <Component className={className}>
-      {translatedText}
-    </Component>
-  );
+  return React.createElement(Component, { className }, translatedText);
 }
 
 // Convenience components for common use cases
@@ -29,7 +26,7 @@ export function TranslatedHeading({ text, className = '', level = 1 }: {
   className?: string;
   level?: 1 | 2 | 3 | 4 | 5 | 6;
 }) {
-  const HeadingTag = `h${level}` as keyof JSX.IntrinsicElements;
+  const HeadingTag = `h${level}` as keyof React.JSX.IntrinsicElements;
   return <TranslatedText text={text} className={className} as={HeadingTag} />;
 }
 
@@ -60,9 +57,8 @@ export function TranslatedButton({
   );
 }
 
-export function TranslatedLabel({ text, htmlFor, className = '' }: {
+export function TranslatedLabel({ text, className = '' }: {
   text: string;
-  htmlFor?: string;
   className?: string;
 }) {
   return <TranslatedText text={text} className={className} as="label" />;

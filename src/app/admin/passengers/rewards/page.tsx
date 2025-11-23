@@ -91,7 +91,7 @@ export default function PassengerRewardsPage() {
             </div>
             <div className="ml-3 min-w-0">
               <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Savings Generated</p>
-              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">₹2.3M</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">LKR 2.3M</p>
             </div>
           </div>
         </Card>
