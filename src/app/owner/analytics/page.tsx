@@ -16,7 +16,7 @@ export default function OwnerAnalyticsPage() {
             </div>
             <div className="ml-3 min-w-0">
               <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Monthly Revenue</p>
-              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">₹1,25,000</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">LKR 1,25,000</p>
             </div>
           </div>
         </Card>

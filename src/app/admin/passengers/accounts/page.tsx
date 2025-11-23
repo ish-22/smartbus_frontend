@@ -26,7 +26,7 @@ export default function PassengerAccountsPage() {
       status: 'Active',
       joinDate: '2024-01-15',
       totalBookings: 45,
-      totalSpent: '₹12,450'
+      totalSpent: 'LKR 12,450'
     },
     {
       id: 2,
@@ -36,7 +36,7 @@ export default function PassengerAccountsPage() {
       status: 'Active',
       joinDate: '2024-01-10',
       totalBookings: 23,
-      totalSpent: '₹8,230'
+      totalSpent: 'LKR 8,230'
     },
     {
       id: 3,
@@ -46,7 +46,7 @@ export default function PassengerAccountsPage() {
       status: 'Suspended',
       joinDate: '2024-01-05',
       totalBookings: 12,
-      totalSpent: '₹3,450'
+      totalSpent: 'LKR 3,450'
     },
   ]
 
@@ -80,6 +80,7 @@ export default function PassengerAccountsPage() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
+              title="Filter by status"
               className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-red-500 focus:border-red-500"
             >
               <option value="all">All Status</option>
@@ -158,18 +159,18 @@ export default function PassengerAccountsPage() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm sm:text-base font-medium">
                     <div className="flex space-x-2">
-                      <button className="text-blue-600 hover:text-blue-900">
+                      <button className="text-blue-600 hover:text-blue-900" title="View passenger details">
                         <EyeIcon className="h-4 w-4" />
                       </button>
-                      <button className="text-green-600 hover:text-green-900">
+                      <button className="text-green-600 hover:text-green-900" title="Edit passenger">
                         <PencilIcon className="h-4 w-4" />
                       </button>
                       {passenger.status === 'Suspended' ? (
-                        <button className="text-green-600 hover:text-green-900">
+                        <button className="text-green-600 hover:text-green-900" title="Activate passenger">
                           <CheckCircleIcon className="h-4 w-4" />
                         </button>
                       ) : (
-                        <button className="text-red-600 hover:text-red-900">
+                        <button className="text-red-600 hover:text-red-900" title="Suspend passenger">
                           <NoSymbolIcon className="h-4 w-4" />
                         </button>
                       )}

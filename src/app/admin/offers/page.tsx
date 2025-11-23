@@ -62,11 +62,11 @@ export default function AdminOffersPage() {
         <Card className="p-3 sm:p-4 lg:p-6">
           <div className="flex items-center">
             <div className="p-2 bg-purple-100 rounded-lg flex-shrink-0">
-              <span className="text-purple-600 text-lg sm:text-xl lg:text-2xl">₹</span>
+              <span className="text-purple-600 text-lg sm:text-xl lg:text-2xl">LKR</span>
             </div>
             <div className="ml-3 min-w-0">
               <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Savings Given</p>
-              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">₹45,230</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">LKR 45,230</p>
             </div>
           </div>
         </Card>
@@ -156,13 +156,13 @@ export default function AdminOffersPage() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm sm:text-base font-medium">
                     <div className="flex space-x-2">
-                      <button className="text-blue-600 hover:text-blue-900">
+                      <button className="text-blue-600 hover:text-blue-900" title="View offer">
                         <EyeIcon className="h-4 w-4" />
                       </button>
-                      <button className="text-green-600 hover:text-green-900">
+                      <button className="text-green-600 hover:text-green-900" title="Edit offer">
                         <PencilIcon className="h-4 w-4" />
                       </button>
-                      <button className="text-red-600 hover:text-red-900">
+                      <button className="text-red-600 hover:text-red-900" title="Delete offer">
                         <TrashIcon className="h-4 w-4" />
                       </button>
                     </div>

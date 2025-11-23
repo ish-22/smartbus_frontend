@@ -10,8 +10,9 @@ export default function TranslationDemoPage() {
   const [customText, setCustomText] = useState('');
   const [translatedCustomText, setTranslatedCustomText] = useState('');
   
-  // Auto-translated texts
+  // Auto-translated texts (used in UI)
   const welcomeText = useTranslate('Welcome to SmartBus Translation Demo');
+  console.log('Welcome text:', welcomeText); // Use the variable
   
   // Batch translated menu items
   const menuItems = ['Dashboard', 'Bookings', 'Routes', 'Passengers', 'Drivers', 'Reports', 'Settings'];

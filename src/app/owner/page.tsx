@@ -29,8 +29,8 @@ export default function OwnerDashboard() {
               <CurrencyDollarIcon className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
             </div>
             <div className="ml-3 min-w-0">
-              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Today's Revenue</p>
-              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">₹45,230</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Today&apos;s Revenue</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">LKR 45,230</p>
             </div>
           </div>
         </Card>
