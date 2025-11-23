@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { usePathname } from 'next/navigation'
 import ModernSidebar from './ModernSidebar'
+import LanguageSelector from '@/components/LanguageSelector'
 
 interface AppLayoutProps {
   children: React.ReactNode
@@ -35,6 +36,13 @@ export default function AppLayout({ children }: AppLayoutProps) {
         sidebarCollapsed ? 'lg:ml-16' : 'lg:ml-64'
       }`}>
         <div className="min-h-full">
+          {/* Header with Language Selector */}
+          <div className="bg-white shadow-sm border-b border-gray-200 px-4 sm:px-6 lg:px-8 py-3">
+            <div className="flex justify-between items-center">
+              <h1 className="text-lg font-semibold text-gray-900">SmartBus</h1>
+              <LanguageSelector />
+            </div>
+          </div>
           <div className="p-4 sm:p-6 lg:p-8">
             {children}
           </div>
