@@ -3,6 +3,7 @@ import './globals.css'
 import { AuthProvider } from '@/providers/auth-provider'
 import AppLayout from '@/components/layout/AppLayout'
 import { TranslationProvider } from '@/context/TranslationContext'
+import ConnectionStatus from '@/components/common/ConnectionStatus'
 
 export const metadata: Metadata = {
   title: 'SmartBus - Smart Public Transport System',
@@ -20,6 +21,7 @@ export default function RootLayout({
 
       </head>
       <body className="font-sans antialiased">
+        <ConnectionStatus />
         <TranslationProvider>
           <AuthProvider>
             <AppLayout>

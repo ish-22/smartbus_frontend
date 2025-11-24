@@ -24,7 +24,7 @@ export default function RegisterPage() {
     setError('')
 
     try {
-      if (!formData.name || !formData.email || !formData.password) {
+      if (!formData.name || (!formData.email && !formData.phone) || !formData.password) {
         throw new Error('Please fill in all required fields')
       }
       
@@ -32,7 +32,28 @@ export default function RegisterPage() {
         throw new Error('Passwords do not match')
       }
       
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      // Call the backend API
+      const response = await fetch('http://127.0.0.1:8000/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email || null,
+          phone: formData.phone || null,
+          password: formData.password,
+          role: formData.role
+        })
+      })
+      
+      const data = await response.json()
+      
+      if (!response.ok) {
+        throw new Error(data.message || 'Registration failed')
+      }
+      
       setSuccess(true)
       setTimeout(() => {
         router.push('/auth/login')
@@ -138,7 +159,7 @@ export default function RegisterPage() {
                   >
                     <option value="passenger">Passenger</option>
                     <option value="driver">Driver</option>
-                    <option value="bus_owner">Bus Owner</option>
+                    <option value="owner">Bus Owner</option>
                   </select>
                 </div>
 

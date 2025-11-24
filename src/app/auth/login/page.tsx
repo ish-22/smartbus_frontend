@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { useAuth } from '@/providers/auth-provider'
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('')
+  const [emailOrPhone, setEmailOrPhone] = useState('')
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
@@ -19,18 +19,22 @@ export default function LoginPage() {
     setError('')
 
     try {
-      if (!email || !password) {
+      if (!emailOrPhone || !password) {
         throw new Error('Please fill in all fields')
       }
       
-      await login(email, password)
+      await login(emailOrPhone, password)
       
-      // Redirect based on email/role
-      if (email === 'admin@gmail.com') {
+      // Get user data from localStorage to determine role
+      const userData = JSON.parse(localStorage.getItem('user') || '{}')
+      const userRole = userData.role
+      
+      // Redirect based on actual user role from database
+      if (userRole === 'admin') {
         router.push('/admin/dashboard')
-      } else if (email === 'driver@gmail.com') {
+      } else if (userRole === 'driver') {
         router.push('/driver/dashboard')
-      } else if (email === 'owner@gmail.com') {
+      } else if (userRole === 'owner') {
         router.push('/owner/dashboard')
       } else {
         router.push('/passenger/dashboard')
@@ -64,13 +68,13 @@ export default function LoginPage() {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Email Address
+              Email or Phone
             </label>
             <input
-              type="email"
-              placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              type="text"
+              placeholder="Enter your email or phone"
+              value={emailOrPhone}
+              onChange={(e) => setEmailOrPhone(e.target.value)}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
               required
             />
@@ -108,20 +112,7 @@ export default function LoginPage() {
           </p>
         </div>
 
-        <div className="mt-6 pt-6 border-t border-gray-200">
-          <p className="text-xs text-gray-500 text-center mb-3 font-semibold">Demo Accounts</p>
-          <div className="space-y-2 text-xs text-gray-600">
-            <div className="bg-gray-50 rounded-lg p-2 text-center">
-              <span className="font-semibold">Admin:</span> admin@gmail.com / admin123
-            </div>
-            <div className="bg-gray-50 rounded-lg p-2 text-center">
-              <span className="font-semibold">Driver:</span> driver@gmail.com / any password
-            </div>
-            <div className="bg-gray-50 rounded-lg p-2 text-center">
-              <span className="font-semibold">Owner:</span> owner@gmail.com / any password
-            </div>
-          </div>
-        </div>
+        
       </div>
     </div>
   )

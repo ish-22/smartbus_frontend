@@ -1,37 +1,76 @@
-import type { Bus, Route, EtaAtStop } from '@/types/bus';
-import { apiGet } from './apiClient';
+import { API_BASE_URL, API_ENDPOINTS } from '@/config/api';
 
-export function fetchBuses(query?: { route?: string; number?: string; from?: string; to?: string }){
-	const params = new URLSearchParams();
-	if (query?.route) params.set('route', query.route);
-	if (query?.number) params.set('number', query.number);
-	if (query?.from) params.set('from', query.from);
-	if (query?.to) params.set('to', query.to);
-	const qs = params.toString() ? `?${params.toString()}` : '';
-	return apiGet<Bus[]>(`/buses${qs}`).catch(() => {
-		// Fallback mock data for local dev when API not ready
-		const demo: Bus[] = [
-			{ id: 'b1', number: '120-Colombo-Galle', routeId: 'r1', capacity: 50, seatsAvailable: 12, currentLocation: { lat: 6.9271, lng: 79.8612 }, lastUpdatedAt: new Date().toISOString() },
-			{ id: 'b2', number: '02-Kandy-Colombo', routeId: 'r2', capacity: 45, seatsAvailable: 5, currentLocation: { lat: 7.2906, lng: 80.6337 }, lastUpdatedAt: new Date().toISOString() },
-		];
-		return demo;
-	});
+export type Bus = {
+	id: number;
+	number: string;
+	type: 'expressway' | 'normal';
+	route_id?: number;
+	capacity: number;
+	driver_id?: number;
+	route?: {
+		id: number;
+		name: string;
+		start_point?: string;
+		end_point?: string;
+	};
+	driver?: {
+		id: number;
+		name: string;
+		email?: string;
+		phone?: string;
+	};
+};
+
+function getAuthHeaders(token?: string | null): HeadersInit {
+	const headers: HeadersInit = {
+		'Content-Type': 'application/json',
+		'Accept': 'application/json',
+	};
+	
+	if (token) {
+		headers['Authorization'] = `Bearer ${token}`;
+	}
+	
+	return headers;
 }
 
-export function fetchRoutes(){
-	return apiGet<Route[]>(`/routes`).catch(() => {
-		const demo: Route[] = [
-			{ id: 'r1', name: 'Colombo → Galle', start: 'Colombo', end: 'Galle', stops: [] },
-			{ id: 'r2', name: 'Kandy → Colombo', start: 'Kandy', end: 'Colombo', stops: [] },
-		];
-		return demo;
+export async function getBusesAPI(): Promise<Bus[]> {
+	const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.BUSES.LIST}`, {
+		method: 'GET',
+		headers: getAuthHeaders(),
 	});
+
+	if (!response.ok) {
+		throw new Error('Failed to fetch buses');
+	}
+
+	return response.json();
 }
 
-export function fetchBusEtas(routeId: string){
-	return apiGet<EtaAtStop[]>(`/routes/${routeId}/etas`).catch(() => {
-		const demo: EtaAtStop[] = [];
-		return demo;
+export async function getBusAPI(id: string): Promise<Bus> {
+	const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.BUSES.DETAIL(id)}`, {
+		method: 'GET',
+		headers: getAuthHeaders(),
 	});
+
+	if (!response.ok) {
+		throw new Error('Failed to fetch bus');
+	}
+
+	return response.json();
 }
 
+export async function createBusAPI(data: Omit<Bus, 'id'>, token: string): Promise<Bus> {
+	const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.BUSES.CREATE}`, {
+		method: 'POST',
+		headers: getAuthHeaders(token),
+		body: JSON.stringify(data),
+	});
+
+	if (!response.ok) {
+		const error = await response.json().catch(() => ({ message: 'Failed to create bus' }));
+		throw new Error(error.message || 'Failed to create bus');
+	}
+
+	return response.json();
+}
