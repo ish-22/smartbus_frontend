@@ -11,7 +11,7 @@ interface User {
 
 interface AuthContextType {
   user: User | null
-  login: (email: string, password: string) => Promise<void>
+  login: (emailOrPhone: string, password: string) => Promise<void>
   logout: () => void
   isLoading: boolean
 }
@@ -22,41 +22,56 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(false)
 
-  const login = async (email: string, password: string) => {
+  const login = async (emailOrPhone: string, password: string) => {
     setIsLoading(true)
-    await new Promise(resolve => setTimeout(resolve, 1000))
     
-    // Determine role based on email
-    let role: 'passenger' | 'driver' | 'admin' | 'owner' = 'passenger'
-    let name = 'User'
-    
-    if (email === 'admin@gmail.com' && password === 'admin123') {
-      role = 'admin'
-      name = 'Admin User'
-    } else if (email === 'driver@gmail.com') {
-      role = 'driver'
-      name = 'Driver User'
-    } else if (email === 'owner@gmail.com') {
-      role = 'owner'
-      name = 'Owner User'
-    } else {
-      name = 'Passenger User'
+    try {
+      // Determine if input is email or phone
+      const isEmail = emailOrPhone.includes('@')
+      const loginData = isEmail 
+        ? { email: emailOrPhone, password: password }
+        : { phone: emailOrPhone, password: password }
+      
+      // Call the backend API
+      const response = await fetch('http://127.0.0.1:8000/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(loginData)
+      })
+      
+      const data = await response.json()
+      
+      if (!response.ok) {
+        throw new Error(data.message || 'Login failed')
+      }
+      
+      // Store token and user data
+      localStorage.setItem('token', data.token)
+      localStorage.setItem('user', JSON.stringify(data.user))
+      
+      // Set cookie for middleware
+      document.cookie = `userRole=${data.user.role}; path=/; max-age=86400`
+      
+      setUser({
+        id: data.user.id.toString(),
+        name: data.user.name,
+        email: data.user.email,
+        role: data.user.role
+      })
+    } catch (error) {
+      throw error
+    } finally {
+      setIsLoading(false)
     }
-    
-    // Set cookie for middleware
-    document.cookie = `userRole=${role}; path=/; max-age=86400`
-    
-    setUser({
-      id: '1',
-      name,
-      email,
-      role
-    })
-    setIsLoading(false)
   }
 
   const logout = () => {
-    // Clear cookie
+    // Clear localStorage and cookie
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
     document.cookie = 'userRole=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT'
     setUser(null)
   }
