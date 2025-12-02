@@ -47,6 +47,11 @@ export const API_ENDPOINTS = {
 		CREATE: '/payments',
 		DETAIL: (id: string) => `/payments/${id}`,
 		UPDATE_STATUS: (id: string) => `/payments/${id}/status`
+	},
+	
+	PROFILE: {
+		GET: (userId: string) => `/profile/${userId}`,
+		UPDATE: (userId: string) => `/profile/update/${userId}`
 	}
 };
 

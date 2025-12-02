@@ -48,6 +48,7 @@ export async function registerUser(
 			name: response.user.name,
 			email: response.user.email || response.user.phone || '',
 			role: convertRole(response.user.role),
+			phone: response.user.phone || undefined,
 		};
 
 		// Auto login after successful registration
@@ -97,6 +98,7 @@ export async function loginWithEmail(emailOrPhone: string, password: string): Pr
 			name: response.user.name,
 			email: response.user.email || response.user.phone || '',
 			role: convertRole(response.user.role),
+			phone: response.user.phone || undefined,
 		};
 
 		useAuthStore.getState().login(authUser, response.token);
