@@ -3,13 +3,13 @@
 import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { UserIcon, EnvelopeIcon, PhoneIcon, MapPinIcon } from '@heroicons/react/24/outline';
+import { UserIcon, EnvelopeIcon, PhoneIcon, ShieldCheckIcon } from '@heroicons/react/24/outline';
 import { useAuthStore } from '@/store/authStore';
 import { getProfileAPI, updateProfileAPI, type UserProfile } from '@/services/api/profileApi';
 import { useRouter } from 'next/navigation';
 import { useUiStore } from '@/store/uiStore';
 
-export default function PassengerProfilePage() {
+export default function AdminProfilePage() {
   const { user, token, updateUser } = useAuthStore();
   const router = useRouter();
   const { showToast } = useUiStore();
@@ -33,8 +33,8 @@ export default function PassengerProfilePage() {
       return;
     }
     
-    // Ensure user is passenger
-    if (user.role !== 'PASSENGER') {
+    // Ensure user is admin
+    if (user.role !== 'ADMIN') {
       router.push('/');
       return;
     }
@@ -152,29 +152,34 @@ export default function PassengerProfilePage() {
   return (
     <div className="space-y-6 sm:space-y-8 overflow-x-hidden">
       <div>
-        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">Profile</h1>
-        <p className="text-gray-600">Manage your account information</p>
+        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">Admin Profile</h1>
+        <p className="text-gray-600">Manage your administrator account</p>
       </div>
 
       <Card className="p-8">
         <div className="flex items-center space-x-6 mb-8">
-          <div className="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center">
-            <UserIcon className="h-12 w-12 text-blue-600" />
+          <div className="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center">
+            <ShieldCheckIcon className="h-12 w-12 text-red-600" />
           </div>
           <div>
             <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">
               {profile.name}
             </h2>
             <p className="text-gray-600">
-              Passenger since {new Date(profile.created_at || '').toLocaleDateString('en-US', { 
+              Administrator since {new Date(profile.created_at || '').toLocaleDateString('en-US', { 
                 month: 'long', 
                 year: 'numeric' 
               })}
             </p>
+            <div className="flex items-center mt-2">
+              <span className="px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm font-semibold">
+                ADMIN
+              </span>
+            </div>
             {!isEditing && (
               <Button 
                 size="sm" 
-                className="mt-2 bg-blue-600 hover:bg-blue-700"
+                className="mt-2 bg-red-600 hover:bg-red-700"
                 onClick={() => setIsEditing(true)}
               >
                 Edit Profile
@@ -197,7 +202,7 @@ export default function PassengerProfilePage() {
               disabled={!isEditing}
               className={`w-full px-3 py-2 border border-gray-300 rounded-lg ${
                 isEditing 
-                  ? 'focus:ring-2 focus:ring-blue-500' 
+                  ? 'focus:ring-2 focus:ring-red-500' 
                   : 'bg-gray-50 cursor-not-allowed'
               }`}
             />
@@ -215,7 +220,7 @@ export default function PassengerProfilePage() {
               disabled={!isEditing}
               className={`w-full px-3 py-2 border border-gray-300 rounded-lg ${
                 isEditing 
-                  ? 'focus:ring-2 focus:ring-blue-500' 
+                  ? 'focus:ring-2 focus:ring-red-500' 
                   : 'bg-gray-50 cursor-not-allowed'
               }`}
             />
@@ -233,7 +238,7 @@ export default function PassengerProfilePage() {
               disabled={!isEditing}
               className={`w-full px-3 py-2 border border-gray-300 rounded-lg ${
                 isEditing 
-                  ? 'focus:ring-2 focus:ring-blue-500' 
+                  ? 'focus:ring-2 focus:ring-red-500' 
                   : 'bg-gray-50 cursor-not-allowed'
               }`}
             />
@@ -249,7 +254,7 @@ export default function PassengerProfilePage() {
                 value={formData.password}
                 onChange={handleInputChange}
                 placeholder="Enter new password"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500"
               />
             </div>
           )}
@@ -265,7 +270,7 @@ export default function PassengerProfilePage() {
               Cancel
             </Button>
             <Button
-              className="bg-blue-600 hover:bg-blue-700"
+              className="bg-red-600 hover:bg-red-700"
               onClick={handleSave}
               disabled={isSaving}
             >
@@ -276,22 +281,38 @@ export default function PassengerProfilePage() {
       </Card>
 
       <Card className="p-3 sm:p-4 lg:p-6">
-        <h3 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">Travel Statistics</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-          <div className="text-center">
-            <div className="text-3xl font-bold text-blue-600">45</div>
-            <div className="text-sm sm:text-base text-gray-600">Total Trips</div>
+        <h3 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">System Access</h3>
+        <div className="space-y-3">
+          <div className="flex items-center justify-between p-4 border rounded-lg">
+            <div>
+              <p className="font-medium text-gray-900">Full System Access</p>
+              <p className="text-sm text-gray-600">Complete administrative privileges</p>
+            </div>
+            <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-semibold">
+              Active
+            </span>
           </div>
-          <div className="text-center">
-            <div className="text-3xl font-bold text-green-600">LKR 12,450</div>
-            <div className="text-sm sm:text-base text-gray-600">Total Spent</div>
+          <div className="flex items-center justify-between p-4 border rounded-lg">
+            <div>
+              <p className="font-medium text-gray-900">User Management</p>
+              <p className="text-sm text-gray-600">Manage all user accounts</p>
+            </div>
+            <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-semibold">
+              Enabled
+            </span>
           </div>
-          <div className="text-center">
-            <div className="text-3xl font-bold text-purple-600">850</div>
-            <div className="text-sm sm:text-base text-gray-600">Reward Points</div>
+          <div className="flex items-center justify-between p-4 border rounded-lg">
+            <div>
+              <p className="font-medium text-gray-900">System Configuration</p>
+              <p className="text-sm text-gray-600">Modify system settings</p>
+            </div>
+            <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-semibold">
+              Enabled
+            </span>
           </div>
         </div>
       </Card>
     </div>
   );
 }
+

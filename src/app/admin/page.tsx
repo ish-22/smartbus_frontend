@@ -1,6 +1,7 @@
 'use client';
 import React, { useState } from 'react';
-import { UserGroupIcon, MapIcon, ChartBarIcon, ExclamationTriangleIcon, CogIcon, ShieldCheckIcon, UsersIcon, TruckIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
+import { UserGroupIcon, MapIcon, ChartBarIcon, ExclamationTriangleIcon, CogIcon, ShieldCheckIcon, UsersIcon, TruckIcon, CheckCircleIcon, UserIcon } from '@heroicons/react/24/outline';
+import Link from 'next/link';
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('overview');
@@ -159,9 +160,17 @@ export default function AdminDashboard() {
 
   return (
     <div className="space-y-4 sm:space-y-6 overflow-x-hidden">
-      <div>
-        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-        <p className="text-gray-600">Complete system management</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+          <p className="text-gray-600">Complete system management</p>
+        </div>
+        <Link href="/admin/profile">
+          <button className="flex items-center space-x-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+            <UserIcon className="h-5 w-5" />
+            <span>My Profile</span>
+          </button>
+        </Link>
       </div>
 
       <div className="border-b border-gray-200">

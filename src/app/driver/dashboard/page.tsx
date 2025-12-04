@@ -1,5 +1,6 @@
 import { Card } from '@/components/ui/Card'
-import { CalendarIcon, UsersIcon, MapPinIcon, QrCodeIcon, ExclamationTriangleIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline'
+import { CalendarIcon, UsersIcon, MapPinIcon, QrCodeIcon, ExclamationTriangleIcon, MagnifyingGlassIcon, UserIcon } from '@heroicons/react/24/outline'
+import Link from 'next/link'
 
 export default function DriverDashboard() {
   return (
@@ -88,6 +89,21 @@ export default function DriverDashboard() {
               View Items →
             </a>
           </Card>
+          
+          <Link href="/driver/profile">
+            <Card className="p-4 sm:p-3 sm:p-4 lg:p-6 hover:shadow-lg transition-shadow cursor-pointer">
+              <div className="flex items-center mb-3 sm:mb-3 sm:mb-4">
+                <div className="p-2 bg-green-100 rounded-lg flex-shrink-0">
+                  <UserIcon className="h-4 w-4 sm:h-5 sm:w-5 sm:h-6 sm:w-6 text-green-600" />
+                </div>
+                <h2 className="text-sm sm:text-base lg:text-lg sm:text-base sm:text-lg lg:text-xl font-semibold ml-3 truncate">My Profile</h2>
+              </div>
+              <p className="text-sm sm:text-base sm:text-sm sm:text-base lg:text-lg text-gray-600 mb-3 sm:mb-3 sm:mb-4 line-clamp-2">View and edit your profile</p>
+              <span className="text-sm sm:text-base sm:text-sm sm:text-base lg:text-lg text-green-600 hover:text-green-800 font-medium">
+                View Profile →
+              </span>
+            </Card>
+          </Link>
         </div>
       </div>
     </div>

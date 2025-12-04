@@ -1,5 +1,5 @@
 import { Card } from '@/components/ui/Card'
-import { MagnifyingGlassIcon, TicketIcon, MapPinIcon, GiftIcon } from '@heroicons/react/24/outline'
+import { MagnifyingGlassIcon, TicketIcon, MapPinIcon, GiftIcon, UserIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link'
 
 export default function PassengerDashboard() {
@@ -56,6 +56,18 @@ export default function PassengerDashboard() {
               </div>
               <h3 className="font-semibold text-gray-900 mb-1">Rewards</h3>
               <p className="text-sm sm:text-base text-gray-600">Earn points and offers</p>
+            </div>
+          </Card>
+        </Link>
+
+        <Link href="/passenger/profile">
+          <Card className="p-3 sm:p-4 lg:p-6 hover:shadow-lg transition-shadow cursor-pointer">
+            <div className="text-center">
+              <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                <UserIcon className="h-5 w-5 sm:h-6 sm:w-6 text-indigo-600" />
+              </div>
+              <h3 className="font-semibold text-gray-900 mb-1">My Profile</h3>
+              <p className="text-sm sm:text-base text-gray-600">View and edit your profile</p>
             </div>
           </Card>
         </Link>
