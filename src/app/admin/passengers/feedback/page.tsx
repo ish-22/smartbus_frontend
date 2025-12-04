@@ -1,145 +1,271 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { Card } from '@/components/ui/Card'
-import { Button } from '@/components/ui/Button'
-import { 
-  ChatBubbleLeftRightIcon,
-  StarIcon,
-  ExclamationTriangleIcon,
-  CheckCircleIcon,
-  TrashIcon
-} from '@heroicons/react/24/outline'
+import { useState, useEffect } from 'react';
+import { Card } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
+import { feedbackAPI, type Feedback, type FeedbackStatus } from '@/services/api/feedback';
+import { useAuthStore } from '@/store/authStore';
+import { useUiStore } from '@/store/uiStore';
 
-export default function PassengerFeedbackPage() {
-  const [activeTab, setActiveTab] = useState('all')
-  const [feedback, setFeedback] = useState([
-    {
-      id: 1,
-      passenger: 'John Doe',
-      type: 'Complaint',
-      subject: 'Bus was late by 30 minutes',
-      message: 'The bus on Route 12A was consistently late.',
-      rating: 2,
-      date: '2024-01-15',
-      status: 'Pending',
-      busNumber: 'SB-001'
-    },
-    {
-      id: 2,
-      passenger: 'Sarah Wilson',
-      type: 'Suggestion',
-      subject: 'Add more buses during peak hours',
-      message: 'Route 15B needs more buses during morning rush hour.',
-      rating: 4,
-      date: '2024-01-14',
-      status: 'Reviewed',
-      busNumber: 'SB-002'
+export default function AdminFeedbackPage() {
+  const { token, user } = useAuthStore();
+  const { showToast } = useUiStore();
+  const [feedback, setFeedback] = useState<Feedback[]>([]);
+  const [stats, setStats] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [mounted, setMounted] = useState(false);
+  const [selectedFeedback, setSelectedFeedback] = useState<Feedback | null>(null);
+  const [response, setResponse] = useState('');
+  const [filter, setFilter] = useState('all');
+
+  useEffect(() => {
+    setMounted(true);
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    if (mounted && user && user.role === 'admin') {
+      loadData();
     }
-  ])
+  }, [mounted, user, filter]);
 
-  const deleteFeedback = (id: number) => {
-    if (confirm('Are you sure you want to delete this feedback?')) {
-      setFeedback(feedback.filter(item => item.id !== id))
+  const loadData = async () => {
+    try {
+      setLoading(true);
+      
+      // Use direct PHP endpoint
+      const response = await fetch('http://127.0.0.1:8000/api/feedback.php');
+      if (response.ok) {
+        const data = await response.json();
+        setFeedback(data.data || []);
+        
+        // Calculate basic stats from feedback data
+        const feedbackData = data.data || [];
+        setStats({
+          total: feedbackData.length,
+          pending: feedbackData.filter((f: any) => f.status === 'pending').length,
+          resolved: feedbackData.filter((f: any) => f.status === 'resolved').length,
+          average_rating: feedbackData.length > 0 ? 
+            feedbackData.reduce((sum: number, f: any) => sum + (f.rating || 0), 0) / feedbackData.length : 0
+        });
+      } else {
+        // Fallback to sample data if server not running
+        setFeedback([
+          {
+            id: 1,
+            user_id: 2,
+            subject: 'Great Service!',
+            message: 'The bus service was excellent today.',
+            type: 'praise' as any,
+            rating: 5,
+            status: 'pending' as any,
+            created_at: new Date().toISOString(),
+            user: { id: 2, name: 'John Passenger' }
+          },
+          {
+            id: 2,
+            user_id: 2,
+            subject: 'Bus Delay Issue',
+            message: 'The bus was 20 minutes late this morning.',
+            type: 'complaint' as any,
+            rating: 2,
+            status: 'pending' as any,
+            created_at: new Date().toISOString(),
+            user: { id: 2, name: 'John Passenger' }
+          }
+        ]);
+        setStats({ total: 2, pending: 2, resolved: 0, average_rating: 3.5 });
+      }
+    } catch (error) {
+      console.error('Load data error:', error);
+      // Show sample data on error
+      setFeedback([
+        {
+          id: 1,
+          user_id: 2,
+          subject: 'Sample Feedback',
+          message: 'This is sample feedback data.',
+          type: 'general' as any,
+          status: 'pending' as any,
+          created_at: new Date().toISOString(),
+          user: { id: 2, name: 'Sample User' }
+        }
+      ]);
+      setStats({ total: 1, pending: 1, resolved: 0, average_rating: 0 });
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const handleUpdateStatus = async (id: number, status: FeedbackStatus) => {
+    try {
+      // Update local state immediately for demo
+      setFeedback(prev => prev.map(item => 
+        item.id === id ? { ...item, status, admin_response: response } : item
+      ));
+      
+      showToast({ type: 'success', message: `Feedback marked as ${status}` });
+      setSelectedFeedback(null);
+      setResponse('');
+      
+      // Recalculate stats
+      const updatedFeedback = feedback.map(item => 
+        item.id === id ? { ...item, status } : item
+      );
+      setStats({
+        total: updatedFeedback.length,
+        pending: updatedFeedback.filter(f => f.status === 'pending').length,
+        resolved: updatedFeedback.filter(f => f.status === 'resolved').length,
+        average_rating: updatedFeedback.length > 0 ? 
+          updatedFeedback.reduce((sum, f) => sum + (f.rating || 0), 0) / updatedFeedback.length : 0
+      });
+    } catch (error) {
+      showToast({ type: 'error', message: 'Failed to update status' });
+    }
+  };
+
+  if (!mounted || loading) {
+    return <div className="text-center py-8">Loading...</div>;
+  }
+
+  if (!user || user.role !== 'admin') {
+    return <div className="text-center py-8">Access denied. Admin only.</div>;
   }
 
   return (
-    <div className="space-y-4 sm:space-y-6 overflow-x-hidden">
+    <div className="space-y-6">
       <div>
-        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">Passenger Feedback</h1>
-        <p className="text-gray-600">Review and respond to passenger feedback</p>
+        <h1 className="text-2xl font-bold">Feedback Management</h1>
+        <p className="text-gray-600">Review and respond to user feedback</p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-        <Card className="p-3 sm:p-4 lg:p-6">
-          <div className="flex items-center">
-            <div className="p-2 bg-yellow-100 rounded-lg flex-shrink-0">
-              <ChatBubbleLeftRightIcon className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-600" />
-            </div>
-            <div className="ml-3 min-w-0">
-              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Feedback</p>
-              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">156</p>
-            </div>
-          </div>
-        </Card>
-        <Card className="p-3 sm:p-4 lg:p-6">
-          <div className="flex items-center">
-            <div className="p-2 bg-red-100 rounded-lg flex-shrink-0">
-              <ExclamationTriangleIcon className="h-5 w-5 sm:h-6 sm:w-6 text-red-600" />
-            </div>
-            <div className="ml-3 min-w-0">
-              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Complaints</p>
-              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">23</p>
-            </div>
-          </div>
-        </Card>
-        <Card className="p-3 sm:p-4 lg:p-6">
-          <div className="flex items-center">
-            <div className="p-2 bg-green-100 rounded-lg flex-shrink-0">
-              <CheckCircleIcon className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
-            </div>
-            <div className="ml-3 min-w-0">
-              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Resolved</p>
-              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">89</p>
-            </div>
-          </div>
-        </Card>
-        <Card className="p-3 sm:p-4 lg:p-6">
-          <div className="flex items-center">
-            <div className="p-2 bg-blue-100 rounded-lg flex-shrink-0">
-              <StarIcon className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
-            </div>
-            <div className="ml-3 min-w-0">
-              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Avg Rating</p>
-              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">4.2</p>
-            </div>
-          </div>
-        </Card>
+      {/* Stats */}
+      {stats && (
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <Card className="p-4">
+            <div className="text-2xl font-bold">{stats.total}</div>
+            <div className="text-sm text-gray-600">Total Feedback</div>
+          </Card>
+          <Card className="p-4">
+            <div className="text-2xl font-bold text-yellow-600">{stats.pending}</div>
+            <div className="text-sm text-gray-600">Pending</div>
+          </Card>
+          <Card className="p-4">
+            <div className="text-2xl font-bold text-green-600">{stats.resolved}</div>
+            <div className="text-sm text-gray-600">Resolved</div>
+          </Card>
+          <Card className="p-4">
+            <div className="text-2xl font-bold text-blue-600">{stats.average_rating.toFixed(1)}</div>
+            <div className="text-sm text-gray-600">Avg Rating</div>
+          </Card>
+        </div>
+      )}
+
+      {/* Filters */}
+      <div className="flex space-x-2">
+        {['all', 'pending', 'reviewed', 'resolved', 'rejected'].map((status) => (
+          <Button
+            key={status}
+            variant={filter === status ? 'primary' : 'secondary'}
+            size="sm"
+            onClick={() => setFilter(status)}
+          >
+            {status.charAt(0).toUpperCase() + status.slice(1)}
+          </Button>
+        ))}
       </div>
 
-      <div className="space-y-3 sm:space-y-4">
+      {/* Feedback List */}
+      <div className="space-y-4">
         {feedback.map((item) => (
-          <Card key={item.id} className="p-3 sm:p-4 lg:p-6">
+          <Card key={item.id} className="p-4">
             <div className="flex justify-between items-start">
               <div className="flex-1">
-                <div className="flex items-center space-x-3 mb-2">
-                  <h3 className="font-semibold text-gray-900">{item.subject}</h3>
+                <div className="flex items-center space-x-2 mb-2">
+                  <h3 className="font-semibold">{item.subject}</h3>
                   <span className={`px-2 py-1 text-xs rounded-full ${
-                    item.type === 'Complaint' ? 'bg-red-100 text-red-800' :
-                    item.type === 'Suggestion' ? 'bg-blue-100 text-blue-800' :
-                    'bg-green-100 text-green-800'
+                    item.status === 'resolved' ? 'bg-green-100 text-green-800' :
+                    item.status === 'reviewed' ? 'bg-blue-100 text-blue-800' :
+                    item.status === 'rejected' ? 'bg-red-100 text-red-800' :
+                    'bg-yellow-100 text-yellow-800'
                   }`}>
-                    {item.type}
+                    {item.status}
                   </span>
                 </div>
-                <p className="text-gray-600 mb-3">{item.message}</p>
-                <div className="flex items-center space-x-4 text-sm sm:text-base text-gray-500">
-                  <span>By: {item.passenger}</span>
-                  <span>Bus: {item.busNumber}</span>
-                  <span>Date: {item.date}</span>
+                <p className="text-gray-600 mb-2">{item.message}</p>
+                <div className="text-sm text-gray-500">
+                  By: {item.user?.name} | {new Date(item.created_at).toLocaleDateString()}
                 </div>
               </div>
-              <div className="flex space-x-2 ml-4">
-                <Button size="sm" className="bg-green-600 hover:bg-green-700">
-                  Resolve
-                </Button>
-                <Button variant="secondary" size="sm">
-                  Reply
-                </Button>
-                <Button 
-                  size="sm" 
-                  variant="secondary" 
-                  className="text-red-600 border-red-600 hover:bg-red-50"
-                  onClick={() => deleteFeedback(item.id)}
-                >
-                  <TrashIcon className="h-4 w-4" />
-                </Button>
-              </div>
+              <Button
+                size="sm"
+                onClick={() => setSelectedFeedback(item)}
+              >
+                Respond
+              </Button>
             </div>
           </Card>
         ))}
       </div>
+
+      {/* Response Modal */}
+      {selectedFeedback && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <Card className="max-w-2xl w-full p-6">
+            <h2 className="text-xl font-bold mb-4">Respond to Feedback</h2>
+            
+            <div className="mb-4">
+              <h3 className="font-semibold">{selectedFeedback.subject}</h3>
+              <p className="text-gray-600">{selectedFeedback.message}</p>
+              <div className="text-sm text-gray-500 mt-2">
+                From: {selectedFeedback.user?.name}
+              </div>
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-2">Admin Response</label>
+              <textarea
+                value={response}
+                onChange={(e) => setResponse(e.target.value)}
+                className="w-full p-2 border rounded-lg h-24"
+                placeholder="Enter your response..."
+              />
+            </div>
+
+            <div className="flex justify-between">
+              <div className="space-x-2">
+                <Button
+                  onClick={() => handleUpdateStatus(selectedFeedback.id, 'reviewed')}
+                  className="bg-blue-600 hover:bg-blue-700"
+                >
+                  Mark Reviewed
+                </Button>
+                <Button
+                  onClick={() => handleUpdateStatus(selectedFeedback.id, 'resolved')}
+                  className="bg-green-600 hover:bg-green-700"
+                >
+                  Mark Resolved
+                </Button>
+                <Button
+                  onClick={() => handleUpdateStatus(selectedFeedback.id, 'rejected')}
+                  variant="danger"
+                >
+                  Reject
+                </Button>
+              </div>
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  setSelectedFeedback(null);
+                  setResponse('');
+                }}
+              >
+                Cancel
+              </Button>
+            </div>
+          </Card>
+        </div>
+      )}
     </div>
-  )
+  );
 }

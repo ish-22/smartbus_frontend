@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-export type UserRole = 'PASSENGER' | 'DRIVER' | 'ADMIN';
+export type UserRole = 'passenger' | 'driver' | 'admin' | 'owner';
 
 export type AuthUser = {
 	id: string;
@@ -62,7 +62,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 			localStorage.setItem('sb-user-name', user.name);
 			
 			// Also set cookie for middleware compatibility
-			document.cookie = `userRole=${user.role.toLowerCase()}; path=/; max-age=86400`;
+			document.cookie = `userRole=${user.role}; path=/; max-age=86400`;
 		}
 		
 		set({ user, token, isAuthenticated: true });

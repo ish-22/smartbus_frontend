@@ -52,6 +52,18 @@ export const API_ENDPOINTS = {
 	PROFILE: {
 		GET: (userId: string) => `/profile/${userId}`,
 		UPDATE: (userId: string) => `/profile/update/${userId}`
+	},
+	// Feedback
+	FEEDBACK: {
+		LIST: '/feedback',
+		MY_LIST: '/feedback/my/list',
+		ADMIN_LIST: '/feedback/admin/list',
+		DETAIL: (id: string) => `/feedback/${id}`,
+		CREATE: '/feedback',
+		UPDATE: (id: string) => `/feedback/${id}`,
+		DELETE: (id: string) => `/feedback/${id}`,
+		UPDATE_STATUS: (id: string) => `/feedback/${id}/status`,
+		STATS: '/feedback/stats'
 	}
 };
 
