@@ -57,13 +57,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         id: data.user.id.toString(),
         name: data.user.name,
         email: data.user.email || data.user.phone || '',
-        role: data.user.role.toUpperCase() as 'PASSENGER' | 'DRIVER' | 'ADMIN',
+        role: data.user.role as 'passenger' | 'driver' | 'admin' | 'owner',
         phone: data.user.phone || undefined,
       }
       localStorage.setItem('sb-user', JSON.stringify(authUser))
       localStorage.setItem('sb-token', data.token)
       localStorage.setItem('sb-user-id', data.user.id.toString())
-      localStorage.setItem('sb-user-role', authUser.role)
+      localStorage.setItem('sb-user-role', data.user.role)
       localStorage.setItem('sb-user-name', data.user.name)
       
       // Set cookie for middleware

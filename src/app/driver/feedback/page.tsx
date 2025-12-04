@@ -4,8 +4,8 @@ import { useState } from 'react';
 import FeedbackForm from '@/components/feedback/FeedbackForm';
 import FeedbackList from '@/components/feedback/FeedbackList';
 
-export default function PassengerFeedbackPage() {
-  const [activeTab, setActiveTab] = useState<'submit' | 'my' | 'all'>('submit');
+export default function DriverFeedbackPage() {
+  const [activeTab, setActiveTab] = useState<'submit' | 'my'>('submit');
   const [refreshKey, setRefreshKey] = useState(0);
 
   const handleFeedbackSubmitted = () => {
@@ -16,22 +16,21 @@ export default function PassengerFeedbackPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Feedback</h1>
-        <p className="text-gray-600">Share your experience and view feedback</p>
+        <h1 className="text-2xl font-bold text-green-600">Driver Feedback</h1>
+        <p className="text-gray-600">Share feedback about routes, schedules, and operations</p>
       </div>
 
       <div className="flex space-x-4 border-b">
         {[
           { key: 'submit', label: 'Submit Feedback' },
           { key: 'my', label: 'My Feedback' },
-          { key: 'all', label: 'All Feedback' },
         ].map((tab) => (
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key as any)}
             className={`pb-2 px-1 border-b-2 font-medium ${
               activeTab === tab.key
-                ? 'border-red-500 text-red-600'
+                ? 'border-green-500 text-green-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
           >
@@ -43,7 +42,6 @@ export default function PassengerFeedbackPage() {
       <div key={refreshKey}>
         {activeTab === 'submit' && <FeedbackForm onSuccess={handleFeedbackSubmitted} />}
         {activeTab === 'my' && <FeedbackList showMy={true} />}
-        {activeTab === 'all' && <FeedbackList showMy={false} />}
       </div>
     </div>
   );
