@@ -11,6 +11,7 @@ export default function OwnerLostFoundPage() {
   const [stats, setStats] = useState({ total: 0, lost: 0, found: 0, returned: 0 });
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<string>('');
+  const [mounted, setMounted] = useState(false);
 
   const fetchItems = async () => {
     if (!token) return;
@@ -36,9 +37,19 @@ export default function OwnerLostFoundPage() {
   };
 
   useEffect(() => {
-    fetchItems();
-    fetchStats();
-  }, [token, filter]);
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (mounted) {
+      fetchItems();
+      fetchStats();
+    }
+  }, [token, filter, mounted]);
+
+  if (!mounted) {
+    return <div className="p-6">Loading...</div>;
+  }
 
   if (!user || !token) {
     return <div className="p-6">Please log in to access this page.</div>;
