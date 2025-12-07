@@ -143,7 +143,7 @@ export default function PassengerBookingsPage() {
             </div>
             <div className="ml-3 min-w-0">
               <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Spent</p>
-              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">Rs. {bookings.reduce((sum, b) => sum + b.fare, 0)}</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">Rs. {bookings.reduce((sum, b) => sum + (b.fare - (b.discount_amount || 0)), 0)}</p>
             </div>
           </div>
         </div>

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { createBookingAPI } from '@/services/api/bookingApi';
 import { rewardAPI } from '@/services/api/rewards';
+import { bookingRewardAPI, BookingRewardData, DiscountCalculation } from '@/services/api/bookingRewards';
 import { MagnifyingGlassIcon, MapPinIcon, ClockIcon, GiftIcon } from '@heroicons/react/24/outline';
 
 interface Bus {
@@ -23,18 +24,39 @@ export default function PassengerSearchPage() {
     { id: 1, name: 'Express 12A', route: 'Route 12A', from: 'Colombo Fort', to: 'Kandy', time: '08:30 AM', duration: '3h 30m', price: 250 },
     { id: 2, name: 'Luxury 15B', route: 'Route 15B', from: 'Colombo Fort', to: 'Kandy', time: '10:00 AM', duration: '3h 45m', price: 280 },
   ]);
-  const [totalPoints, setTotalPoints] = useState(0);
+  const [rewardData, setRewardData] = useState<BookingRewardData | null>(null);
+  const [discountCalculation, setDiscountCalculation] = useState<DiscountCalculation | null>(null);
   const [loading, setLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [bookingMessage, setBookingMessage] = useState('');
 
-  const fetchPoints = async () => {
+  const fetchRewardData = async () => {
     if (!token) return;
     try {
-      const response = await rewardAPI.getUserPoints(token);
-      setTotalPoints(response.total_points);
+      const data = await bookingRewardAPI.getBookingData(token);
+      console.log('Reward data received:', data);
+      setRewardData(data);
+      // Reset points to use if user doesn't have enough
+      if (pointsToUse > 0 && data.user_points < pointsToUse) {
+        setPointsToUse(0);
+      }
     } catch (error) {
-      console.error('Failed to fetch points:', error);
+      console.error('Failed to fetch reward data:', error);
+    }
+  };
+
+  const calculateDiscount = async () => {
+    if (!token || !selectedBus) return;
+    
+    try {
+      const calculation = await bookingRewardAPI.calculateDiscount(token, {
+        fare: selectedBus.price,
+        points_to_use: pointsToUse > 0 ? pointsToUse : undefined,
+        offer_id: selectedOfferId || undefined
+      });
+      setDiscountCalculation(calculation);
+    } catch (error) {
+      console.error('Failed to calculate discount:', error);
     }
   };
 
@@ -42,6 +64,7 @@ export default function PassengerSearchPage() {
   const [showBookingForm, setShowBookingForm] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<'cash' | 'credit_card' | 'debit_card' | 'digital_wallet'>('cash');
   const [pointsToUse, setPointsToUse] = useState(0);
+  const [selectedOfferId, setSelectedOfferId] = useState<number | null>(null);
   const [cardDetails, setCardDetails] = useState({
     number: '',
     expiry: '',
@@ -56,11 +79,30 @@ export default function PassengerSearchPage() {
       return;
     }
     setSelectedBus(bus);
+    setPointsToUse(0);
+    setSelectedOfferId(null);
+    setDiscountCalculation(null);
     setShowBookingForm(true);
+    // Reset any previously selected offer that might be redeemed
+    if (rewardData && selectedOfferId && Array.isArray(rewardData.redeemed_offers) && rewardData.redeemed_offers.includes(selectedOfferId)) {
+      setSelectedOfferId(null);
+    }
   };
 
   const handleConfirmBooking = async () => {
     if (!selectedBus || !token) return;
+
+    // Validate points before submitting
+    if (pointsToUse > 0 && rewardData && pointsToUse > rewardData.user_points) {
+      alert(`You only have ${rewardData.user_points} points available. Please reduce the points to use.`);
+      return;
+    }
+
+    // Validate offer before submitting
+    if (selectedOfferId && rewardData && Array.isArray(rewardData.redeemed_offers) && rewardData.redeemed_offers.includes(selectedOfferId)) {
+      alert('You have already used this offer. Please select a different offer.');
+      return;
+    }
 
     setLoading(true);
     try {
@@ -73,6 +115,10 @@ export default function PassengerSearchPage() {
 
       if (pointsToUse > 0) {
         bookingData.points_to_use = pointsToUse;
+      }
+      
+      if (selectedOfferId) {
+        bookingData.offer_id = selectedOfferId;
       }
 
       if (paymentMethod === 'credit_card' || paymentMethod === 'debit_card') {
@@ -88,14 +134,16 @@ export default function PassengerSearchPage() {
 
       const response = await createBookingAPI(bookingData, token);
       
-      setBookingMessage(`Booking successful! ${response.points_used > 0 ? `Used ${response.points_used} points. ` : ''}Complete your trip to earn rewards.`);
+      const discountMsg = response.total_discount > 0 ? `Saved Rs. ${response.total_discount}! ` : '';
+      setBookingMessage(`Booking successful! ${discountMsg}Complete your trip to earn rewards.`);
       setShowBookingForm(false);
       setSelectedBus(null);
-      fetchPoints();
+      fetchRewardData();
       setTimeout(() => setBookingMessage(''), 5000);
     } catch (error) {
       console.error('Failed to create booking:', error);
-      alert('Failed to create booking. Please try again.');
+      const errorMessage = error instanceof Error ? error.message : 'Failed to create booking. Please try again.';
+      alert(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -107,9 +155,17 @@ export default function PassengerSearchPage() {
 
   useEffect(() => {
     if (mounted && token) {
-      fetchPoints();
+      fetchRewardData();
     }
   }, [mounted, token]);
+
+  useEffect(() => {
+    if (selectedBus && (pointsToUse > 0 || selectedOfferId)) {
+      calculateDiscount();
+    } else {
+      setDiscountCalculation(null);
+    }
+  }, [pointsToUse, selectedOfferId, selectedBus]);
 
   if (!mounted) {
     return <div className="p-6">Loading...</div>;
@@ -122,11 +178,11 @@ export default function PassengerSearchPage() {
           <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">Search Buses</h1>
           <p className="text-gray-600">Find buses for your journey</p>
         </div>
-        {user && (
+        {user && rewardData && rewardData.user_points !== undefined && (
           <div className="bg-purple-50 p-3 rounded-lg">
             <div className="flex items-center">
               <GiftIcon className="h-5 w-5 text-purple-600 mr-2" />
-              <span className="text-purple-800 font-medium">{totalPoints} Points</span>
+              <span className="text-purple-800 font-medium">{rewardData.user_points} Points</span>
             </div>
           </div>
         )}
@@ -217,26 +273,63 @@ export default function PassengerSearchPage() {
             
             <div className="space-y-4">
               <div>
-                <p className="text-sm text-gray-600">Fare: Rs. {selectedBus.price}</p>
-                {pointsToUse > 0 && (
-                  <p className="text-sm text-green-600">Discount: -Rs. {pointsToUse}</p>
+                <p className="text-sm text-gray-600">Original Fare: Rs. {selectedBus.price}</p>
+                {discountCalculation && discountCalculation.total_discount > 0 && (
+                  <>
+                    <p className="text-sm text-green-600">Total Discount: -Rs. {discountCalculation.total_discount}</p>
+                    <p className="font-semibold text-lg text-green-700">Final Amount: Rs. {discountCalculation.final_amount}</p>
+                  </>
                 )}
-                <p className="font-semibold">Total: Rs. {selectedBus.price - pointsToUse}</p>
+                {!discountCalculation && (
+                  <p className="font-semibold">Total: Rs. {selectedBus.price}</p>
+                )}
               </div>
 
+              {/* Available Offers */}
+              {rewardData && rewardData.available_offers.length > 0 && (
+                <div>
+                  <label className="block text-sm font-medium mb-1">Available Offers</label>
+                  <select
+                    value={selectedOfferId || ''}
+                    onChange={(e) => setSelectedOfferId(e.target.value ? parseInt(e.target.value) : null)}
+                    className="w-full border rounded px-3 py-2"
+                  >
+                    <option value="">No offer selected</option>
+                    {rewardData.available_offers.map((offer) => (
+                      <option key={offer.id} value={offer.id}>
+                        {offer.title} - {offer.discount_percentage}% OFF
+                      </option>
+                    ))}
+                  </select>
+                  {selectedOfferId && rewardData && Array.isArray(rewardData.redeemed_offers) && rewardData.redeemed_offers.includes(selectedOfferId) && (
+                    <p className="text-xs text-red-500 mt-1">This offer has already been used</p>
+                  )}
+                </div>
+              )}
+
               {/* Points Usage */}
-              <div>
-                <label className="block text-sm font-medium mb-1">Use Reward Points (Available: {totalPoints})</label>
-                <input
-                  type="number"
-                  min="0"
-                  max={Math.min(totalPoints, Math.floor(selectedBus.price * 0.5))}
-                  value={pointsToUse}
-                  onChange={(e) => setPointsToUse(parseInt(e.target.value) || 0)}
-                  className="w-full border rounded px-3 py-2"
-                  placeholder="Points to use (1 point = Rs. 1)"
-                />
-              </div>
+              {rewardData && rewardData.user_points > 0 && (
+                <div>
+                  <label className="block text-sm font-medium mb-1">Use Reward Points (Available: {rewardData.user_points})</label>
+                  <input
+                    type="number"
+                    min="0"
+                    max={Math.min(rewardData.user_points, Math.floor(selectedBus.price * 0.5))}
+                    value={pointsToUse}
+                    onChange={(e) => {
+                      const value = parseInt(e.target.value) || 0;
+                      const maxAllowed = Math.min(rewardData.user_points, Math.floor(selectedBus.price * 0.5));
+                      setPointsToUse(Math.min(value, maxAllowed));
+                    }}
+                    className="w-full border rounded px-3 py-2"
+                    placeholder="Points to use (1 point = Rs. 1)"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Maximum 50% of fare can be paid with points</p>
+                  {pointsToUse > rewardData.user_points && (
+                    <p className="text-xs text-red-500 mt-1">You only have {rewardData.user_points} points available</p>
+                  )}
+                </div>
+              )}
 
               {/* Payment Method */}
               <div>
@@ -305,13 +398,33 @@ export default function PassengerSearchPage() {
                 </div>
               )}
 
+              {/* Discount Breakdown */}
+              {discountCalculation && discountCalculation.total_discount > 0 && (
+                <div className="bg-green-50 p-3 rounded border">
+                  <h4 className="font-medium text-green-800 mb-2">Discount Breakdown:</h4>
+                  {discountCalculation.discount_breakdown.points && (
+                    <p className="text-sm text-green-700">
+                      Points: {discountCalculation.discount_breakdown.points.points_used} points = Rs. {discountCalculation.discount_breakdown.points.discount_amount}
+                    </p>
+                  )}
+                  {discountCalculation.discount_breakdown.offer && (
+                    <p className="text-sm text-green-700">
+                      Offer: {discountCalculation.discount_breakdown.offer.offer_title} ({discountCalculation.discount_breakdown.offer.discount_percentage}%) = Rs. {discountCalculation.discount_breakdown.offer.discount_amount}
+                    </p>
+                  )}
+                </div>
+              )}
+
               <div className="flex gap-3 mt-6">
                 <button
                   onClick={handleConfirmBooking}
-                  disabled={loading}
+                  disabled={loading || 
+                    (pointsToUse > 0 && rewardData && pointsToUse > rewardData.user_points) ||
+                    (selectedOfferId && rewardData && Array.isArray(rewardData.redeemed_offers) && rewardData.redeemed_offers.includes(selectedOfferId))
+                  }
                   className="flex-1 bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 disabled:bg-gray-400"
                 >
-                  {loading ? 'Processing...' : 'Confirm Booking'}
+                  {loading ? 'Processing...' : `Confirm Booking${discountCalculation ? ` - Rs. ${discountCalculation.final_amount}` : ''}`}
                 </button>
                 <button
                   onClick={() => setShowBookingForm(false)}
