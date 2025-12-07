@@ -5,25 +5,38 @@ export type Booking = {
 	user_id: number;
 	bus_id: number;
 	route_id?: number;
-	seat_number?: string;
-	ticket_category?: string;
-	status: 'pending' | 'confirmed' | 'cancelled';
-	total_amount: number;
-	payment_method: string;
+	seat_number: string;
+	fare: number;
+	status: 'confirmed' | 'cancelled' | 'completed';
+	travel_date: string;
+	payment_method: 'cash' | 'credit_card' | 'debit_card' | 'digital_wallet';
+	payment_status: 'pending' | 'paid' | 'failed' | 'refunded';
+	transaction_id?: string;
+	discount_amount: number;
+	points_used: number;
+	payment_date?: string;
 	created_at: string;
 	updated_at: string;
 	user?: any;
 	bus?: any;
 	route?: any;
+	total_amount?: number;
 };
 
 export type CreateBookingRequest = {
 	bus_id: number;
 	route_id?: number;
-	seat_number?: string;
-	ticket_category?: string;
-	total_amount: number;
-	payment_method: string;
+	seat_number: string;
+	fare: number;
+	payment_method: 'cash' | 'credit_card' | 'debit_card' | 'digital_wallet';
+	points_to_use?: number;
+	// Card payment fields
+	card_number?: string;
+	card_expiry?: string;
+	card_cvv?: string;
+	card_holder_name?: string;
+	// Wallet payment fields
+	wallet_type?: string;
 };
 
 function getAuthHeaders(token: string): HeadersInit {
@@ -83,6 +96,27 @@ export async function cancelBookingAPI(id: string, token: string): Promise<Booki
 
 	if (!response.ok) {
 		throw new Error('Failed to cancel booking');
+	}
+
+	return response.json();
+}
+
+export async function completeBookingAPI(id: string, token: string): Promise<{
+	success: boolean;
+	message: string;
+	data: Booking;
+	points_awarded: number;
+	bonus_points: number;
+	total_points_earned: number;
+	total_points: number;
+}> {
+	const response = await fetch(`${API_BASE_URL}/bookings/${id}/complete`, {
+		method: 'PATCH',
+		headers: getAuthHeaders(token),
+	});
+
+	if (!response.ok) {
+		throw new Error('Failed to complete booking');
 	}
 
 	return response.json();

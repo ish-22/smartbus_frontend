@@ -1,178 +1,302 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { Card } from '@/components/ui/Card'
-import { Button } from '@/components/ui/Button'
-import { 
-  PlusIcon, 
-  PencilIcon, 
-  TrashIcon,
-  EyeIcon,
-  ChartBarIcon,
-  GiftIcon
-} from '@heroicons/react/24/outline'
+import { useEffect, useState } from 'react';
+import { useAuth } from '@/hooks/useAuth';
+import { offerAPI, Offer } from '@/services/api/offers';
 
 export default function AdminOffersPage() {
-  const [activeTab, setActiveTab] = useState('active')
+  const { user, token } = useAuth();
+  const [offers, setOffers] = useState<Offer[]>([]);
+  const [showForm, setShowForm] = useState(false);
+  const [editingOffer, setEditingOffer] = useState<Offer | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [mounted, setMounted] = useState(false);
+  
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    discount_percentage: '',
+    required_points: '',
+    start_date: '',
+    end_date: '',
+    status: 'active' as 'active' | 'expired'
+  });
 
-  const offers = [
-    { id: 1, name: '20% Weekend Discount', type: 'Percentage', status: 'Active', usage: 245, routes: 'All Routes' },
-    { id: 2, name: 'Student Special', type: 'Percentage', status: 'Active', usage: 89, routes: 'Route 12A, 15B' },
-    { id: 3, name: 'Loyalty Miles Bonus', type: 'Mileage', status: 'Paused', usage: 156, routes: 'Premium Routes' },
-    { id: 4, name: 'Festival Offer', type: 'Event', status: 'Scheduled', usage: 0, routes: 'All Routes' },
-  ]
+  const fetchOffers = async () => {
+    if (!token) return;
+    setLoading(true);
+    try {
+      const response = await offerAPI.getActiveOffers(token);
+      setOffers(response.data || []);
+    } catch (error) {
+      console.error('Failed to fetch offers:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!token) return;
+    
+    const offerData = {
+      title: formData.title,
+      description: formData.description,
+      discount_percentage: parseInt(formData.discount_percentage),
+      required_points: parseInt(formData.required_points),
+      start_date: formData.start_date,
+      end_date: formData.end_date,
+      status: formData.status
+    };
+    
+    try {
+      if (editingOffer) {
+        await offerAPI.updateOffer(token, editingOffer.id, offerData);
+        alert('Offer updated successfully!');
+      } else {
+        await offerAPI.createOffer(token, offerData);
+        alert('Offer created successfully!');
+      }
+      
+      resetForm();
+      fetchOffers();
+    } catch (error) {
+      console.error('Failed to save offer:', error);
+      alert('Failed to save offer. Please try again.');
+    }
+  };
+
+  const handleEdit = (offer: Offer) => {
+    setEditingOffer(offer);
+    setFormData({
+      title: offer.title,
+      description: offer.description,
+      discount_percentage: offer.discount_percentage.toString(),
+      required_points: offer.required_points.toString(),
+      start_date: offer.start_date,
+      end_date: offer.end_date,
+      status: offer.status
+    });
+    setShowForm(true);
+  };
+
+  const handleDelete = async (id: number) => {
+    if (!token || !confirm('Are you sure you want to delete this offer?')) return;
+    
+    try {
+      await offerAPI.deleteOffer(token, id);
+      alert('Offer deleted successfully!');
+      fetchOffers();
+    } catch (error) {
+      console.error('Failed to delete offer:', error);
+      alert('Failed to delete offer. Please try again.');
+    }
+  };
+
+  const resetForm = () => {
+    setFormData({
+      title: '',
+      description: '',
+      discount_percentage: '',
+      required_points: '',
+      start_date: '',
+      end_date: '',
+      status: 'active'
+    });
+    setEditingOffer(null);
+    setShowForm(false);
+  };
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (mounted) {
+      fetchOffers();
+    }
+  }, [token, mounted]);
+
+  if (!mounted) {
+    return <div className="p-6">Loading...</div>;
+  }
+
+  if (!user || !token || user.role !== 'admin') {
+    return <div className="p-6">Access denied. Admin only.</div>;
+  }
 
   return (
-    <div className="space-y-4 sm:space-y-6 overflow-x-hidden">
-      <div className="flex justify-between items-center">
+    <div className="p-6 max-w-7xl mx-auto">
+      <div className="mb-6 flex justify-between items-center">
         <div>
-          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">Offer Management</h1>
-          <p className="text-gray-600">Create and manage promotional offers</p>
+          <h1 className="text-3xl font-bold">Offer Management</h1>
+          <p className="text-gray-600 mt-1">Create and manage discount offers</p>
         </div>
-        <Button className="bg-red-600 hover:bg-red-700">
-          <PlusIcon className="h-4 w-4 mr-2" />
-          Create Offer
-        </Button>
+        <button
+          onClick={() => setShowForm(!showForm)}
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        >
+          {showForm ? 'Cancel' : 'Create Offer'}
+        </button>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-        <Card className="p-3 sm:p-4 lg:p-6">
-          <div className="flex items-center">
-            <div className="p-2 bg-green-100 rounded-lg flex-shrink-0">
-              <GiftIcon className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
+      {showForm && (
+        <div className="mb-6 bg-white rounded-lg shadow p-6">
+          <h2 className="text-xl font-semibold mb-4">
+            {editingOffer ? 'Edit Offer' : 'Create New Offer'}
+          </h2>
+          
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">Title *</label>
+                <input
+                  type="text"
+                  required
+                  value={formData.title}
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  className="w-full border rounded px-3 py-2"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium mb-1">Discount % *</label>
+                <input
+                  type="number"
+                  required
+                  min="0"
+                  max="100"
+                  value={formData.discount_percentage}
+                  onChange={(e) => setFormData({ ...formData, discount_percentage: e.target.value })}
+                  className="w-full border rounded px-3 py-2"
+                />
+              </div>
             </div>
-            <div className="ml-3 min-w-0">
-              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Active Offers</p>
-              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">12</p>
-            </div>
-          </div>
-        </Card>
-        <Card className="p-3 sm:p-4 lg:p-6">
-          <div className="flex items-center">
-            <div className="p-2 bg-blue-100 rounded-lg flex-shrink-0">
-              <ChartBarIcon className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
-            </div>
-            <div className="ml-3 min-w-0">
-              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Usage</p>
-              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">1,234</p>
-            </div>
-          </div>
-        </Card>
-        <Card className="p-3 sm:p-4 lg:p-6">
-          <div className="flex items-center">
-            <div className="p-2 bg-purple-100 rounded-lg flex-shrink-0">
-              <span className="text-purple-600 text-lg sm:text-xl lg:text-2xl">LKR</span>
-            </div>
-            <div className="ml-3 min-w-0">
-              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Savings Given</p>
-              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">LKR 45,230</p>
-            </div>
-          </div>
-        </Card>
-        <Card className="p-3 sm:p-4 lg:p-6">
-          <div className="flex items-center">
-            <div className="p-2 bg-orange-100 rounded-lg flex-shrink-0">
-              <span className="text-orange-600 text-lg sm:text-xl lg:text-2xl">%</span>
-            </div>
-            <div className="ml-3 min-w-0">
-              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Conversion Rate</p>
-              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">23.5%</p>
-            </div>
-          </div>
-        </Card>
-      </div>
 
-      {/* Tabs */}
-      <div className="border-b border-gray-200">
-        <nav className="-mb-px flex space-x-8">
-          {['active', 'paused', 'scheduled', 'expired'].map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`py-2 px-1 border-b-2 font-medium text-sm sm:text-base capitalize ${
-                activeTab === tab
-                  ? 'border-red-500 text-red-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              {tab} Offers
-            </button>
-          ))}
-        </nav>
-      </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Description *</label>
+              <textarea
+                required
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                className="w-full border rounded px-3 py-2"
+                rows={3}
+              />
+            </div>
 
-      {/* Offers Table */}
-      <Card className="overflow-hidden">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">Required Points *</label>
+                <input
+                  type="number"
+                  required
+                  min="1"
+                  value={formData.required_points}
+                  onChange={(e) => setFormData({ ...formData, required_points: e.target.value })}
+                  className="w-full border rounded px-3 py-2"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium mb-1">Start Date *</label>
+                <input
+                  type="date"
+                  required
+                  value={formData.start_date}
+                  onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
+                  className="w-full border rounded px-3 py-2"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium mb-1">End Date *</label>
+                <input
+                  type="date"
+                  required
+                  value={formData.end_date}
+                  onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
+                  className="w-full border rounded px-3 py-2"
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-4">
+              <button
+                type="submit"
+                className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700"
+              >
+                {editingOffer ? 'Update Offer' : 'Create Offer'}
+              </button>
+              <button
+                type="button"
+                onClick={resetForm}
+                className="bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      <div className="bg-white rounded-lg shadow">
+        <div className="p-6 border-b">
+          <h2 className="text-xl font-semibold">All Offers</h2>
+        </div>
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Offer Name
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Type
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Usage
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Routes
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {offers.map((offer) => (
-                <tr key={offer.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="font-medium text-gray-900">{offer.name}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">
-                      {offer.type}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 py-1 text-xs rounded-full ${
-                      offer.status === 'Active' ? 'bg-green-100 text-green-800' :
-                      offer.status === 'Paused' ? 'bg-yellow-100 text-yellow-800' :
-                      'bg-gray-100 text-gray-800'
-                    }`}>
-                      {offer.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-gray-900">
-                    {offer.usage}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-gray-600">
-                    {offer.routes}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm sm:text-base font-medium">
-                    <div className="flex space-x-2">
-                      <button className="text-blue-600 hover:text-blue-900" title="View offer">
-                        <EyeIcon className="h-4 w-4" />
-                      </button>
-                      <button className="text-green-600 hover:text-green-900" title="Edit offer">
-                        <PencilIcon className="h-4 w-4" />
-                      </button>
-                      <button className="text-red-600 hover:text-red-900" title="Delete offer">
-                        <TrashIcon className="h-4 w-4" />
-                      </button>
-                    </div>
-                  </td>
+          {loading ? (
+            <div className="p-8 text-center">Loading...</div>
+          ) : offers.length === 0 ? (
+            <div className="p-8 text-center text-gray-500">No offers found</div>
+          ) : (
+            <table className="w-full">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Title</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Discount</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Points</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Valid Until</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y">
+                {offers.map((offer) => (
+                  <tr key={offer.id}>
+                    <td className="px-6 py-4 font-medium">{offer.title}</td>
+                    <td className="px-6 py-4">{offer.discount_percentage}%</td>
+                    <td className="px-6 py-4">{offer.required_points}</td>
+                    <td className="px-6 py-4">{new Date(offer.end_date).toLocaleDateString()}</td>
+                    <td className="px-6 py-4">
+                      <span className={`px-2 py-1 rounded text-xs font-medium ${
+                        offer.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                      }`}>
+                        {offer.status.toUpperCase()}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleEdit(offer)}
+                          className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDelete(offer.id)}
+                          className="text-red-600 hover:text-red-800 text-sm font-medium"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
-      </Card>
+      </div>
     </div>
-  )
+  );
 }
