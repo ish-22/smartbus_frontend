@@ -11,6 +11,7 @@ export default function AdminLostFoundPage() {
   const [stats, setStats] = useState({ total: 0, lost: 0, found: 0, returned: 0 });
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<string>('');
+  const [mounted, setMounted] = useState(false);
 
   const fetchItems = async () => {
     if (!token) return;
@@ -36,12 +37,22 @@ export default function AdminLostFoundPage() {
   };
 
   useEffect(() => {
-    fetchItems();
-    fetchStats();
-  }, [token, filter]);
+    setMounted(true);
+  }, []);
 
-  if (!user || !token) {
-    return <div className="p-6">Please log in to access this page.</div>;
+  useEffect(() => {
+    if (mounted && token) {
+      fetchItems();
+      fetchStats();
+    }
+  }, [mounted, token, filter]);
+
+  if (!mounted) {
+    return <div className="p-6 max-w-7xl mx-auto"><div className="mb-6">Loading...</div></div>;
+  }
+
+  if (!user || !token || user.role !== 'admin') {
+    return <div className="p-6 max-w-7xl mx-auto"><div className="mb-6">Access denied. Admin only.</div></div>;
   }
 
   return (
