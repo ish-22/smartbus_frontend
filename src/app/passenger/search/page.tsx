@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { createBookingAPI } from '@/services/api/bookingApi';
 import { rewardAPI } from '@/services/api/rewards';
@@ -19,6 +20,7 @@ interface Bus {
 }
 
 export default function PassengerSearchPage() {
+  const router = useRouter();
   const { user, token } = useAuth();
   const [buses] = useState<Bus[]>([
     { id: 1, name: 'Express 12A', route: 'Route 12A', from: 'Colombo Fort', to: 'Kandy', time: '08:30 AM', duration: '3h 30m', price: 250 },
@@ -134,12 +136,11 @@ export default function PassengerSearchPage() {
 
       const response = await createBookingAPI(bookingData, token);
       
-      const discountMsg = response.total_discount > 0 ? `Saved Rs. ${response.total_discount}! ` : '';
-      setBookingMessage(`Booking successful! ${discountMsg}Complete your trip to earn rewards.`);
       setShowBookingForm(false);
       setSelectedBus(null);
-      fetchRewardData();
-      setTimeout(() => setBookingMessage(''), 5000);
+      
+      // Redirect to bookings page to see confirmation
+      router.push('/passenger/bookings');
     } catch (error) {
       console.error('Failed to create booking:', error);
       const errorMessage = error instanceof Error ? error.message : 'Failed to create booking. Please try again.';
