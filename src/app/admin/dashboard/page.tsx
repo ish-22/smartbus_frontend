@@ -1,9 +1,41 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { UserGroupIcon, MapIcon, ChartBarIcon, ExclamationTriangleIcon, CogIcon, ShieldCheckIcon, UsersIcon, TruckIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
+import { useAuthStore } from '@/store/authStore';
+import { getAdminDashboardStats, type AdminDashboardStats } from '@/services/api/dashboardApi';
+import Link from 'next/link';
 
 export default function AdminDashboard() {
+  const { user, token } = useAuthStore();
   const [activeTab, setActiveTab] = useState('overview');
+  const [stats, setStats] = useState<AdminDashboardStats | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted || !token || !user || user.role !== 'admin') {
+      setIsLoading(false);
+      return;
+    }
+
+    const loadStats = async () => {
+      try {
+        setIsLoading(true);
+        const data = await getAdminDashboardStats(token);
+        setStats(data);
+      } catch (error) {
+        console.error('Failed to load dashboard stats:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadStats();
+  }, [mounted, token, user]);
 
   const tabs = [
     { id: 'overview', label: 'Overview', icon: ChartBarIcon },
@@ -26,7 +58,9 @@ export default function AdminDashboard() {
                   </div>
                   <div className="ml-3 min-w-0">
                     <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Users</p>
-                    <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">12,543</p>
+                    <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">
+                      {isLoading ? '...' : stats?.total_users?.toLocaleString() || '0'}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -37,7 +71,9 @@ export default function AdminDashboard() {
                   </div>
                   <div className="ml-3 min-w-0">
                     <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Active Routes</p>
-                    <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">45</p>
+                    <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">
+                      {isLoading ? '...' : stats?.active_routes || '0'}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -47,8 +83,10 @@ export default function AdminDashboard() {
                     <ChartBarIcon className="h-5 w-5 sm:h-6 sm:w-6 text-purple-600" />
                   </div>
                   <div className="ml-3 min-w-0">
-                    <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Daily Trips</p>
-                    <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">1,234</p>
+                    <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Today's Bookings</p>
+                    <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">
+                      {isLoading ? '...' : stats?.today_bookings || '0'}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -58,27 +96,94 @@ export default function AdminDashboard() {
                     <ExclamationTriangleIcon className="h-5 w-5 sm:h-6 sm:w-6 text-red-600" />
                   </div>
                   <div className="ml-3 min-w-0">
-                    <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">System Alerts</p>
-                    <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">3</p>
+                    <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Pending Incidents</p>
+                    <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">
+                      {isLoading ? '...' : stats?.pending_incidents || '0'}
+                    </p>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="bg-white p-3 sm:p-4 lg:p-6 rounded-lg shadow">
-              <h3 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">Recent Activity</h3>
-              <div className="space-y-3 sm:space-y-4">
-                {[
-                  { action: 'New user registration', time: '2 minutes ago' },
-                  { action: 'Route 45 reported delay', time: '15 minutes ago' },
-                  { action: 'Driver completed trip', time: '1 hour ago' },
-                  { action: 'System backup completed', time: '2 hours ago' }
-                ].map((activity, index) => (
-                  <div key={index} className="flex flex-col sm:flex-row sm:justify-between py-2 border-b border-gray-100 last:border-b-0 space-y-1 sm:space-y-0">
-                    <span className="text-sm sm:text-base text-gray-700 truncate">{activity.action}</span>
-                    <span className="text-xs sm:text-sm text-gray-500 flex-shrink-0">{activity.time}</span>
+            
+            {/* Additional Stats Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+              <div className="bg-white p-3 sm:p-4 lg:p-6 rounded-lg shadow">
+                <div className="flex items-center">
+                  <div className="p-2 bg-blue-100 rounded-lg flex-shrink-0">
+                    <UsersIcon className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
                   </div>
-                ))}
+                  <div className="ml-3 min-w-0">
+                    <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Passengers</p>
+                    <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">
+                      {isLoading ? '...' : stats?.total_passengers || '0'}
+                    </p>
+                  </div>
+                </div>
               </div>
+              <div className="bg-white p-3 sm:p-4 lg:p-6 rounded-lg shadow">
+                <div className="flex items-center">
+                  <div className="p-2 bg-green-100 rounded-lg flex-shrink-0">
+                    <UsersIcon className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
+                  </div>
+                  <div className="ml-3 min-w-0">
+                    <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Drivers</p>
+                    <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">
+                      {isLoading ? '...' : stats?.total_drivers || '0'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-white p-3 sm:p-4 lg:p-6 rounded-lg shadow">
+                <div className="flex items-center">
+                  <div className="p-2 bg-purple-100 rounded-lg flex-shrink-0">
+                    <TruckIcon className="h-5 w-5 sm:h-6 sm:w-6 text-purple-600" />
+                  </div>
+                  <div className="ml-3 min-w-0">
+                    <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Buses</p>
+                    <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">
+                      {isLoading ? '...' : stats?.total_buses || '0'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-white p-3 sm:p-4 lg:p-6 rounded-lg shadow">
+                <div className="flex items-center">
+                  <div className="p-2 bg-green-100 rounded-lg flex-shrink-0">
+                    <CheckCircleIcon className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
+                  </div>
+                  <div className="ml-3 min-w-0">
+                    <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Resolved Incidents</p>
+                    <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">
+                      {isLoading ? '...' : stats?.resolved_incidents || '0'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Links */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+              <Link href="/admin/incidents" className="bg-white p-4 rounded-lg shadow hover:shadow-lg transition-shadow">
+                <div className="flex items-center mb-2">
+                  <ExclamationTriangleIcon className="h-5 w-5 text-red-600 mr-2" />
+                  <h3 className="font-semibold text-gray-900">Incidents</h3>
+                </div>
+                <p className="text-sm text-gray-600">Manage and resolve incidents</p>
+              </Link>
+              <Link href="/admin/notifications" className="bg-white p-4 rounded-lg shadow hover:shadow-lg transition-shadow">
+                <div className="flex items-center mb-2">
+                  <UsersIcon className="h-5 w-5 text-blue-600 mr-2" />
+                  <h3 className="font-semibold text-gray-900">Notifications</h3>
+                </div>
+                <p className="text-sm text-gray-600">Send notifications to users</p>
+              </Link>
+              <Link href="/admin/users" className="bg-white p-4 rounded-lg shadow hover:shadow-lg transition-shadow">
+                <div className="flex items-center mb-2">
+                  <UserGroupIcon className="h-5 w-5 text-green-600 mr-2" />
+                  <h3 className="font-semibold text-gray-900">User Management</h3>
+                </div>
+                <p className="text-sm text-gray-600">Manage all system users</p>
+              </Link>
             </div>
           </div>
         );
@@ -86,70 +191,36 @@ export default function AdminDashboard() {
         return (
           <div className="bg-white p-3 sm:p-4 lg:p-6 rounded-lg shadow">
             <h3 className="text-base sm:text-lg lg:text-xl font-semibold mb-3 sm:mb-4">User Management</h3>
-            <div className="space-y-3 sm:space-y-4">
-              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center p-3 sm:p-4 border rounded space-y-2 sm:space-y-0">
-                <div className="min-w-0">
-                  <p className="text-sm sm:text-base font-medium truncate">John Passenger</p>
-                  <p className="text-xs sm:text-sm text-gray-500 truncate">passenger@example.com</p>
-                </div>
-                <span className="px-2 py-1 bg-green-100 text-green-800 rounded text-xs sm:text-sm self-start sm:self-center flex-shrink-0">Active</span>
-              </div>
-              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center p-3 sm:p-4 border rounded space-y-2 sm:space-y-0">
-                <div className="min-w-0">
-                  <p className="text-sm sm:text-base font-medium truncate">Driver Silva</p>
-                  <p className="text-xs sm:text-sm text-gray-500 truncate">driver@example.com</p>
-                </div>
-                <span className="px-2 py-1 bg-green-100 text-green-800 rounded text-xs sm:text-sm self-start sm:self-center flex-shrink-0">Active</span>
-              </div>
-            </div>
+            <Link href="/admin/users" className="text-blue-600 hover:text-blue-800 font-medium">
+              Go to User Management →
+            </Link>
           </div>
         );
       case 'routes':
         return (
           <div className="bg-white p-3 sm:p-4 lg:p-6 rounded-lg shadow">
             <h3 className="text-base sm:text-lg lg:text-xl font-semibold mb-3 sm:mb-4">Routes & Buses</h3>
-            <div className="space-y-3 sm:space-y-4">
-              <div className="p-3 sm:p-4 border rounded">
-                <p className="text-sm sm:text-base font-medium">Colombo - Kandy</p>
-                <p className="text-xs sm:text-sm text-gray-500">2 buses active</p>
-              </div>
-              <div className="p-3 sm:p-4 border rounded">
-                <p className="text-sm sm:text-base font-medium">Colombo - Galle</p>
-                <p className="text-xs sm:text-sm text-gray-500">1 bus active</p>
-              </div>
-            </div>
+            <Link href="/admin/routes" className="text-blue-600 hover:text-blue-800 font-medium">
+              Go to Routes Management →
+            </Link>
           </div>
         );
       case 'security':
         return (
           <div className="bg-white p-3 sm:p-4 lg:p-6 rounded-lg shadow">
             <h3 className="text-base sm:text-lg lg:text-xl font-semibold mb-3 sm:mb-4">Security & Monitoring</h3>
-            <div className="space-y-3 sm:space-y-4">
-              <div className="p-3 sm:p-4 border rounded">
-                <p className="text-sm sm:text-base font-medium">Failed Login Attempts</p>
-                <p className="text-xs sm:text-sm text-gray-500">3 attempts in last hour</p>
-              </div>
-              <div className="p-3 sm:p-4 border rounded">
-                <p className="text-sm sm:text-base font-medium">System Health</p>
-                <p className="text-xs sm:text-sm text-green-600">All systems operational</p>
-              </div>
-            </div>
+            <Link href="/admin/security" className="text-blue-600 hover:text-blue-800 font-medium">
+              Go to Security Settings →
+            </Link>
           </div>
         );
       case 'settings':
         return (
           <div className="bg-white p-3 sm:p-4 lg:p-6 rounded-lg shadow">
             <h3 className="text-base sm:text-lg lg:text-xl font-semibold mb-3 sm:mb-4">System Settings</h3>
-            <div className="space-y-3 sm:space-y-4">
-              <div className="p-3 sm:p-4 border rounded">
-                <p className="text-sm sm:text-base font-medium">API Configuration</p>
-                <p className="text-xs sm:text-sm text-gray-500">Manage external integrations</p>
-              </div>
-              <div className="p-3 sm:p-4 border rounded">
-                <p className="text-sm sm:text-base font-medium">Notification Settings</p>
-                <p className="text-xs sm:text-sm text-gray-500">Configure system alerts</p>
-              </div>
-            </div>
+            <Link href="/admin/settings" className="text-blue-600 hover:text-blue-800 font-medium">
+              Go to System Settings →
+            </Link>
           </div>
         );
       default:
