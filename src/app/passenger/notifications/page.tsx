@@ -1,4 +1,5 @@
 'use client';
+
 import { useEffect, useState } from 'react';
 import { BellIcon, CheckIcon, ExclamationTriangleIcon, InformationCircleIcon } from '@heroicons/react/24/outline';
 import { useAuthStore } from '@/store/authStore';
@@ -10,7 +11,7 @@ import {
   type DriverNotification,
 } from '@/services/api/notificationApi';
 
-export default function DriverNotificationsPage() {
+export default function PassengerNotificationsPage() {
   const { user, token } = useAuthStore();
   const { showToast } = useUiStore();
 
@@ -25,7 +26,7 @@ export default function DriverNotificationsPage() {
 
   useEffect(() => {
     if (!mounted) return;
-    if (!token || !user || user.role !== 'driver') {
+    if (!token || !user || user.role !== 'passenger') {
       setIsLoading(false);
       return;
     }
@@ -91,7 +92,7 @@ export default function DriverNotificationsPage() {
     <div className="p-3 sm:p-4 lg:p-6">
       <div className="flex justify-between items-center mb-4 sm:mb-6">
         <div className="flex items-center gap-3">
-          <BellIcon className="h-6 w-6 sm:h-7 sm:w-7 lg:h-8 lg:w-8 text-green-600" />
+          <BellIcon className="h-6 w-6 sm:h-7 sm:w-7 lg:h-8 lg:w-8 text-blue-600" />
           <div>
             <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">Notifications</h1>
             <p className="text-sm sm:text-base text-gray-500">{unreadCount} unread notifications</p>
@@ -101,7 +102,7 @@ export default function DriverNotificationsPage() {
           <button
             onClick={() => setOnlyUnread(!onlyUnread)}
             className={`text-sm sm:text-base font-medium px-3 py-1 rounded-full border ${
-              onlyUnread ? 'bg-green-600 text-white border-green-600' : 'text-gray-600 border-gray-300'
+              onlyUnread ? 'bg-blue-600 text-white border-blue-600' : 'text-gray-600 border-gray-300'
             }`}
           >
             {onlyUnread ? 'Showing Unread' : 'Showing All'}
@@ -109,7 +110,7 @@ export default function DriverNotificationsPage() {
           {unreadCount > 0 && (
             <button
               onClick={markAllAsReadHandler}
-              className="text-green-600 hover:text-green-800 text-sm sm:text-base font-medium"
+              className="text-blue-600 hover:text-blue-800 text-sm sm:text-base font-medium"
             >
               Mark all as read
             </button>
@@ -128,7 +129,7 @@ export default function DriverNotificationsPage() {
               <div
                 key={notification.id}
                 className={`p-3 sm:p-4 lg:p-6 hover:bg-gray-50 cursor-pointer ${
-                  !notification.read_at ? 'bg-green-50' : ''
+                  !notification.read_at ? 'bg-blue-50' : ''
                 }`}
                 onClick={() => markAsRead(notification.id)}
               >
@@ -149,7 +150,7 @@ export default function DriverNotificationsPage() {
                     </div>
                     <p className="text-sm sm:text-base text-gray-600 mt-1">{notification.message}</p>
                     {!notification.read_at && (
-                      <div className="w-2 h-2 bg-green-500 rounded-full mt-2" />
+                      <div className="w-2 h-2 bg-blue-500 rounded-full mt-2" />
                     )}
                   </div>
                 </div>
@@ -161,3 +162,5 @@ export default function DriverNotificationsPage() {
     </div>
   );
 }
+
+
