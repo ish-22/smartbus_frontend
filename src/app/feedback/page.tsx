@@ -392,7 +392,7 @@ export default function FeedbackPage() {
                       <EyeIcon className="h-4 w-4 mr-1" />
                       View
                     </Button>
-                    {(item.user_id === user?.id || user?.role === 'admin') && (
+                    {(item.user_id === parseInt(user?.id || '0') || user?.role === 'admin') && (
                       <Button
                         variant="danger"
                         size="sm"

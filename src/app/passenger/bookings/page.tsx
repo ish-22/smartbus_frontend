@@ -83,7 +83,7 @@ export default function PassengerBookingsPage() {
     return <div className="p-6">Please log in to access this page.</div>;
   }
 
-  const activeBookings = bookings.filter(b => b.status === 'confirmed' || b.status === 'pending');
+  const activeBookings = bookings.filter(b => b.status === 'confirmed');
   const completedBookings = bookings.filter(b => b.status === 'completed');
 
   return (

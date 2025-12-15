@@ -10,6 +10,7 @@ export type AuthUser = {
 	role: UserRole;
 	lang?: 'en' | 'si' | 'ta';
 	phone?: string | null;
+	driver_type?: 'expressway' | 'normal' | null;
 };
 
 type AuthState = {

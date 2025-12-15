@@ -34,7 +34,7 @@ export default function PassengerProfilePage() {
     }
     
     // Ensure user is passenger
-    if (user.role !== 'PASSENGER') {
+    if (user.role !== 'passenger') {
       router.push('/');
       return;
     }
@@ -59,6 +59,12 @@ export default function PassengerProfilePage() {
         const message = error instanceof Error ? error.message : 'Failed to load profile';
         showToast({ type: 'error', message });
         console.error('Error fetching profile:', error);
+        // Don't redirect on error - let user stay on page and try again
+        // Only redirect if it's a 401 (unauthorized) which means token is invalid
+        if (error instanceof Error && message.includes('401')) {
+          // Token might be invalid, but don't auto-logout - let the auth guard handle it
+          console.warn('Profile API returned 401, but keeping user logged in');
+        }
       } finally {
         setIsLoading(false);
       }

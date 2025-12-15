@@ -64,6 +64,12 @@ export const API_ENDPOINTS = {
 		DELETE: (id: string) => `/feedback/${id}`,
 		UPDATE_STATUS: (id: string) => `/feedback/${id}/status`,
 		STATS: '/feedback/stats'
+	},
+	// Drivers
+	DRIVERS: {
+		ASSIGN_BUS: (driverId: string) => `/drivers/${driverId}/assign-bus`,
+		CURRENT_ASSIGNMENT: (driverId: string) => `/drivers/${driverId}/current-assignment`,
+		END_ASSIGNMENT: (driverId: string, assignmentId: string) => `/drivers/${driverId}/assignments/${assignmentId}/end`
 	}
 };
 

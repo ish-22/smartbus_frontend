@@ -144,11 +144,11 @@ export default function AdminOwnerAccountsPage() {
                     {owner.busCount} buses
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <Button variant="outline" size="sm" className="mr-2">
+                    <Button variant="secondary" size="sm" className="mr-2">
                       <EyeIcon className="h-4 w-4 mr-1" />
                       View
                     </Button>
-                    <Button variant="outline" size="sm">
+                    <Button variant="secondary" size="sm">
                       Edit
                     </Button>
                   </td>

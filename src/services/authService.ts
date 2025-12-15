@@ -49,6 +49,7 @@ export async function registerUser(
 			email: response.user.email || response.user.phone || '',
 			role: convertRole(response.user.role),
 			phone: response.user.phone || undefined,
+			driver_type: response.user.driver_type || undefined,
 		};
 
 		// Auto login after successful registration
@@ -99,6 +100,7 @@ export async function loginWithEmail(emailOrPhone: string, password: string): Pr
 			email: response.user.email || response.user.phone || '',
 			role: convertRole(response.user.role),
 			phone: response.user.phone || undefined,
+			driver_type: response.user.driver_type || undefined,
 		};
 
 		useAuthStore.getState().login(authUser, response.token);

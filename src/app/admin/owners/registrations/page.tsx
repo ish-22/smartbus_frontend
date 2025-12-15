@@ -142,7 +142,7 @@ export default function AdminOwnerRegistrationsPage() {
                     {registration.documents.length} documents
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                    <Button variant="outline" size="sm">
+                    <Button variant="secondary" size="sm">
                       Review
                     </Button>
                     {registration.status === 'pending' && (
@@ -150,7 +150,7 @@ export default function AdminOwnerRegistrationsPage() {
                         <Button size="sm" className="bg-green-600 hover:bg-green-700">
                           Approve
                         </Button>
-                        <Button size="sm" variant="outline" className="text-red-600 border-red-600 hover:bg-red-50">
+                        <Button size="sm" variant="secondary" className="text-red-600 border-red-600 hover:bg-red-50">
                           Reject
                         </Button>
                       </>

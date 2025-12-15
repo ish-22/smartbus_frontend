@@ -146,11 +146,11 @@ export default function AdminAdminsPage() {
                     {admin.lastLogin}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                    <Button variant="outline" size="sm">
+                    <Button variant="secondary" size="sm">
                       <EyeIcon className="h-4 w-4 mr-1" />
                       View
                     </Button>
-                    <Button variant="outline" size="sm">
+                    <Button variant="secondary" size="sm">
                       Edit
                     </Button>
                   </td>
