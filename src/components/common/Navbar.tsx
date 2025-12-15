@@ -26,23 +26,23 @@ export default function Navbar() {
 						<Link href="/auth/register">Register</Link>
 					</>
 				)}
-				{isAuthenticated && user?.role === 'PASSENGER' && (
-					<>
-						<Link href="/passenger/dashboard">Passenger</Link>
-						<Link href="/feedback">Feedback</Link>
-						<Link href="/lost-found">Lost & Found</Link>
-						<button onClick={handleLogout} className="px-2 py-1 border rounded hover:bg-blue-50">Logout {user?.name}</button>
-					</>
-				)}
-				{isAuthenticated && user?.role === 'DRIVER' && (
-					<>
-						<Link href="/driver/dashboard">Driver</Link>
-						<Link href="/feedback">Feedback</Link>
-						<Link href="/lost-found">Lost & Found</Link>
-						<button onClick={handleLogout} className="px-2 py-1 border rounded hover:bg-blue-50">Logout {user?.name}</button>
-					</>
-				)}
-				{isAuthenticated && user?.role === 'ADMIN' && (
+			{isAuthenticated && user?.role === 'passenger' && (
+				<>
+					<Link href="/passenger/dashboard">Passenger</Link>
+					<Link href="/feedback">Feedback</Link>
+					<Link href="/lost-found">Lost & Found</Link>
+					<button onClick={handleLogout} className="px-2 py-1 border rounded hover:bg-blue-50">Logout {user?.name}</button>
+				</>
+			)}
+			{isAuthenticated && user?.role === 'driver' && (
+				<>
+					<Link href="/driver/dashboard">Driver</Link>
+					<Link href="/feedback">Feedback</Link>
+					<Link href="/lost-found">Lost & Found</Link>
+					<button onClick={handleLogout} className="px-2 py-1 border rounded hover:bg-blue-50">Logout {user?.name}</button>
+				</>
+			)}
+			{isAuthenticated && user?.role === 'admin' && (
 					<>
 						<Link href="/admin/dashboard">Admin</Link>
 						<Link href="/feedback">Feedback</Link>

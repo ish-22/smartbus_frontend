@@ -7,6 +7,7 @@ export type RegisterRequest = {
 	phone?: string;
 	password: string;
 	role?: 'passenger' | 'driver' | 'admin';
+	driver_type?: 'expressway' | 'normal';
 };
 
 export type LoginRequest = {
@@ -22,6 +23,7 @@ export type AuthResponse = {
 		email: string | null;
 		phone: string | null;
 		role: 'passenger' | 'driver' | 'admin';
+		driver_type?: 'expressway' | 'normal' | null;
 	};
 	token: string;
 	token_type: string;

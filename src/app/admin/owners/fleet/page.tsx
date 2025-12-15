@@ -168,10 +168,10 @@ export default function AdminOwnerFleetPage() {
                     <div className="text-gray-500">Next: {bus.nextMaintenance}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                    <Button variant="outline" size="sm">
+                    <Button variant="secondary" size="sm">
                       View
                     </Button>
-                    <Button variant="outline" size="sm">
+                    <Button variant="secondary" size="sm">
                       Track
                     </Button>
                   </td>

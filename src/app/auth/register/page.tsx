@@ -11,7 +11,8 @@ export default function RegisterPage() {
     phone: '',
     password: '',
     confirmPassword: '',
-    role: 'passenger'
+    role: 'passenger',
+    driver_type: '' as 'expressway' | 'normal' | ''
   })
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
@@ -31,6 +32,11 @@ export default function RegisterPage() {
       if (formData.password !== formData.confirmPassword) {
         throw new Error('Passwords do not match')
       }
+
+      // Validate driver type if role is driver
+      if (formData.role === 'driver' && !formData.driver_type) {
+        throw new Error('Please select your driver type (Expressway or Normal Route)')
+      }
       
       // Call the backend API
       const response = await fetch('http://127.0.0.1:8000/api/auth/register', {
@@ -44,7 +50,8 @@ export default function RegisterPage() {
           email: formData.email || null,
           phone: formData.phone || null,
           password: formData.password,
-          role: formData.role
+          role: formData.role,
+          driver_type: formData.role === 'driver' ? formData.driver_type : null
         })
       })
       
@@ -66,10 +73,15 @@ export default function RegisterPage() {
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setFormData(prev => ({
-      ...prev,
-      [e.target.name]: e.target.value
-    }))
+    const { name, value } = e.target
+    setFormData(prev => {
+      const updated = { ...prev, [name]: value }
+      // Reset driver_type when role changes away from driver
+      if (name === 'role' && value !== 'driver') {
+        updated.driver_type = ''
+      }
+      return updated
+    })
   }
 
   return (
@@ -162,6 +174,70 @@ export default function RegisterPage() {
                     <option value="owner">Bus Owner</option>
                   </select>
                 </div>
+
+                {formData.role === 'driver' && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Driver Type <span className="text-red-500">*</span>
+                    </label>
+                    <div className="grid grid-cols-2 gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setFormData(prev => ({ ...prev, driver_type: 'expressway' }))}
+                        className={`p-4 border-2 rounded-lg transition-all text-left ${
+                          formData.driver_type === 'expressway'
+                            ? 'border-green-600 bg-green-50'
+                            : 'border-gray-300 hover:border-green-400'
+                        }`}
+                      >
+                        <div className="flex items-center space-x-2">
+                          <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                            formData.driver_type === 'expressway'
+                              ? 'border-green-600 bg-green-600'
+                              : 'border-gray-400'
+                          }`}>
+                            {formData.driver_type === 'expressway' && (
+                              <div className="w-2 h-2 rounded-full bg-white"></div>
+                            )}
+                          </div>
+                          <div>
+                            <div className="font-semibold text-gray-900">Expressway Driver</div>
+                            <div className="text-xs text-gray-600">For expressway routes</div>
+                          </div>
+                        </div>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setFormData(prev => ({ ...prev, driver_type: 'normal' }))}
+                        className={`p-4 border-2 rounded-lg transition-all text-left ${
+                          formData.driver_type === 'normal'
+                            ? 'border-blue-600 bg-blue-50'
+                            : 'border-gray-300 hover:border-blue-400'
+                        }`}
+                      >
+                        <div className="flex items-center space-x-2">
+                          <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                            formData.driver_type === 'normal'
+                              ? 'border-blue-600 bg-blue-600'
+                              : 'border-gray-400'
+                          }`}>
+                            {formData.driver_type === 'normal' && (
+                              <div className="w-2 h-2 rounded-full bg-white"></div>
+                            )}
+                          </div>
+                          <div>
+                            <div className="font-semibold text-gray-900">Normal Route Driver</div>
+                            <div className="text-xs text-gray-600">For normal city routes</div>
+                          </div>
+                        </div>
+                      </button>
+                    </div>
+                    {!formData.driver_type && (
+                      <p className="mt-1 text-xs text-red-600">Please select your driver type</p>
+                    )}
+                  </div>
+                )}
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">

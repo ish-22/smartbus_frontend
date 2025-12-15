@@ -1,10 +1,33 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { UserGroupIcon, MapIcon, ChartBarIcon, ExclamationTriangleIcon, CogIcon, ShieldCheckIcon, UsersIcon, TruckIcon, CheckCircleIcon, UserIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
+import { useAuthStore } from '@/store/authStore';
+import { getIncidentStats } from '@/services/api/incidentApi';
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('overview');
+  const { user, token } = useAuthStore();
+  const [incidentStats, setIncidentStats] = useState<any>(null);
+  const [loadingStats, setLoadingStats] = useState(true);
+
+  useEffect(() => {
+    if (token && user?.role === 'admin') {
+      loadIncidentStats();
+    }
+  }, [token, user]);
+
+  const loadIncidentStats = async () => {
+    if (!token) return;
+    try {
+      const stats = await getIncidentStats(token);
+      setIncidentStats(stats);
+    } catch (error) {
+      console.error('Error loading incident stats:', error);
+    } finally {
+      setLoadingStats(false);
+    }
+  };
 
   const tabs = [
     { id: 'overview', label: 'Overview', icon: ChartBarIcon },
@@ -53,32 +76,83 @@ export default function AdminDashboard() {
                   </div>
                 </div>
               </div>
-              <div className="bg-white p-3 sm:p-4 lg:p-6 rounded-lg shadow">
-                <div className="flex items-center">
-                  <div className="p-2 bg-red-100 rounded-lg flex-shrink-0">
-                    <ExclamationTriangleIcon className="h-5 w-5 sm:h-6 sm:w-6 text-red-600" />
-                  </div>
-                  <div className="ml-3 min-w-0">
-                    <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">System Alerts</p>
-                    <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">3</p>
+              <Link href="/admin/incidents">
+                <div className="bg-white p-3 sm:p-4 lg:p-6 rounded-lg shadow hover:shadow-lg transition-shadow cursor-pointer">
+                  <div className="flex items-center">
+                    <div className="p-2 bg-red-100 rounded-lg flex-shrink-0">
+                      <ExclamationTriangleIcon className="h-5 w-5 sm:h-6 sm:w-6 text-red-600" />
+                    </div>
+                    <div className="ml-3 min-w-0">
+                      <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Active Incidents</p>
+                      <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">
+                        {loadingStats ? '...' : (incidentStats?.unresolved || 0)}
+                      </p>
+                      {incidentStats && (
+                        <p className="text-xs text-gray-500 mt-1">
+                          {incidentStats.total} total
+                        </p>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             </div>
-            <div className="bg-white p-3 sm:p-4 lg:p-6 rounded-lg shadow">
-              <h3 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">Recent Activity</h3>
-              <div className="space-y-3 sm:space-y-4">
-                {[
-                  { action: 'New user registration', time: '2 minutes ago' },
-                  { action: 'Route 45 reported delay', time: '15 minutes ago' },
-                  { action: 'Driver completed trip', time: '1 hour ago' },
-                  { action: 'System backup completed', time: '2 hours ago' }
-                ].map((activity, index) => (
-                  <div key={index} className="flex justify-between py-2 border-b border-gray-100 last:border-b-0">
-                    <span className="text-gray-700">{activity.action}</span>
-                    <span className="text-sm sm:text-base text-gray-500">{activity.time}</span>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+              <div className="bg-white p-3 sm:p-4 lg:p-6 rounded-lg shadow">
+                <div className="flex items-center justify-between mb-3 sm:mb-4">
+                  <h3 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900">Recent Activity</h3>
+                </div>
+                <div className="space-y-3 sm:space-y-4">
+                  {[
+                    { action: 'New user registration', time: '2 minutes ago' },
+                    { action: 'Route 45 reported delay', time: '15 minutes ago' },
+                    { action: 'Driver completed trip', time: '1 hour ago' },
+                    { action: 'System backup completed', time: '2 hours ago' }
+                  ].map((activity, index) => (
+                    <div key={index} className="flex justify-between py-2 border-b border-gray-100 last:border-b-0">
+                      <span className="text-gray-700">{activity.action}</span>
+                      <span className="text-sm sm:text-base text-gray-500">{activity.time}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="bg-white p-3 sm:p-4 lg:p-6 rounded-lg shadow">
+                <div className="flex items-center justify-between mb-3 sm:mb-4">
+                  <h3 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900">Incident Overview</h3>
+                  <Link href="/admin/incidents" className="text-sm text-red-600 hover:text-red-700 font-medium">
+                    View All →
+                  </Link>
+                </div>
+                {loadingStats ? (
+                  <div className="text-center py-4 text-gray-500">Loading...</div>
+                ) : incidentStats ? (
+                  <div className="space-y-3 sm:space-y-4">
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-700">Total Incidents</span>
+                      <span className="font-semibold text-gray-900">{incidentStats.total}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-700">Unresolved</span>
+                      <span className="font-semibold text-red-600">{incidentStats.unresolved}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-700">In Progress</span>
+                      <span className="font-semibold text-yellow-600">{incidentStats.by_status.in_progress}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-700">Resolved</span>
+                      <span className="font-semibold text-green-600">{incidentStats.by_status.resolved}</span>
+                    </div>
+                    <div className="pt-2 border-t border-gray-200">
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-700">Critical Severity</span>
+                        <span className="font-semibold text-red-700">{incidentStats.by_severity.critical}</span>
+                      </div>
+                    </div>
                   </div>
-                ))}
+                ) : (
+                  <div className="text-center py-4 text-gray-500">No incident data available</div>
+                )}
               </div>
             </div>
           </div>
