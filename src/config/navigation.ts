@@ -43,6 +43,7 @@ export const navigationConfig = {
     { name: 'Analytics', href: '/admin/analytics', icon: ChartBarIcon },
     { name: 'Lost & Found', href: '/admin/lost-found', icon: ArchiveBoxIcon },
     { name: 'Incidents', href: '/admin/incidents', icon: ExclamationTriangleIcon },
+    { name: 'Notifications', href: '/admin/notifications', icon: BellIcon },
     { name: 'Reports', href: '/admin/reports', icon: DocumentTextIcon },
     { name: 'Security', href: '/admin/security', icon: ShieldCheckIcon },
     { name: 'Manage Admins', href: '/admin/admins', icon: ShieldCheckIcon },
@@ -59,6 +60,7 @@ export const navigationConfig = {
     { name: 'Offers & Promotions', href: '/owner/offers', icon: GiftIcon },
     { name: 'Lost & Found Verification', href: '/owner/lost-found', icon: ArchiveBoxIcon },
     { name: 'Incidents', href: '/owner/incidents', icon: ExclamationTriangleIcon },
+    { name: 'Notifications', href: '/owner/notifications', icon: BellIcon },
     { name: 'Reports', href: '/owner/reports', icon: DocumentTextIcon },
     { name: 'Profile', href: '/owner/profile', icon: UserIcon },
   ],
@@ -71,6 +73,7 @@ export const navigationConfig = {
     { name: 'Feedback', href: '/passenger/feedback', icon: ChatBubbleLeftRightIcon },
     { name: 'Lost & Found', href: '/passenger/lost-found', icon: ArchiveBoxIcon },
     { name: 'Bus Incidents', href: '/passenger/incidents', icon: ExclamationTriangleIcon },
+    { name: 'Notifications', href: '/passenger/notifications', icon: BellIcon },
     { name: 'Profile', href: '/passenger/profile', icon: UserIcon },
   ],
   driver: [
