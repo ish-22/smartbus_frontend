@@ -3,6 +3,7 @@ import { API_BASE_URL, API_ENDPOINTS } from '@/config/api';
 export type Route = {
 	id: number;
 	name: string;
+	route_number?: string;
 	start_point?: string;
 	end_point?: string;
 	metadata?: any;
@@ -32,17 +33,28 @@ function getAuthHeaders(token?: string | null): HeadersInit {
 	return headers;
 }
 
-export async function getRoutesAPI(): Promise<Route[]> {
-	const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.ROUTES.LIST}`, {
-		method: 'GET',
-		headers: getAuthHeaders(),
-	});
+export async function getRoutesAPI(type?: 'expressway' | 'normal'): Promise<Route[]> {
+	try {
+		const url = type 
+			? `${API_BASE_URL}${API_ENDPOINTS.ROUTES.LIST}?type=${type}`
+			: `${API_BASE_URL}${API_ENDPOINTS.ROUTES.LIST}`;
+		
+		const response = await fetch(url, {
+			method: 'GET',
+			headers: getAuthHeaders(),
+		});
 
-	if (!response.ok) {
-		throw new Error('Failed to fetch routes');
+		if (!response.ok) {
+			const errorData = await response.json().catch(() => ({ message: 'Failed to fetch routes' }));
+			throw new Error(errorData.message || `Failed to fetch routes: ${response.status}`);
+		}
+
+		const data = await response.json();
+		return Array.isArray(data) ? data : [];
+	} catch (error) {
+		console.error('Error fetching routes:', error);
+		throw error instanceof Error ? error : new Error('Failed to fetch routes');
 	}
-
-	return response.json();
 }
 
 export async function getRouteAPI(id: string): Promise<Route> {

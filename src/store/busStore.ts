@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import type { Bus, Route } from '@/types/bus';
 import { getBusesAPI } from '@/services/api/busApi';
 import { getRoutesAPI } from '@/services/api/routeApi';
+import { useAuthStore } from '@/store/authStore';
 
 type BusState = {
 	buses: Bus[];
@@ -33,7 +34,9 @@ export const useBusStore = create<BusState>((set, get) => ({
 	search: async () => {
 		set({ isLoading: true });
 		try {
-			const buses = await getBusesAPI();
+ 			// Get token if available, but don't require it since buses endpoint is now public
+			const token = useAuthStore.getState().token;
+			const buses = await getBusesAPI(token);
 			// Filter buses based on query
 			const { route, number, from, to } = get().query;
 			let filteredBuses = buses;

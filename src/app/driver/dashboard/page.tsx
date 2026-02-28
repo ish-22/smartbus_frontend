@@ -3,24 +3,24 @@
 import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { CalendarIcon, UsersIcon, MapPinIcon, QrCodeIcon, ExclamationTriangleIcon, MagnifyingGlassIcon, UserIcon, TruckIcon, BoltIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
+import { CalendarIcon, UsersIcon, MapPinIcon, QrCodeIcon, ExclamationTriangleIcon, MagnifyingGlassIcon, UserIcon, TruckIcon, BoltIcon, CheckCircleIcon, PhoneIcon, BuildingOfficeIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { useAuthStore } from '@/store/authStore';
 import { useDriverStore } from '@/store/driverStore';
-import BusSelectionModal from '@/components/driver/BusSelectionModal';
 import { getCurrentDriverAssignment } from '@/services/api/driverApi';
 import { useUiStore } from '@/store/uiStore';
 import { getDriverIncidents } from '@/services/api/incidentApi';
+import type { DriverAssignmentResponse } from '@/services/api/driverApi';
 
 export default function DriverDashboard() {
   const { user, token } = useAuthStore();
   const { session, isSessionActive, clearSession, setDriverSession } = useDriverStore();
   const { showToast } = useUiStore();
-  const [showBusModal, setShowBusModal] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [loadingAssignment, setLoadingAssignment] = useState(true);
   const [recentIncidents, setRecentIncidents] = useState<any[]>([]);
   const [incidentCounts, setIncidentCounts] = useState({ total: 0, unresolved: 0 });
+  const [assignmentDetails, setAssignmentDetails] = useState<DriverAssignmentResponse | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -55,18 +55,31 @@ export default function DriverDashboard() {
     }
 
     try {
-      const assignment = await getCurrentDriverAssignment(parseInt(user.id), token);
-      if (assignment && assignment.bus) {
-        // Sync with local store
-        setDriverSession(
-          assignment.driver_type,
-          assignment.bus_id,
-          assignment.bus.number || assignment.bus.bus_number || `Bus ${assignment.bus_id}`
-        );
+      const response = await getCurrentDriverAssignment(parseInt(user.id), token);
+      if (response && response.assignment) {
+        const assignment = response.assignment;
+        const busDetails = response.bus_details || assignment.bus;
+        
+        // Store assignment details for display
+        setAssignmentDetails(response);
+        
+        if (busDetails) {
+          // Sync with local store
+          setDriverSession(
+            assignment.driver_type || 'normal',
+            assignment.bus_id,
+            busDetails.bus_number || `Bus ${assignment.bus_id}`
+          );
+        }
+      } else {
+        setAssignmentDetails(null);
+        clearSession();
       }
     } catch (error) {
-      // If no assignment found (404), that's okay - driver needs to assign
-      if (error instanceof Error && !error.message.includes('404')) {
+      // If no assignment found, that's okay - driver hasn't been assigned by owner
+      setAssignmentDetails(null);
+      clearSession();
+      if (error instanceof Error && !error.message.includes('404') && !error.message.includes('No active assignment')) {
         console.error('Error loading assignment:', error);
       }
     } finally {
@@ -75,8 +88,7 @@ export default function DriverDashboard() {
   };
 
   const handleChangeBus = () => {
-    clearSession();
-    setShowBusModal(true);
+    showToast({ type: 'info', message: 'Please contact your bus owner to change your assignment' });
   };
 
   if (!mounted || loadingAssignment) {
@@ -87,6 +99,9 @@ export default function DriverDashboard() {
     );
   }
 
+  const busDetails = assignmentDetails?.bus_details || assignmentDetails?.assignment?.bus;
+  const assignment = assignmentDetails?.assignment;
+
   return (
     <div className="space-y-4 sm:space-y-6 sm:space-y-6 sm:space-y-8 overflow-x-hidden">
       <div>
@@ -94,71 +109,198 @@ export default function DriverDashboard() {
         <p className="text-sm sm:text-base sm:text-sm sm:text-base lg:text-lg text-gray-600 mt-1">Manage your trips and passenger services</p>
       </div>
 
-      {/* Bus Assignment Status Card */}
+      {/* Bus Assignment Status Card - Enhanced */}
       <Card className="p-4 sm:p-6">
-        <div className="flex items-center justify-between flex-wrap gap-4">
-          <div className="flex-1">
-            <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">Current Bus Assignment</h2>
-            {isSessionActive() && session ? (
-              <div className="space-y-2">
-                <div className="flex items-center space-x-3">
-                  {session.driverType === 'expressway' ? (
-                    <BoltIcon className="h-6 w-6 text-green-600" />
-                  ) : (
-                    <TruckIcon className="h-6 w-6 text-blue-600" />
-                  )}
-                  <div>
-                    <div className="flex items-center space-x-2">
-                      <span className="font-semibold text-gray-900">
-                        Bus {session.busNumber}
-                      </span>
-                      <span className={`px-2 py-1 text-xs rounded-full font-medium ${
-                        session.driverType === 'expressway'
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-blue-100 text-blue-800'
-                      }`}>
-                        {session.driverType === 'expressway' ? 'Expressway' : 'Normal Route'}
-                      </span>
-                    </div>
-                    <p className="text-sm text-gray-600 mt-1">
-                      Assigned today at {session.assignedAt ? new Date(session.assignedAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : ''}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div className="flex items-center space-x-3">
-                <ExclamationTriangleIcon className="h-6 w-6 text-yellow-600" />
-                <div>
-                  <p className="text-gray-700 font-medium">No bus assigned for today</p>
-                  <p className="text-sm text-gray-600 mt-1">
-                    Please select your driver type and bus to start your shift
-                  </p>
-                </div>
-              </div>
+        <div className="flex items-center justify-between flex-wrap gap-4 mb-4">
+          <div className="flex items-center space-x-2">
+            <h2 className="text-lg sm:text-xl font-semibold text-gray-900">Current Bus Assignment</h2>
+            {assignment && (
+              <CheckCircleIcon className="h-5 w-5 text-green-600" />
             )}
           </div>
-          <div className="flex space-x-2">
-            {isSessionActive() && session ? (
+          {assignment && (
+            <div className="flex space-x-2">
               <Button
                 onClick={handleChangeBus}
                 variant="secondary"
                 size="sm"
               >
-                Change Bus
+                Request Change
               </Button>
-            ) : (
-              <Button
-                onClick={() => setShowBusModal(true)}
-                className="bg-green-600 hover:bg-green-700"
-                size="sm"
-              >
-                <TruckIcon className="h-4 w-4 mr-2" />
-                Assign Bus
-              </Button>
-            )}
-          </div>
+            </div>
+          )}
         </div>
+
+        {assignment && busDetails ? (
+          <div className="space-y-4">
+            {/* Main Assignment Info */}
+            <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-lg p-4 border border-green-200">
+              <div className="flex items-start space-x-4">
+                <div className="flex-shrink-0">
+                  {assignment.driver_type === 'expressway' ? (
+                    <div className="p-3 bg-green-100 rounded-full">
+                      <BoltIcon className="h-8 w-8 text-green-600" />
+                    </div>
+                  ) : (
+                    <div className="p-3 bg-blue-100 rounded-full">
+                      <TruckIcon className="h-8 w-8 text-blue-600" />
+                    </div>
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center space-x-3 mb-2">
+                    <h3 className="text-xl font-bold text-gray-900">
+                      Bus {busDetails.bus_number}
+                    </h3>
+                    <span className={`px-3 py-1 text-sm rounded-full font-semibold ${
+                      assignment.driver_type === 'expressway'
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-blue-100 text-blue-800'
+                    }`}>
+                      {assignment.driver_type === 'expressway' ? 'Expressway' : 'Normal Route'}
+                    </span>
+                  </div>
+                  {assignment.assignment_date && (
+                    <p className="text-sm text-gray-600 mb-1">
+                      <CalendarIcon className="h-4 w-4 inline mr-1" />
+                      Assigned for {new Date(assignment.assignment_date).toLocaleDateString('en-US', { 
+                        weekday: 'long', 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric' 
+                      })}
+                    </p>
+                  )}
+                  {assignment.assigned_at && (
+                    <p className="text-xs text-gray-500">
+                      Assigned at {new Date(assignment.assigned_at).toLocaleTimeString('en-US', { 
+                        hour: '2-digit', 
+                        minute: '2-digit' 
+                      })}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Bus Details Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Bus Information */}
+              <div className="bg-white border border-gray-200 rounded-lg p-4">
+                <h4 className="font-semibold text-gray-900 mb-3 flex items-center">
+                  <TruckIcon className="h-5 w-5 mr-2 text-gray-600" />
+                  Bus Information
+                </h4>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Bus Number:</span>
+                    <span className="font-medium text-gray-900">{busDetails.bus_number}</span>
+                  </div>
+                  {busDetails.model && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Model:</span>
+                      <span className="font-medium text-gray-900">{busDetails.model}</span>
+                    </div>
+                  )}
+                  {busDetails.capacity && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Capacity:</span>
+                      <span className="font-medium text-gray-900">{busDetails.capacity} seats</span>
+                    </div>
+                  )}
+                  {busDetails.type && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Type:</span>
+                      <span className="font-medium text-gray-900 capitalize">{busDetails.type}</span>
+                    </div>
+                  )}
+                  {busDetails.status && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Status:</span>
+                      <span className={`font-medium ${
+                        busDetails.status === 'active' ? 'text-green-600' :
+                        busDetails.status === 'maintenance' ? 'text-yellow-600' :
+                        'text-red-600'
+                      }`}>
+                        {busDetails.status}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Route Information */}
+              {busDetails.route && (
+                <div className="bg-white border border-gray-200 rounded-lg p-4">
+                  <h4 className="font-semibold text-gray-900 mb-3 flex items-center">
+                    <MapPinIcon className="h-5 w-5 mr-2 text-gray-600" />
+                    Route Information
+                  </h4>
+                  <div className="space-y-2 text-sm">
+                    {busDetails.route.name && (
+                      <div>
+                        <span className="text-gray-600">Route Name:</span>
+                        <p className="font-medium text-gray-900">{busDetails.route.name}</p>
+                      </div>
+                    )}
+                    {(busDetails.route.start_point || busDetails.route.end_point) && (
+                      <div>
+                        <span className="text-gray-600">Route:</span>
+                        <p className="font-medium text-gray-900">
+                          {busDetails.route.start_point || 'Start'} → {busDetails.route.end_point || 'End'}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Owner Information */}
+              {busDetails.owner && (
+                <div className="bg-white border border-gray-200 rounded-lg p-4 md:col-span-2">
+                  <h4 className="font-semibold text-gray-900 mb-3 flex items-center">
+                    <BuildingOfficeIcon className="h-5 w-5 mr-2 text-gray-600" />
+                    Bus Owner Information
+                  </h4>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-medium text-gray-900">{busDetails.owner.name}</p>
+                      {busDetails.owner.phone && (
+                        <p className="text-sm text-gray-600 flex items-center mt-1">
+                          <PhoneIcon className="h-4 w-4 mr-1" />
+                          {busDetails.owner.phone}
+                        </p>
+                      )}
+                    </div>
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => {
+                        if (busDetails.owner?.phone) {
+                          window.location.href = `tel:${busDetails.owner.phone}`;
+                        }
+                      }}
+                      disabled={!busDetails.owner?.phone}
+                    >
+                      <PhoneIcon className="h-4 w-4 mr-1" />
+                      Contact Owner
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        ) : (
+          <div className="flex items-center space-x-3 py-8">
+            <ExclamationTriangleIcon className="h-6 w-6 text-yellow-600 flex-shrink-0" />
+            <div>
+              <p className="text-gray-700 font-medium">No bus assigned for today</p>
+              <p className="text-sm text-gray-600 mt-1">
+                Please wait for your bus owner to assign you to a bus. You will receive a notification when assigned.
+              </p>
+            </div>
+          </div>
+        )}
       </Card>
 
       {/* Recent Incidents Widget */}
@@ -303,16 +445,6 @@ export default function DriverDashboard() {
           </Link>
         </div>
       </div>
-
-      {/* Bus Selection Modal */}
-      <BusSelectionModal
-        isOpen={showBusModal}
-        onClose={() => setShowBusModal(false)}
-        onSuccess={() => {
-          setShowBusModal(false);
-          // Refresh will happen automatically via store
-        }}
-      />
     </div>
   );
 }
