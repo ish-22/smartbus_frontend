@@ -6,6 +6,7 @@ export type UserProfile = {
 	email: string | null;
 	phone: string | null;
 	role: 'passenger' | 'driver' | 'admin' | 'owner';
+	license_number?: string | null;
 	created_at?: string;
 	updated_at?: string;
 };
@@ -15,6 +16,7 @@ export type UpdateProfileRequest = {
 	email?: string | null;
 	phone?: string | null;
 	password?: string;
+	license_number?: string | null;
 };
 
 // Helper to get auth headers

@@ -8,6 +8,15 @@ export type RegisterRequest = {
 	password: string;
 	role?: 'passenger' | 'driver' | 'admin';
 	driver_type?: 'expressway' | 'normal';
+	// Driver-specific detailed fields
+	license_number?: string;
+	license_expiry_date?: string;
+	address?: string;
+	nic_number?: string;
+	date_of_birth?: string;
+	emergency_contact_name?: string;
+	emergency_contact_phone?: string;
+	experience_years?: number;
 };
 
 export type LoginRequest = {
@@ -24,6 +33,14 @@ export type AuthResponse = {
 		phone: string | null;
 		role: 'passenger' | 'driver' | 'admin';
 		driver_type?: 'expressway' | 'normal' | null;
+		license_number?: string | null;
+		license_expiry_date?: string | null;
+		address?: string | null;
+		nic_number?: string | null;
+		date_of_birth?: string | null;
+		emergency_contact_name?: string | null;
+		emergency_contact_phone?: string | null;
+		experience_years?: number | null;
 	};
 	token: string;
 	token_type: string;

@@ -25,6 +25,11 @@ export interface AdminDashboardStats {
 export interface OwnerDashboardStats {
   total_buses: number;
   active_buses: number;
+  maintenance_buses?: number;
+  inactive_buses?: number;
+  buses_with_drivers?: number;
+  total_assignments?: number;
+  active_assignments?: number;
   total_drivers: number;
   total_routes: number;
   today_bookings: number;

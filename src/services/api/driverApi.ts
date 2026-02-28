@@ -9,12 +9,53 @@ export type DriverAssignment = {
 	bus_id: number;
 	driver_type: DriverType;
 	assigned_at: string;
+	assignment_date?: string;
 	ended_at?: string | null;
+	assigned_by?: number;
 	bus?: {
 		id: number;
 		bus_number?: string;
 		number?: string;
+		model?: string;
+		capacity?: number;
+		type?: string;
+		status?: string;
+		route?: any;
+		owner?: {
+			id: number;
+			name: string;
+			phone?: string;
+		} | null;
 	} | null;
+	driver?: {
+		id: number;
+		name: string;
+		email?: string;
+		phone?: string;
+	};
+	assignedBy?: {
+		id: number;
+		name: string;
+	};
+	bus_details?: {
+		id: number;
+		bus_number: string;
+		model?: string;
+		capacity?: number;
+		type?: string;
+		status?: string;
+		route?: any;
+		owner?: {
+			id: number;
+			name: string;
+			phone?: string;
+		} | null;
+	};
+};
+
+export type DriverAssignmentResponse = {
+	assignment: DriverAssignment;
+	bus_details?: DriverAssignment['bus_details'];
 };
 
 function getAuthHeaders(token: string): HeadersInit {
@@ -25,25 +66,8 @@ function getAuthHeaders(token: string): HeadersInit {
 	};
 }
 
-// Get available buses for driver (filtered by type)
-export async function getAvailableBusesForDriver(
-	driverType: DriverType,
-	token: string
-): Promise<Bus[]> {
-	const response = await fetch(`${API_BASE_URL}/buses?type=${driverType}`, {
-		method: 'GET',
-		headers: getAuthHeaders(token),
-	});
-
-	if (!response.ok) {
-		throw new Error('Failed to fetch available buses');
-	}
-
-	return response.json();
-}
-
-// Get all buses (for driver selection)
-export async function getAllBusesForDriver(token: string): Promise<Bus[]> {
+// Get all buses (for owner to assign to drivers)
+export async function getAllBuses(token: string): Promise<Bus[]> {
 	const response = await fetch(`${API_BASE_URL}/buses`, {
 		method: 'GET',
 		headers: getAuthHeaders(token),
@@ -54,53 +78,59 @@ export async function getAllBusesForDriver(token: string): Promise<Bus[]> {
 	}
 
 	const data = await response.json();
-	// Handle both array and object with data property
 	return Array.isArray(data) ? data : (data.data || []);
 }
 
-// Assign driver to bus
+// Assign driver to bus (Owner/Admin only)
 export async function assignDriverToBus(
 	driverId: number,
 	busId: number,
-	driverType: DriverType,
+	assignmentDate?: string,
 	token: string
-): Promise<DriverAssignment> {
-	const response = await fetch(`${API_BASE_URL}/drivers/${driverId}/assign-bus`, {
+): Promise<DriverAssignmentResponse> {
+	const body: any = {
+		driver_id: driverId,
+		bus_id: busId,
+	};
+
+	if (assignmentDate) {
+		body.assignment_date = assignmentDate;
+	}
+
+	const response = await fetch(`${API_BASE_URL}/driver-assignments`, {
 		method: 'POST',
 		headers: getAuthHeaders(token),
-		body: JSON.stringify({
-			bus_id: busId,
-			driver_type: driverType,
-		}),
+		body: JSON.stringify(body),
 	});
 
 	if (!response.ok) {
-		const error = await response.json().catch(() => ({ message: 'Failed to assign bus' }));
-		throw new Error(error.message || 'Failed to assign bus');
+		const error = await response.json().catch(() => ({ message: 'Failed to assign driver to bus' }));
+		throw new Error(error.message || 'Failed to assign driver to bus');
 	}
 
-	const data = await response.json();
-	return data.assignment || data;
+	return response.json();
 }
 
-// Get current driver assignment
+// Get current driver assignment (Driver can view their own)
 export async function getCurrentDriverAssignment(
 	driverId: number,
 	token: string
-): Promise<DriverAssignment | null> {
+): Promise<DriverAssignmentResponse | null> {
 	const response = await fetch(`${API_BASE_URL}/drivers/${driverId}/current-assignment`, {
 		method: 'GET',
 		headers: getAuthHeaders(token),
 	});
 
 	if (!response.ok) {
-		if (response.status === 404) {
-			return null; // No current assignment
+		if (response.status === 404 || response.status === 200) {
+			const data = await response.json().catch(() => null);
+			return data?.assignment ? data : null;
 		}
 		throw new Error('Failed to fetch current assignment');
 	}
 
-	return response.json();
+	const data = await response.json();
+	return data.assignment ? data : { assignment: data };
 }
 
 // End current driver assignment
@@ -123,3 +153,33 @@ export async function endDriverAssignment(
 	}
 }
 
+// Get assignment history for a driver
+export async function getDriverAssignmentHistory(
+	driverId: number,
+	token: string
+): Promise<{ data: DriverAssignment[] }> {
+	const response = await fetch(`${API_BASE_URL}/drivers/${driverId}/assignments`, {
+		method: 'GET',
+		headers: getAuthHeaders(token),
+	});
+
+	if (!response.ok) {
+		throw new Error('Failed to fetch assignment history');
+	}
+
+	return response.json();
+}
+
+// Get all assignments for owner's buses
+export async function getOwnerAssignments(token: string): Promise<{ data: DriverAssignment[] }> {
+	const response = await fetch(`${API_BASE_URL}/driver-assignments/owner/all`, {
+		method: 'GET',
+		headers: getAuthHeaders(token),
+	});
+
+	if (!response.ok) {
+		throw new Error('Failed to fetch owner assignments');
+	}
+
+	return response.json();
+}

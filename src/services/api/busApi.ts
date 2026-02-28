@@ -3,13 +3,18 @@ import { API_BASE_URL, API_ENDPOINTS } from '@/config/api';
 export type Bus = {
 	id: number;
 	number: string;
+	bus_number?: string;
 	type: 'expressway' | 'normal';
 	route_id?: number;
 	capacity: number;
 	driver_id?: number;
+	owner_id?: number;
+	model?: string;
+	status?: 'active' | 'maintenance' | 'inactive';
 	route?: {
 		id: number;
 		name: string;
+		route_number?: string;
 		start_point?: string;
 		end_point?: string;
 	};
@@ -19,6 +24,11 @@ export type Bus = {
 		email?: string;
 		phone?: string;
 	};
+	owner?: {
+		id: number;
+		name: string;
+	};
+	created_at?: string;
 };
 
 function getAuthHeaders(token?: string | null): HeadersInit {
@@ -34,27 +44,29 @@ function getAuthHeaders(token?: string | null): HeadersInit {
 	return headers;
 }
 
-export async function getBusesAPI(): Promise<Bus[]> {
+export async function getBusesAPI(token?: string | null): Promise<Bus[]> {
 	const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.BUSES.LIST}`, {
 		method: 'GET',
-		headers: getAuthHeaders(),
+		headers: getAuthHeaders(token),
 	});
 
 	if (!response.ok) {
-		throw new Error('Failed to fetch buses');
+		const error = await response.json().catch(() => ({ message: 'Failed to fetch buses' }));
+		throw new Error(error.message || 'Failed to fetch buses');
 	}
 
 	return response.json();
 }
 
-export async function getBusAPI(id: string): Promise<Bus> {
+export async function getBusAPI(id: string, token?: string | null): Promise<Bus> {
 	const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.BUSES.DETAIL(id)}`, {
 		method: 'GET',
-		headers: getAuthHeaders(),
+		headers: getAuthHeaders(token),
 	});
 
 	if (!response.ok) {
-		throw new Error('Failed to fetch bus');
+		const error = await response.json().catch(() => ({ message: 'Failed to fetch bus' }));
+		throw new Error(error.message || 'Failed to fetch bus');
 	}
 
 	return response.json();

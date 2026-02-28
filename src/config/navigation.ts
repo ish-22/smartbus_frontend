@@ -51,7 +51,7 @@ export const navigationConfig = {
     { name: 'Settings', href: '/admin/settings', icon: CogIcon },
   ],
   owner: [
-    { name: 'Dashboard', href: '/owner', icon: HomeIcon },
+    { name: 'Dashboard', href: '/owner/dashboard', icon: HomeIcon },
     { name: 'Fleet Management', href: '/owner/fleet', icon: TruckIcon },
     { name: 'Bus Registrations', href: '/owner/registrations', icon: DocumentTextIcon },
     { name: 'Driver Assignments', href: '/owner/drivers', icon: UserIcon },
