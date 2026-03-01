@@ -1,12 +1,87 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { PlayIcon, StopIcon, MapPinIcon, ClockIcon } from '@heroicons/react/24/outline'
+import { useGPSTracking } from '@/hooks/useRealTimeData'
+import { useAuthStore } from '@/store/authStore'
+import { getCurrentDriverAssignment, type DriverAssignmentResponse } from '@/services/api/driverApi'
 
 export default function DriverTripPage() {
   const [tripActive, setTripActive] = useState(false)
+  const { position, error, isTracking, startTracking, stopTracking } = useGPSTracking()
+  const { user, token } = useAuthStore()
+  const [assignmentDetails, setAssignmentDetails] = useState<DriverAssignmentResponse | null>(null)
+
+  const handleToggleTrip = () => {
+    if (tripActive) {
+      stopTracking()
+      setTripActive(false)
+    } else {
+      startTracking()
+      setTripActive(true)
+    }
+  }
+
+  // Load current assignment for route info
+  useEffect(() => {
+    const loadAssignment = async () => {
+      if (!user?.id || !token || user.role !== 'driver') {
+        setAssignmentDetails(null)
+        return
+      }
+
+      try {
+        const response = await getCurrentDriverAssignment(parseInt(user.id as unknown as string, 10), token)
+        if (response && response.assignment) {
+          setAssignmentDetails(response)
+        } else {
+          setAssignmentDetails(null)
+        }
+      } catch (e) {
+        console.error('Error loading driver assignment for trip page:', e)
+        setAssignmentDetails(null)
+      }
+    }
+
+    loadAssignment()
+  }, [user, token])
+
+  // Ensure tracking stops when component unmounts or tripActive flips off unexpectedly
+  useEffect(() => {
+    if (!tripActive && isTracking) {
+      stopTracking()
+    }
+  }, [tripActive, isTracking, stopTracking])
+
+  const lastUpdateTime = position
+    ? new Date(position.timestamp).toLocaleTimeString()
+    : null
+
+  const assignment = assignmentDetails?.assignment
+  const busDetails = assignmentDetails?.bus_details || assignment?.bus
+  const route: any = busDetails?.route
+
+  const routeName = route?.name || 'Assigned route'
+  const routeDirection =
+    route?.start_point && route?.end_point
+      ? `${route.start_point} \u2192 ${route.end_point}`
+      : routeName
+
+  const assignmentDateText = assignment?.assignment_date
+    ? new Date(assignment.assignment_date).toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      })
+    : 'Today'
+
+  const duration = route?.metadata?.duration || null
+  const scheduledTimeText = duration
+    ? `${assignmentDateText} • ${duration}`
+    : assignmentDateText
 
   return (
     <div className="space-y-6 sm:space-y-8 overflow-x-hidden">
@@ -31,15 +106,28 @@ export default function DriverTripPage() {
             {tripActive ? 'Trip in Progress' : 'Ready to Start'}
           </h2>
           
-          <p className="text-gray-600 mb-8">
+          <p className="text-gray-600 mb-4 sm:mb-6">
             {tripActive 
-              ? 'Your trip is currently active. Tap to end the trip.'
-              : 'Tap the button below to start your scheduled trip.'
+              ? 'Your trip is currently active. Your location is being tracked.'
+              : 'Tap the button below to start your scheduled trip and begin location tracking.'
             }
           </p>
 
+          {error && (
+            <p className="text-sm text-red-600 mb-4">
+              Location error: {error}
+            </p>
+          )}
+
+          {position && (
+            <p className="text-sm text-gray-600 mb-4">
+              Current position: {position.lat.toFixed(5)}, {position.lng.toFixed(5)}
+              {lastUpdateTime && ` (updated at ${lastUpdateTime})`}
+            </p>
+          )}
+
           <Button
-            onClick={() => setTripActive(!tripActive)}
+            onClick={handleToggleTrip}
             className={`px-12 py-4 text-base sm:text-lg lg:text-xl font-semibold ${
               tripActive 
                 ? 'bg-red-600 hover:bg-red-700' 
@@ -57,15 +145,15 @@ export default function DriverTripPage() {
           <div className="flex items-center space-x-3">
             <MapPinIcon className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
             <div>
-              <p className="font-medium text-gray-900">Route 12A</p>
-              <p className="text-sm sm:text-base text-gray-600">Colombo Fort → Kandy</p>
+              <p className="font-medium text-gray-900">{routeName}</p>
+              <p className="text-sm sm:text-base text-gray-600">{routeDirection}</p>
             </div>
           </div>
           <div className="flex items-center space-x-3">
             <ClockIcon className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
             <div>
               <p className="font-medium text-gray-900">Scheduled Time</p>
-              <p className="text-sm sm:text-base text-gray-600">08:30 AM - 12:00 PM</p>
+              <p className="text-sm sm:text-base text-gray-600">{scheduledTimeText}</p>
             </div>
           </div>
         </div>

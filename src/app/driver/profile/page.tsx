@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/Button';
 import { UserIcon, StarIcon, TruckIcon, ClockIcon, EnvelopeIcon, PhoneIcon } from '@heroicons/react/24/outline';
 import { useAuthStore } from '@/store/authStore';
 import { getProfileAPI, updateProfileAPI, type UserProfile } from '@/services/api/profileApi';
+import { getDriverStats, type DriverStats } from '@/services/api/driverStatsApi';
 import { useRouter } from 'next/navigation';
 import { useUiStore } from '@/store/uiStore';
 
@@ -18,6 +19,7 @@ export default function DriverProfilePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [stats, setStats] = useState<DriverStats | null>(null);
   
   const [formData, setFormData] = useState({
     name: '',
@@ -55,6 +57,21 @@ export default function DriverProfilePage() {
           phone: profileData.phone || '',
           password: '',
         });
+        
+        // Load stats (don't fail if this errors)
+        try {
+          const driverStats = await getDriverStats(token);
+          setStats(driverStats);
+        } catch (statsError) {
+          // Silently set default stats
+          setStats({
+            total_trips: 0,
+            on_time_rate: 0,
+            passengers_served: 0,
+            average_rating: 0,
+            total_reviews: 0
+          });
+        }
       } catch (error) {
         const message = error instanceof Error ? error.message : 'Failed to load profile';
         showToast({ type: 'error', message });
@@ -288,28 +305,28 @@ export default function DriverProfilePage() {
             <div className="p-3 bg-blue-100 rounded-lg w-fit mx-auto mb-2">
               <TruckIcon className="h-6 w-6 sm:h-7 sm:w-7 lg:h-8 lg:w-8 text-blue-600" />
             </div>
-            <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">1,234</div>
+            <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">{stats?.total_trips ?? 0}</div>
             <div className="text-sm sm:text-base text-gray-600">Total Trips</div>
           </div>
           <div className="text-center">
             <div className="p-3 bg-green-100 rounded-lg w-fit mx-auto mb-2">
               <ClockIcon className="h-6 w-6 sm:h-7 sm:w-7 lg:h-8 lg:w-8 text-green-600" />
             </div>
-            <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">94%</div>
+            <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">{stats?.on_time_rate ?? 0}%</div>
             <div className="text-sm sm:text-base text-gray-600">On-Time Rate</div>
           </div>
           <div className="text-center">
             <div className="p-3 bg-purple-100 rounded-lg w-fit mx-auto mb-2">
               <UserIcon className="h-6 w-6 sm:h-7 sm:w-7 lg:h-8 lg:w-8 text-purple-600" />
             </div>
-            <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">45,678</div>
+            <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">{stats?.passengers_served ?? 0}</div>
             <div className="text-sm sm:text-base text-gray-600">Passengers Served</div>
           </div>
           <div className="text-center">
             <div className="p-3 bg-yellow-100 rounded-lg w-fit mx-auto mb-2">
               <StarIcon className="h-6 w-6 sm:h-7 sm:w-7 lg:h-8 lg:w-8 text-yellow-600" />
             </div>
-            <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">4.8</div>
+            <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">{stats?.average_rating ?? 0}</div>
             <div className="text-sm sm:text-base text-gray-600">Average Rating</div>
           </div>
         </div>

@@ -1,5 +1,7 @@
 'use client'
 
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { 
@@ -8,32 +10,134 @@ import {
   MapPinIcon,
   PlayIcon
 } from '@heroicons/react/24/outline'
+import { useAuthStore } from '@/store/authStore'
+import { getCurrentDriverAssignment, type DriverAssignmentResponse } from '@/services/api/driverApi'
+
+type ScheduleItem = {
+  id: number
+  route: string
+  departureTime: string
+  arrivalTime: string
+  status: string
+  passengers: number
+}
 
 export default function DriverSchedulePage() {
-  const schedules = [
-    {
-      id: 1,
-      route: 'Colombo - Kandy',
-      departureTime: '06:00 AM',
-      arrivalTime: '09:00 AM',
-      status: 'Upcoming',
-      passengers: 45
-    },
-    {
-      id: 2,
-      route: 'Kandy - Colombo',
-      departureTime: '02:00 PM',
-      arrivalTime: '05:00 PM',
-      status: 'Scheduled',
-      passengers: 38
+  const router = useRouter()
+  const { user, token } = useAuthStore()
+  const [schedules, setSchedules] = useState<ScheduleItem[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [assignmentDetails, setAssignmentDetails] = useState<DriverAssignmentResponse | null>(null)
+  const [totalHours, setTotalHours] = useState<string>('-')
+  const [totalDistance, setTotalDistance] = useState<string>('-')
+
+  useEffect(() => {
+    const loadSchedule = async () => {
+      if (!user?.id || !token || user.role !== 'driver') {
+        setSchedules([])
+        setLoading(false)
+        return
+      }
+
+      try {
+        const response = await getCurrentDriverAssignment(parseInt(user.id as unknown as string, 10), token)
+
+        if (response && response.assignment) {
+          setAssignmentDetails(response)
+
+          const assignment = response.assignment
+          const busDetails = response.bus_details || assignment.bus
+          const route: any = busDetails?.route
+
+          const routeLabel =
+            route?.start_point && route?.end_point
+              ? `${route.start_point} - ${route.end_point}`
+              : route?.name ?? 'Assigned route'
+
+          const assignmentDateLabel = assignment.assignment_date
+            ? new Date(assignment.assignment_date).toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+              })
+            : 'Today'
+
+          // Distance and duration from route metadata (if available)
+          const metadata = route?.metadata || {}
+          const distanceValue: string | number | undefined =
+            metadata.distance ?? route?.distance
+          const durationValue: string | number | undefined =
+            metadata.duration
+
+          if (distanceValue !== undefined && distanceValue !== null) {
+            const distanceStr = typeof distanceValue === 'number'
+              ? `${distanceValue} km`
+              : String(distanceValue)
+            setTotalDistance(distanceStr)
+          } else {
+            setTotalDistance('-')
+          }
+
+          if (durationValue !== undefined && durationValue !== null) {
+            const durationStr = String(durationValue)
+            setTotalHours(durationStr)
+          } else {
+            setTotalHours('-')
+          }
+
+          setSchedules([
+            {
+              id: assignment.id ?? 1,
+              route: routeLabel,
+              departureTime: assignmentDateLabel,
+              // No exact arrival time in backend yet
+              arrivalTime: '—',
+              status: 'Upcoming',
+              // TODO: hook into bookings API to get real passenger count per trip
+              passengers: 0
+            }
+          ])
+        } else {
+          setAssignmentDetails(null)
+          setSchedules([])
+          setTotalHours('-')
+          setTotalDistance('-')
+        }
+      } catch (err) {
+        console.error('Error loading driver schedule:', err)
+        setError('Failed to load today\'s schedule.')
+        setAssignmentDetails(null)
+        setSchedules([])
+        setTotalHours('-')
+        setTotalDistance('-')
+      } finally {
+        setLoading(false)
+      }
     }
-  ]
+
+    loadSchedule()
+  }, [user, token])
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-gray-600">Loading schedule...</div>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-4 sm:space-y-6 overflow-x-hidden">
       <div>
         <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">My Schedule</h1>
         <p className="text-sm sm:text-base text-gray-600 mt-1">Today's routes and timings</p>
+        {error && (
+          <p className="text-xs sm:text-sm text-red-600 mt-1">
+            {error}
+          </p>
+        )}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
@@ -44,7 +148,9 @@ export default function DriverSchedulePage() {
             </div>
             <div className="ml-3 min-w-0">
               <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Today's Trips</p>
-              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">2</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">
+                {schedules.length}
+              </p>
             </div>
           </div>
         </Card>
@@ -55,7 +161,9 @@ export default function DriverSchedulePage() {
             </div>
             <div className="ml-3 min-w-0">
               <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Hours</p>
-              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">6</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">
+                {totalHours}
+              </p>
             </div>
           </div>
         </Card>
@@ -66,7 +174,9 @@ export default function DriverSchedulePage() {
             </div>
             <div className="ml-3 min-w-0">
               <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Distance</p>
-              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">230 km</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">
+                {totalDistance}
+              </p>
             </div>
           </div>
         </Card>
@@ -91,7 +201,11 @@ export default function DriverSchedulePage() {
                   {schedule.status}
                 </span>
                 {schedule.status === 'Upcoming' && (
-                  <Button className="bg-green-600 hover:bg-green-700 px-3 py-2 text-sm sm:px-4 sm:py-2 sm:text-base-sm">
+                  <Button
+                    className="bg-green-600 hover:bg-green-700 px-3 py-2 text-sm sm:px-4 sm:py-2 sm:text-base-sm"
+                    onClick={() => router.push('/driver/trip')}
+                    disabled={!assignmentDetails}
+                  >
                     <PlayIcon className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
                     <span className="hidden sm:inline">Start Trip</span>
                     <span className="sm:hidden">Start</span>

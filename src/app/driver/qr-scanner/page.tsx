@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { 
@@ -8,27 +8,62 @@ import {
   CheckCircleIcon,
   XCircleIcon
 } from '@heroicons/react/24/outline'
+import { useAuthStore } from '@/store/authStore'
+import { validateTicket, confirmBoarding, getRecentScans, type ScanResult, type RecentScan } from '@/services/api/qrScanApi'
 
 export default function DriverQRScannerPage() {
-  const [scanResult, setScanResult] = useState<any>(null)
+  const [scanResult, setScanResult] = useState<ScanResult | null>(null)
   const [isScanning, setIsScanning] = useState(false)
+  const [recentScans, setRecentScans] = useState<RecentScan[]>([])
+  const [ticketInput, setTicketInput] = useState('')
+  const { token } = useAuthStore()
 
-  const mockScan = () => {
-    setIsScanning(true)
-    setTimeout(() => {
-      setScanResult({
-        ticketId: 'SB001',
-        passenger: 'John Doe',
-        seat: '15A',
-        route: 'Colombo - Kandy',
-        valid: true
-      })
-      setIsScanning(false)
-    }, 2000)
+  useEffect(() => {
+    loadRecentScans()
+  }, [])
+
+  const loadRecentScans = async () => {
+    if (!token) return
+    try {
+      const scans = await getRecentScans(token)
+      setRecentScans(scans)
+    } catch (error) {
+      console.error('Failed to load recent scans:', error)
+    }
   }
 
-  const confirmTicket = () => {
-    setScanResult(null)
+  const handleScan = async () => {
+    if (!ticketInput.trim() || !token) return
+    
+    setIsScanning(true)
+    try {
+      const result = await validateTicket(ticketInput, token)
+      setScanResult(result)
+      setTicketInput('')
+    } catch (error: any) {
+      setScanResult({
+        valid: false,
+        ticket_id: ticketInput,
+        passenger: 'Unknown',
+        seat: '-',
+        route: '-',
+        message: error.message
+      })
+    } finally {
+      setIsScanning(false)
+    }
+  }
+
+  const handleConfirmBoarding = async () => {
+    if (!scanResult?.booking_id || !token) return
+    
+    try {
+      await confirmBoarding(scanResult.booking_id, token)
+      setScanResult(null)
+      loadRecentScans()
+    } catch (error) {
+      console.error('Failed to confirm boarding:', error)
+    }
   }
 
   return (
@@ -46,13 +81,21 @@ export default function DriverQRScannerPage() {
                 <QrCodeIcon className="h-16 w-16 text-gray-400" />
               </div>
               <h3 className="text-base sm:text-lg lg:text-xl font-semibold mb-2">Ready to Scan</h3>
-              <p className="text-gray-600 mb-4 sm:mb-6">Position the QR code within the camera frame</p>
+              <p className="text-gray-600 mb-4">Enter ticket ID to validate</p>
+              <input
+                type="text"
+                value={ticketInput}
+                onChange={(e) => setTicketInput(e.target.value)}
+                placeholder="Enter Ticket ID"
+                className="w-full border border-gray-300 rounded-md px-3 py-2 mb-4"
+                onKeyPress={(e) => e.key === 'Enter' && handleScan()}
+              />
               <Button 
                 className="bg-green-600 hover:bg-green-700"
-                onClick={mockScan}
-                disabled={isScanning}
+                onClick={handleScan}
+                disabled={isScanning || !ticketInput.trim()}
               >
-                {isScanning ? 'Scanning...' : 'Start Scanning'}
+                {isScanning ? 'Validating...' : 'Validate Ticket'}
               </Button>
             </>
           ) : (
@@ -73,10 +116,13 @@ export default function DriverQRScannerPage() {
               </h3>
               <div className="bg-gray-50 p-4 rounded-lg text-left">
                 <div className="space-y-2 text-sm sm:text-base">
-                  <div><span className="font-medium">Ticket ID:</span> {scanResult.ticketId}</div>
+                  <div><span className="font-medium">Ticket ID:</span> {scanResult.ticket_id}</div>
                   <div><span className="font-medium">Passenger:</span> {scanResult.passenger}</div>
                   <div><span className="font-medium">Seat:</span> {scanResult.seat}</div>
                   <div><span className="font-medium">Route:</span> {scanResult.route}</div>
+                  {scanResult.message && (
+                    <div className="text-red-600"><span className="font-medium">Error:</span> {scanResult.message}</div>
+                  )}
                 </div>
               </div>
               <div className="flex space-x-3">
@@ -84,7 +130,7 @@ export default function DriverQRScannerPage() {
                   Scan Another
                 </Button>
                 {scanResult.valid && (
-                  <Button className="bg-green-600 hover:bg-green-700" onClick={confirmTicket}>
+                  <Button className="bg-green-600 hover:bg-green-700" onClick={handleConfirmBoarding}>
                     Confirm Boarding
                   </Button>
                 )}
@@ -97,26 +143,26 @@ export default function DriverQRScannerPage() {
       <Card className="p-3 sm:p-4 lg:p-6">
         <h3 className="text-base sm:text-lg lg:text-xl font-semibold mb-3 sm:mb-4">Recent Scans</h3>
         <div className="space-y-3">
-          {[
-            { id: 'SB001', passenger: 'John Doe', time: '10:30 AM', status: 'Valid' },
-            { id: 'SB002', passenger: 'Sarah Wilson', time: '10:28 AM', status: 'Valid' },
-            { id: 'SB003', passenger: 'Mike Johnson', time: '10:25 AM', status: 'Invalid' }
-          ].map((scan, index) => (
-            <div key={index} className="flex justify-between items-center py-2 border-b border-gray-100 last:border-b-0">
-              <div>
-                <span className="font-medium">{scan.id}</span>
-                <span className="text-gray-500 ml-2">{scan.passenger}</span>
+          {recentScans.length === 0 ? (
+            <p className="text-gray-500 text-center py-4">No recent scans</p>
+          ) : (
+            recentScans.map((scan, index) => (
+              <div key={index} className="flex justify-between items-center py-2 border-b border-gray-100 last:border-b-0">
+                <div>
+                  <span className="font-medium">{scan.id}</span>
+                  <span className="text-gray-500 ml-2">{scan.passenger}</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <span className="text-sm sm:text-base text-gray-500">{scan.time}</span>
+                  <span className={`px-2 py-1 text-xs rounded-full ${
+                    scan.status === 'Valid' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                  }`}>
+                    {scan.status}
+                  </span>
+                </div>
               </div>
-              <div className="flex items-center space-x-3">
-                <span className="text-sm sm:text-base text-gray-500">{scan.time}</span>
-                <span className={`px-2 py-1 text-xs rounded-full ${
-                  scan.status === 'Valid' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                }`}>
-                  {scan.status}
-                </span>
-              </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </Card>
     </div>
