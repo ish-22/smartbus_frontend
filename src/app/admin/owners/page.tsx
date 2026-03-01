@@ -1,3 +1,6 @@
+'use client'
+
+import { useState, useEffect } from 'react'
 import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import Link from 'next/link'
@@ -8,15 +11,47 @@ import {
   ArrowRightIcon,
   CurrencyDollarIcon
 } from '@heroicons/react/24/outline'
+import { useAuthStore } from '@/store/authStore'
+import { API_BASE_URL } from '@/config/api'
 
 export default function AdminOwnersPage() {
+  const [stats, setStats] = useState({ total_owners: 0, total_buses: 0, active_buses: 0, pending_buses: 0, pending_transfers: 0 })
+  const [loading, setLoading] = useState(true)
+  const token = useAuthStore(state => state.token)
+
+  useEffect(() => {
+    if (token) {
+      loadStats()
+    }
+  }, [token])
+
+  const loadStats = async () => {
+    if (!token) return
+    try {
+      const response = await fetch(`${API_BASE_URL}/users/owner-stats`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/json'
+        }
+      })
+      if (response.ok) {
+        const data = await response.json()
+        setStats(data)
+      }
+    } catch (error) {
+      console.error('Failed to load stats:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const ownerSections = [
     {
       title: 'Owner Accounts',
       description: 'Manage bus owner registrations, profiles, and verification',
       href: '/admin/owners/accounts',
       icon: BuildingOfficeIcon,
-      stats: '45 Active Owners',
+      stats: `${stats.total_owners} Active Owners`,
       color: 'purple'
     },
     {
@@ -24,7 +59,7 @@ export default function AdminOwnersPage() {
       description: 'Approve new bus registrations and documentation',
       href: '/admin/owners/registrations',
       icon: TruckIcon,
-      stats: '12 Pending Approvals',
+      stats: `${stats.pending_buses} Pending Approvals`,
       color: 'blue'
     },
     {
@@ -32,7 +67,7 @@ export default function AdminOwnersPage() {
       description: 'Monitor all buses owned by registered operators',
       href: '/admin/owners/fleet',
       icon: TruckIcon,
-      stats: '156 Total Buses',
+      stats: `${stats.total_buses} Total Buses`,
       color: 'green'
     },
     {
@@ -40,10 +75,14 @@ export default function AdminOwnersPage() {
       description: 'Process bus ownership transfers between operators',
       href: '/admin/owners/transfers',
       icon: ArrowRightOnRectangleIcon,
-      stats: '3 Pending Transfers',
+      stats: `${stats.pending_transfers} Pending Transfers`,
       color: 'yellow'
     },
   ]
+
+  if (loading) {
+    return <div className="text-center py-8">Loading...</div>
+  }
 
   return (
     <div className="space-y-4 sm:space-y-6 overflow-x-hidden">
@@ -61,7 +100,7 @@ export default function AdminOwnersPage() {
             </div>
             <div className="ml-3 min-w-0">
               <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Owners</p>
-              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">45</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">{stats.total_owners}</p>
             </div>
           </div>
         </Card>
@@ -72,18 +111,18 @@ export default function AdminOwnersPage() {
             </div>
             <div className="ml-3 min-w-0">
               <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Fleet</p>
-              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">156</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">{stats.total_buses}</p>
             </div>
           </div>
         </Card>
         <Card className="p-3 sm:p-4 lg:p-6">
           <div className="flex items-center">
             <div className="p-2 bg-green-100 rounded-lg flex-shrink-0">
-              <CurrencyDollarIcon className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
+              <TruckIcon className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
             </div>
             <div className="ml-3 min-w-0">
-              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Monthly Revenue</p>
-              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">LKR 2.3M</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Active Buses</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">{stats.active_buses}</p>
             </div>
           </div>
         </Card>
@@ -93,8 +132,8 @@ export default function AdminOwnersPage() {
               <ArrowRightOnRectangleIcon className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-600" />
             </div>
             <div className="ml-3 min-w-0">
-              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Pending Actions</p>
-              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">15</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Pending Buses</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">{stats.pending_buses}</p>
             </div>
           </div>
         </Card>
@@ -135,24 +174,6 @@ export default function AdminOwnersPage() {
           </Card>
         ))}
       </div>
-
-      {/* Recent Activity */}
-      <Card className="p-3 sm:p-4 lg:p-6">
-        <h3 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">Recent Owner Activity</h3>
-        <div className="space-y-3">
-          {[
-            { action: 'New owner registration: Metro Bus Co', time: '2 hours ago', type: 'info' },
-            { action: 'Bus ownership transfer approved', time: '4 hours ago', type: 'success' },
-            { action: 'Fleet inspection completed: City Lines', time: '6 hours ago', type: 'info' },
-            { action: 'New bus registration pending approval', time: '8 hours ago', type: 'warning' },
-          ].map((activity, index) => (
-            <div key={index} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-b-0">
-              <span className="text-gray-700">{activity.action}</span>
-              <span className="text-sm sm:text-base text-gray-500">{activity.time}</span>
-            </div>
-          ))}
-        </div>
-      </Card>
     </div>
   )
 }

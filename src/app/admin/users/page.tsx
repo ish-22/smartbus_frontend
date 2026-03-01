@@ -1,3 +1,6 @@
+'use client'
+
+import { useState, useEffect } from 'react'
 import { Card } from '@/components/ui/Card'
 import { 
   UserGroupIcon,
@@ -5,8 +8,44 @@ import {
   BuildingOfficeIcon,
   ShieldCheckIcon
 } from '@heroicons/react/24/outline'
+import { useAuthStore } from '@/store/authStore'
+import { API_BASE_URL } from '@/config/api'
+
+type UserStats = {
+  passengers: number
+  drivers: number
+  owners: number
+  admins: number
+}
 
 export default function AdminUsersPage() {
+  const [stats, setStats] = useState<UserStats>({ passengers: 0, drivers: 0, owners: 0, admins: 0 })
+  const [loading, setLoading] = useState(true)
+  const token = useAuthStore(state => state.token)
+
+  useEffect(() => {
+    loadUserStats()
+  }, [])
+
+  const loadUserStats = async () => {
+    if (!token) return
+    try {
+      const response = await fetch(`${API_BASE_URL}/users/stats`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/json'
+        }
+      })
+      if (response.ok) {
+        const data = await response.json()
+        setStats(data)
+      }
+    } catch (error) {
+      console.error('Failed to load user stats:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
   return (
     <div className="space-y-4 sm:space-y-6 overflow-x-hidden">
       <div>
@@ -23,7 +62,7 @@ export default function AdminUsersPage() {
             </div>
             <div className="ml-3 min-w-0">
               <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Passengers</p>
-              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">12,543</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">{loading ? '...' : stats.passengers.toLocaleString()}</p>
             </div>
           </div>
         </Card>
@@ -34,7 +73,7 @@ export default function AdminUsersPage() {
             </div>
             <div className="ml-3 min-w-0">
               <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Active Drivers</p>
-              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">89</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">{loading ? '...' : stats.drivers}</p>
             </div>
           </div>
         </Card>
@@ -45,7 +84,7 @@ export default function AdminUsersPage() {
             </div>
             <div className="ml-3 min-w-0">
               <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Bus Owners</p>
-              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">45</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">{loading ? '...' : stats.owners}</p>
             </div>
           </div>
         </Card>
@@ -56,7 +95,7 @@ export default function AdminUsersPage() {
             </div>
             <div className="ml-3 min-w-0">
               <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">System Admins</p>
-              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">3</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">{loading ? '...' : stats.admins}</p>
             </div>
           </div>
         </Card>

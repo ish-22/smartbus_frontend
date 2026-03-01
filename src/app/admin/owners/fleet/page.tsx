@@ -1,45 +1,74 @@
+'use client'
+
+import { useState, useEffect } from 'react'
 import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { 
   TruckIcon,
   MapPinIcon,
   ClockIcon,
-  WrenchScrewdriverIcon
+  WrenchScrewdriverIcon,
+  XCircleIcon
 } from '@heroicons/react/24/outline'
+import { useAuthStore } from '@/store/authStore'
+import { API_BASE_URL } from '@/config/api'
+
+type Bus = {
+  id: number
+  bus_number: string
+  registration_number: string
+  capacity: number
+  status: string
+  owner_id: number
+  route_id: number
+  created_at: string
+  owner?: { name: string }
+  route?: { name: string; route_number: string }
+}
 
 export default function AdminOwnerFleetPage() {
-  const fleetData = [
-    {
-      id: 1,
-      busNumber: 'NB-1234',
-      owner: 'Metro Bus Company',
-      route: 'Colombo - Kandy',
-      status: 'active',
-      location: 'Colombo Fort',
-      lastMaintenance: '2024-01-10',
-      nextMaintenance: '2024-04-10'
-    },
-    {
-      id: 2,
-      busNumber: 'NC-5678',
-      owner: 'City Express Lines',
-      route: 'Galle - Matara',
-      status: 'maintenance',
-      location: 'Galle Depot',
-      lastMaintenance: '2024-01-15',
-      nextMaintenance: '2024-04-15'
-    },
-    {
-      id: 3,
-      busNumber: 'NM-9012',
-      owner: 'Highway Transport Co',
-      route: 'Negombo - Airport',
-      status: 'active',
-      location: 'Negombo',
-      lastMaintenance: '2024-01-05',
-      nextMaintenance: '2024-04-05'
+  const [buses, setBuses] = useState<Bus[]>([])
+  const [stats, setStats] = useState({ total: 0, active: 0, maintenance: 0, inactive: 0 })
+  const [loading, setLoading] = useState(true)
+  const [showViewModal, setShowViewModal] = useState(false)
+  const [selectedBus, setSelectedBus] = useState<Bus | null>(null)
+  const token = useAuthStore(state => state.token)
+
+  useEffect(() => {
+    if (token) {
+      loadBuses()
     }
-  ]
+  }, [token])
+
+  const loadBuses = async () => {
+    if (!token) return
+    try {
+      const response = await fetch(`${API_BASE_URL}/buses`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/json'
+        }
+      })
+      if (response.ok) {
+        const data = await response.json()
+        setBuses(data)
+        setStats({
+          total: data.length,
+          active: data.filter((b: Bus) => b.status === 'active').length,
+          maintenance: data.filter((b: Bus) => b.status === 'maintenance').length,
+          inactive: data.filter((b: Bus) => b.status === 'inactive').length
+        })
+      }
+    } catch (error) {
+      console.error('Failed to load buses:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (loading) {
+    return <div className="text-center py-8">Loading...</div>
+  }
 
   return (
     <div className="space-y-6">
@@ -56,7 +85,7 @@ export default function AdminOwnerFleetPage() {
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Total Fleet</p>
-              <p className="text-2xl font-bold text-gray-900">156</p>
+              <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
             </div>
           </div>
         </Card>
@@ -67,7 +96,7 @@ export default function AdminOwnerFleetPage() {
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Active</p>
-              <p className="text-2xl font-bold text-gray-900">142</p>
+              <p className="text-2xl font-bold text-gray-900">{stats.active}</p>
             </div>
           </div>
         </Card>
@@ -78,7 +107,7 @@ export default function AdminOwnerFleetPage() {
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Maintenance</p>
-              <p className="text-2xl font-bold text-gray-900">8</p>
+              <p className="text-2xl font-bold text-gray-900">{stats.maintenance}</p>
             </div>
           </div>
         </Card>
@@ -89,7 +118,7 @@ export default function AdminOwnerFleetPage() {
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Out of Service</p>
-              <p className="text-2xl font-bold text-gray-900">6</p>
+              <p className="text-2xl font-bold text-gray-900">{stats.inactive}</p>
             </div>
           </div>
         </Card>
@@ -98,7 +127,6 @@ export default function AdminOwnerFleetPage() {
       <Card className="p-6">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-semibold text-gray-900">Fleet Overview</h2>
-          <Button className="bg-red-600 hover:bg-red-700">Export Report</Button>
         </div>
         
         <div className="overflow-x-auto">
@@ -118,10 +146,7 @@ export default function AdminOwnerFleetPage() {
                   Status
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Location
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Maintenance
+                  Capacity
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Actions
@@ -129,58 +154,108 @@ export default function AdminOwnerFleetPage() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {fleetData.map((bus) => (
-                <tr key={bus.id}>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0 h-10 w-10">
-                        <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
-                          <TruckIcon className="h-6 w-6 text-blue-600" />
-                        </div>
-                      </div>
-                      <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">{bus.busNumber}</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {bus.owner}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {bus.route}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                      bus.status === 'active' 
-                        ? 'bg-green-100 text-green-800' 
-                        : bus.status === 'maintenance'
-                        ? 'bg-yellow-100 text-yellow-800'
-                        : 'bg-red-100 text-red-800'
-                    }`}>
-                      {bus.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {bus.location}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    <div>Last: {bus.lastMaintenance}</div>
-                    <div className="text-gray-500">Next: {bus.nextMaintenance}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                    <Button variant="secondary" size="sm">
-                      View
-                    </Button>
-                    <Button variant="secondary" size="sm">
-                      Track
-                    </Button>
+              {buses.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
+                    No buses found
                   </td>
                 </tr>
-              ))}
+              ) : (
+                buses.map((bus) => (
+                  <tr key={bus.id}>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center">
+                        <div className="flex-shrink-0 h-10 w-10">
+                          <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                            <TruckIcon className="h-6 w-6 text-blue-600" />
+                          </div>
+                        </div>
+                        <div className="ml-4">
+                          <div className="text-sm font-medium text-gray-900">{bus.registration_number || bus.bus_number}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {bus.owner?.name || 'N/A'}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {bus.route?.name || 'N/A'}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                        bus.status === 'active' 
+                          ? 'bg-green-100 text-green-800' 
+                          : bus.status === 'maintenance'
+                          ? 'bg-yellow-100 text-yellow-800'
+                          : 'bg-red-100 text-red-800'
+                      }`}>
+                        {bus.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {bus.capacity} seats
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <div className="flex gap-2">
+                        <Button variant="secondary" size="sm" onClick={() => { setSelectedBus(bus); setShowViewModal(true); }}>
+                          View
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
       </Card>
+
+      {/* View Bus Modal */}
+      {showViewModal && selectedBus && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <Card className="w-full max-w-2xl">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-bold">Bus Details</h2>
+                <button onClick={() => setShowViewModal(false)} className="text-gray-500 hover:text-gray-700">
+                  <XCircleIcon className="h-6 w-6" />
+                </button>
+              </div>
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm text-gray-500">Bus Number</p>
+                    <p className="font-medium">{selectedBus.registration_number || selectedBus.bus_number}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Capacity</p>
+                    <p className="font-medium">{selectedBus.capacity} seats</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Status</p>
+                    <p className="font-medium">{selectedBus.status}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Owner</p>
+                    <p className="font-medium">{selectedBus.owner?.name || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Route</p>
+                    <p className="font-medium">{selectedBus.route?.name || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Route Number</p>
+                    <p className="font-medium">{selectedBus.route?.route_number || 'N/A'}</p>
+                  </div>
+                </div>
+                <div className="flex justify-end gap-2 mt-6">
+                  <Button onClick={() => setShowViewModal(false)} variant="secondary">Close</Button>
+                </div>
+              </div>
+            </div>
+          </Card>
+        </div>
+      )}
     </div>
   )
 }

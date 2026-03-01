@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { 
@@ -10,45 +10,79 @@ import {
   EyeIcon,
   PencilIcon,
   NoSymbolIcon,
-  CheckCircleIcon
+  CheckCircleIcon,
+  XMarkIcon
 } from '@heroicons/react/24/outline'
+import { useAuthStore } from '@/store/authStore'
+import { API_BASE_URL } from '@/config/api'
+
+type Passenger = {
+  id: number
+  name: string
+  email: string
+  phone: string
+  status: string
+  joinDate: string
+  totalBookings: number
+  totalSpent: string
+}
 
 export default function PassengerAccountsPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
+  const [viewingPassenger, setViewingPassenger] = useState<Passenger | null>(null)
+  const [editingPassenger, setEditingPassenger] = useState<Passenger | null>(null)
+  const [passengers, setPassengers] = useState<Passenger[]>([])
+  const [loading, setLoading] = useState(true)
+  const token = useAuthStore(state => state.token)
 
-  const passengers = [
-    {
-      id: 1,
-      name: 'John Doe',
-      email: 'john@example.com',
-      phone: '+91 9876543210',
-      status: 'Active',
-      joinDate: '2024-01-15',
-      totalBookings: 45,
-      totalSpent: 'LKR 12,450'
-    },
-    {
-      id: 2,
-      name: 'Sarah Wilson',
-      email: 'sarah@example.com',
-      phone: '+91 9876543211',
-      status: 'Active',
-      joinDate: '2024-01-10',
-      totalBookings: 23,
-      totalSpent: 'LKR 8,230'
-    },
-    {
-      id: 3,
-      name: 'Mike Johnson',
-      email: 'mike@example.com',
-      phone: '+91 9876543212',
-      status: 'Suspended',
-      joinDate: '2024-01-05',
-      totalBookings: 12,
-      totalSpent: 'LKR 3,450'
-    },
-  ]
+  useEffect(() => {
+    loadPassengers()
+  }, [])
+
+  const loadPassengers = async () => {
+    if (!token) return
+    try {
+      const response = await fetch(`${API_BASE_URL}/users/passengers`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/json'
+        }
+      })
+      if (response.ok) {
+        const data = await response.json()
+        setPassengers(data.map((user: any) => ({
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          phone: user.phone || 'N/A',
+          status: user.status || 'Active',
+          joinDate: new Date(user.created_at).toISOString().split('T')[0],
+          totalBookings: 0,
+          totalSpent: 'LKR 0'
+        })))
+      }
+    } catch (error) {
+      console.error('Failed to load passengers:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleViewPassenger = (passenger: Passenger) => {
+    setViewingPassenger(passenger)
+  }
+
+  const handleEditPassenger = (passenger: Passenger) => {
+    setEditingPassenger(passenger)
+  }
+
+  const handleToggleStatus = async (passenger: Passenger) => {
+    const newStatus = passenger.status === 'Suspended' ? 'Active' : 'Suspended'
+    setPassengers(passengers.map(p => 
+      p.id === passenger.id ? { ...p, status: newStatus } : p
+    ))
+  }
 
   return (
     <div className="space-y-4 sm:space-y-6 overflow-x-hidden">
@@ -94,6 +128,11 @@ export default function PassengerAccountsPage() {
 
       {/* Passengers Table */}
       <Card className="overflow-hidden">
+        {loading ? (
+          <div className="p-8 text-center text-gray-500">Loading passengers...</div>
+        ) : passengers.length === 0 ? (
+          <div className="p-8 text-center text-gray-500">No passengers found</div>
+        ) : (
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
@@ -159,18 +198,18 @@ export default function PassengerAccountsPage() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm sm:text-base font-medium">
                     <div className="flex space-x-2">
-                      <button className="text-blue-600 hover:text-blue-900" title="View passenger details">
+                      <button onClick={() => handleViewPassenger(passenger)} className="text-blue-600 hover:text-blue-900" title="View passenger details">
                         <EyeIcon className="h-4 w-4" />
                       </button>
-                      <button className="text-green-600 hover:text-green-900" title="Edit passenger">
+                      <button onClick={() => handleEditPassenger(passenger)} className="text-green-600 hover:text-green-900" title="Edit passenger">
                         <PencilIcon className="h-4 w-4" />
                       </button>
                       {passenger.status === 'Suspended' ? (
-                        <button className="text-green-600 hover:text-green-900" title="Activate passenger">
+                        <button onClick={() => handleToggleStatus(passenger)} className="text-green-600 hover:text-green-900" title="Activate passenger">
                           <CheckCircleIcon className="h-4 w-4" />
                         </button>
                       ) : (
-                        <button className="text-red-600 hover:text-red-900" title="Suspend passenger">
+                        <button onClick={() => handleToggleStatus(passenger)} className="text-red-600 hover:text-red-900" title="Suspend passenger">
                           <NoSymbolIcon className="h-4 w-4" />
                         </button>
                       )}
@@ -181,7 +220,67 @@ export default function PassengerAccountsPage() {
             </tbody>
           </table>
         </div>
+        )}
       </Card>
+
+      {/* View Passenger Modal */}
+      {viewingPassenger && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <Card className="w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold">Passenger Details</h2>
+                <button onClick={() => setViewingPassenger(null)} className="text-gray-500 hover:text-gray-700">
+                  <XMarkIcon className="h-6 w-6" />
+                </button>
+              </div>
+              <div className="space-y-4">
+                <div><span className="font-semibold">Name:</span> {viewingPassenger.name}</div>
+                <div><span className="font-semibold">Email:</span> {viewingPassenger.email}</div>
+                <div><span className="font-semibold">Phone:</span> {viewingPassenger.phone}</div>
+                <div><span className="font-semibold">Status:</span> <span className={`px-2 py-1 text-xs rounded-full ${viewingPassenger.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>{viewingPassenger.status}</span></div>
+                <div><span className="font-semibold">Join Date:</span> {viewingPassenger.joinDate}</div>
+                <div><span className="font-semibold">Total Bookings:</span> {viewingPassenger.totalBookings}</div>
+                <div><span className="font-semibold">Total Spent:</span> {viewingPassenger.totalSpent}</div>
+              </div>
+            </div>
+          </Card>
+        </div>
+      )}
+
+      {/* Edit Passenger Modal */}
+      {editingPassenger && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <Card className="w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold">Edit Passenger</h2>
+                <button onClick={() => setEditingPassenger(null)} className="text-gray-500 hover:text-gray-700">
+                  <XMarkIcon className="h-6 w-6" />
+                </button>
+              </div>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">Name</label>
+                  <input type="text" defaultValue={editingPassenger.name} className="w-full px-3 py-2 border rounded-lg" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Email</label>
+                  <input type="email" defaultValue={editingPassenger.email} className="w-full px-3 py-2 border rounded-lg" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Phone</label>
+                  <input type="text" defaultValue={editingPassenger.phone} className="w-full px-3 py-2 border rounded-lg" />
+                </div>
+                <div className="flex gap-3 mt-6">
+                  <Button onClick={() => setEditingPassenger(null)} className="flex-1 bg-gray-500 hover:bg-gray-600">Cancel</Button>
+                  <Button onClick={() => setEditingPassenger(null)} className="flex-1 bg-red-600 hover:bg-red-700">Save Changes</Button>
+                </div>
+              </div>
+            </div>
+          </Card>
+        </div>
+      )}
     </div>
   )
 }

@@ -1,7 +1,51 @@
+'use client'
+
+import { useState, useEffect } from 'react'
 import { Card } from '@/components/ui/Card'
 import { ChartBarIcon, ArrowTrendingUpIcon, UsersIcon, CurrencyDollarIcon } from '@heroicons/react/24/outline'
+import { useAuthStore } from '@/store/authStore'
+import { API_BASE_URL } from '@/config/api'
 
 export default function AdminAnalyticsPage() {
+  const [stats, setStats] = useState({ 
+    total_bookings: 0, 
+    total_users: 0, 
+    total_routes: 0, 
+    total_buses: 0 
+  })
+  const [loading, setLoading] = useState(true)
+  const token = useAuthStore(state => state.token)
+
+  useEffect(() => {
+    if (token) {
+      loadStats()
+    }
+  }, [token])
+
+  const loadStats = async () => {
+    if (!token) return
+    try {
+      const response = await fetch(`${API_BASE_URL}/dashboard/admin/stats`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/json'
+        }
+      })
+      if (response.ok) {
+        const data = await response.json()
+        setStats(data)
+      }
+    } catch (error) {
+      console.error('Failed to load stats:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (loading) {
+    return <div className="text-center py-8">Loading...</div>
+  }
+
   return (
     <div className="space-y-6 sm:space-y-8 overflow-x-hidden">
       <div>
@@ -16,8 +60,8 @@ export default function AdminAnalyticsPage() {
               <ChartBarIcon className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
             </div>
             <div className="ml-3 min-w-0">
-              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Trips</p>
-              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">45,231</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Bookings</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">{stats.total_bookings}</p>
             </div>
           </div>
         </Card>
@@ -27,8 +71,8 @@ export default function AdminAnalyticsPage() {
               <ArrowTrendingUpIcon className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
             </div>
             <div className="ml-3 min-w-0">
-              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Growth Rate</p>
-              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">+12%</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Routes</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">{stats.total_routes}</p>
             </div>
           </div>
         </Card>
@@ -38,8 +82,8 @@ export default function AdminAnalyticsPage() {
               <UsersIcon className="h-5 w-5 sm:h-6 sm:w-6 text-purple-600" />
             </div>
             <div className="ml-3 min-w-0">
-              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Active Users</p>
-              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">8,456</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Users</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">{stats.total_users}</p>
             </div>
           </div>
         </Card>
@@ -49,8 +93,8 @@ export default function AdminAnalyticsPage() {
               <CurrencyDollarIcon className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-600" />
             </div>
             <div className="ml-3 min-w-0">
-              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Revenue</p>
-              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">LKR 2.3M</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Buses</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">{stats.total_buses}</p>
             </div>
           </div>
         </Card>

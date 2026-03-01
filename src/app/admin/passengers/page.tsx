@@ -1,3 +1,6 @@
+'use client'
+
+import { useState, useEffect } from 'react'
 import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import Link from 'next/link'
@@ -9,15 +12,62 @@ import {
   ArchiveBoxIcon,
   ArrowRightIcon
 } from '@heroicons/react/24/outline'
+import { useAuthStore } from '@/store/authStore'
+import { API_BASE_URL } from '@/config/api'
+
+type PassengerStats = {
+  total_passengers: number
+  monthly_bookings: number
+  feedback_items: number
+  active_rewards: number
+}
 
 export default function AdminPassengersPage() {
+  const [stats, setStats] = useState<PassengerStats>({
+    total_passengers: 0,
+    monthly_bookings: 0,
+    feedback_items: 0,
+    active_rewards: 0
+  })
+  const [loading, setLoading] = useState(true)
+  const token = useAuthStore(state => state.token)
+
+  useEffect(() => {
+    loadPassengerStats()
+  }, [])
+
+  const loadPassengerStats = async () => {
+    if (!token) return
+    try {
+      const response = await fetch(`${API_BASE_URL}/dashboard/admin/stats`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/json'
+        }
+      })
+      if (response.ok) {
+        const data = await response.json()
+        setStats({
+          total_passengers: data.total_passengers || 0,
+          monthly_bookings: data.today_bookings || 0,
+          feedback_items: data.total_feedback || 0,
+          active_rewards: data.active_offers || 0
+        })
+      }
+    } catch (error) {
+      console.error('Failed to load passenger stats:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const passengerSections = [
     {
       title: 'Passenger Accounts',
       description: 'Manage passenger registrations, profiles, and account status',
       href: '/admin/passengers/accounts',
       icon: UserGroupIcon,
-      stats: '12,543 Active Users',
+      stats: loading ? '...' : `${stats.total_passengers.toLocaleString()} Active Users`,
       color: 'blue'
     },
     {
@@ -25,7 +75,7 @@ export default function AdminPassengersPage() {
       description: 'Review complaints, suggestions, and passenger feedback',
       href: '/admin/passengers/feedback',
       icon: ChatBubbleLeftRightIcon,
-      stats: '23 Pending Reviews',
+      stats: loading ? '...' : `${stats.feedback_items} Pending Reviews`,
       color: 'purple'
     },
     {
@@ -33,7 +83,7 @@ export default function AdminPassengersPage() {
       description: 'Monitor all passenger bookings and transaction history',
       href: '/admin/passengers/bookings',
       icon: CalendarIcon,
-      stats: '2,567 This Month',
+      stats: loading ? '...' : `${stats.monthly_bookings.toLocaleString()} Today`,
       color: 'green'
     },
     {
@@ -41,7 +91,7 @@ export default function AdminPassengersPage() {
       description: 'Manage loyalty points, rewards, and redemption system',
       href: '/admin/passengers/rewards',
       icon: StarIcon,
-      stats: 'LKR 45,230 Redeemed',
+      stats: loading ? '...' : `${stats.active_rewards} Active Offers`,
       color: 'yellow'
     },
     {
@@ -49,7 +99,7 @@ export default function AdminPassengersPage() {
       description: 'Process passenger claims for lost items',
       href: '/admin/passengers/claims',
       icon: ArchiveBoxIcon,
-      stats: '8 Pending Claims',
+      stats: '0 Pending Claims',
       color: 'red'
     },
   ]
@@ -70,7 +120,7 @@ export default function AdminPassengersPage() {
             </div>
             <div className="ml-3 min-w-0">
               <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Passengers</p>
-              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">12,543</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">{loading ? '...' : stats.total_passengers.toLocaleString()}</p>
             </div>
           </div>
         </Card>
@@ -80,8 +130,8 @@ export default function AdminPassengersPage() {
               <CalendarIcon className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
             </div>
             <div className="ml-3 min-w-0">
-              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Monthly Bookings</p>
-              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">2,567</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Today's Bookings</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">{loading ? '...' : stats.monthly_bookings.toLocaleString()}</p>
             </div>
           </div>
         </Card>
@@ -92,7 +142,7 @@ export default function AdminPassengersPage() {
             </div>
             <div className="ml-3 min-w-0">
               <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Feedback Items</p>
-              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">156</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">{loading ? '...' : stats.feedback_items}</p>
             </div>
           </div>
         </Card>
@@ -102,8 +152,8 @@ export default function AdminPassengersPage() {
               <StarIcon className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-600" />
             </div>
             <div className="ml-3 min-w-0">
-              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Active Rewards</p>
-              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">89</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Active Offers</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">{loading ? '...' : stats.active_rewards}</p>
             </div>
           </div>
         </Card>
