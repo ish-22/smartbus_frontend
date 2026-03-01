@@ -28,6 +28,7 @@ export type CreateBookingRequest = {
 	route_id?: number;
 	seat_number: string;
 	fare: number;
+	trip_number?: number;
 	payment_method: 'cash' | 'credit_card' | 'debit_card' | 'digital_wallet';
 	points_to_use?: number;
 	// Card payment fields

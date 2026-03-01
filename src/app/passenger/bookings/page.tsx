@@ -13,6 +13,7 @@ export default function PassengerBookingsPage() {
   const [loading, setLoading] = useState(true);
   const [mounted, setMounted] = useState(false);
   const [rewardMessage, setRewardMessage] = useState('');
+  const [showAllActive, setShowAllActive] = useState(false);
 
   const fetchBookings = async () => {
     if (!token) return;
@@ -85,6 +86,8 @@ export default function PassengerBookingsPage() {
 
   const activeBookings = bookings.filter(b => b.status === 'confirmed');
   const completedBookings = bookings.filter(b => b.status === 'completed');
+  const displayedActiveBookings = showAllActive ? activeBookings : activeBookings.slice(0, 5);
+  const hasMoreActive = activeBookings.length > 5;
 
   return (
     <div className="space-y-6 sm:space-y-8 overflow-x-hidden">
@@ -161,7 +164,8 @@ export default function PassengerBookingsPage() {
                 <p className="text-gray-500">No active bookings</p>
               </div>
             ) : (
-              activeBookings.map((booking) => (
+              <>
+                {displayedActiveBookings.map((booking) => (
                 <div key={booking.id} className="bg-white rounded-lg shadow p-4">
                   <div className="flex items-center justify-between">
                     <div className="flex-1">
@@ -233,7 +237,16 @@ export default function PassengerBookingsPage() {
                     </div>
                   </div>
                 </div>
-              ))
+              ))}
+              {hasMoreActive && (
+                <button
+                  onClick={() => setShowAllActive(!showAllActive)}
+                  className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 rounded-lg text-sm font-medium transition-colors"
+                >
+                  {showAllActive ? 'Show Less' : `Show ${activeBookings.length - 5} More Bookings`}
+                </button>
+              )}
+              </>
             )}
           </div>
         </div>

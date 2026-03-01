@@ -18,6 +18,7 @@ export default function PassengerProfilePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [stats, setStats] = useState({ totalTrips: 0, totalSpent: 0, rewardPoints: 0 });
   
   const [formData, setFormData] = useState({
     name: '',
@@ -54,6 +55,27 @@ export default function PassengerProfilePage() {
           email: profileData.email || '',
           phone: profileData.phone || '',
           password: '',
+        });
+        
+        const [bookingsRes, rewardsRes] = await Promise.all([
+          fetch(`${process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8000/api'}/bookings`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+          }),
+          fetch(`${process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8000/api'}/rewards/points`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+          })
+        ]);
+        
+        const bookings = await bookingsRes.json();
+        const rewards = await rewardsRes.json();
+        
+        const completedBookings = Array.isArray(bookings) ? bookings.filter((b: any) => b.status === 'completed') : [];
+        const totalSpent = completedBookings.reduce((sum: number, b: any) => sum + (b.fare - (b.discount_amount || 0)), 0);
+        
+        setStats({
+          totalTrips: completedBookings.length,
+          totalSpent: totalSpent,
+          rewardPoints: rewards.total_points || 0
         });
       } catch (error) {
         const message = error instanceof Error ? error.message : 'Failed to load profile';
@@ -285,15 +307,15 @@ export default function PassengerProfilePage() {
         <h3 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">Travel Statistics</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           <div className="text-center">
-            <div className="text-3xl font-bold text-blue-600">45</div>
+            <div className="text-3xl font-bold text-blue-600">{stats.totalTrips}</div>
             <div className="text-sm sm:text-base text-gray-600">Total Trips</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl font-bold text-green-600">LKR 12,450</div>
+            <div className="text-3xl font-bold text-green-600">Rs. {stats.totalSpent.toFixed(2)}</div>
             <div className="text-sm sm:text-base text-gray-600">Total Spent</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl font-bold text-purple-600">850</div>
+            <div className="text-3xl font-bold text-purple-600">{stats.rewardPoints}</div>
             <div className="text-sm sm:text-base text-gray-600">Reward Points</div>
           </div>
         </div>
