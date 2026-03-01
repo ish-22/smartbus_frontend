@@ -39,6 +39,12 @@ export default function AdminOffersPage() {
     e.preventDefault();
     if (!token) return;
     
+    // Client-side validation
+    if (formData.start_date && formData.end_date && formData.end_date <= formData.start_date) {
+      alert('End date must be after start date');
+      return;
+    }
+    
     const offerData = {
       title: formData.title,
       description: formData.description,
@@ -149,8 +155,9 @@ export default function AdminOffersPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium mb-1">Title *</label>
+                <label htmlFor="title" className="block text-sm font-medium mb-1">Title *</label>
                 <input
+                  id="title"
                   type="text"
                   required
                   value={formData.title}
@@ -160,8 +167,9 @@ export default function AdminOffersPage() {
               </div>
               
               <div>
-                <label className="block text-sm font-medium mb-1">Discount % *</label>
+                <label htmlFor="discount" className="block text-sm font-medium mb-1">Discount % *</label>
                 <input
+                  id="discount"
                   type="number"
                   required
                   min="0"
@@ -174,8 +182,9 @@ export default function AdminOffersPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">Description *</label>
+              <label htmlFor="description" className="block text-sm font-medium mb-1">Description *</label>
               <textarea
+                id="description"
                 required
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
@@ -186,8 +195,9 @@ export default function AdminOffersPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-medium mb-1">Required Points *</label>
+                <label htmlFor="points" className="block text-sm font-medium mb-1">Required Points *</label>
                 <input
+                  id="points"
                   type="number"
                   required
                   min="1"
@@ -198,8 +208,9 @@ export default function AdminOffersPage() {
               </div>
               
               <div>
-                <label className="block text-sm font-medium mb-1">Start Date *</label>
+                <label htmlFor="startDate" className="block text-sm font-medium mb-1">Start Date *</label>
                 <input
+                  id="startDate"
                   type="date"
                   required
                   value={formData.start_date}
@@ -209,10 +220,12 @@ export default function AdminOffersPage() {
               </div>
               
               <div>
-                <label className="block text-sm font-medium mb-1">End Date *</label>
+                <label htmlFor="endDate" className="block text-sm font-medium mb-1">End Date *</label>
                 <input
+                  id="endDate"
                   type="date"
                   required
+                  min={formData.start_date || undefined}
                   value={formData.end_date}
                   onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
                   className="w-full border rounded px-3 py-2"

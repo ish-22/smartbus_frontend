@@ -23,7 +23,7 @@ export interface OwnerPayment {
   created_at: string;
   offer?: Offer;
   passenger?: { id: number; name: string };
-  booking?: any;
+  booking?: { id: number; [key: string]: unknown };
 }
 
 export const offerAPI = {
@@ -36,7 +36,8 @@ export const offerAPI = {
     });
     
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
     }
     
     return response.json();
@@ -53,7 +54,13 @@ export const offerAPI = {
     });
     
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const errorData = await response.json().catch(() => ({}));
+      const errorMessage = errorData.message || `HTTP error! status: ${response.status}`;
+      if (errorData.errors) {
+        const validationErrors = Object.values(errorData.errors).flat().join(', ');
+        throw new Error(`${errorMessage}: ${validationErrors}`);
+      }
+      throw new Error(errorMessage);
     }
     
     return response.json();

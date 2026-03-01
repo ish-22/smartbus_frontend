@@ -1,3 +1,6 @@
+'use client'
+
+import { useState, useEffect } from 'react'
 import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { 
@@ -6,37 +9,97 @@ import {
   CheckCircleIcon,
   XCircleIcon
 } from '@heroicons/react/24/outline'
+import { useAuthStore } from '@/store/authStore'
+import { API_BASE_URL } from '@/config/api'
+
+type Bus = {
+  id: number
+  registration_number: string
+  capacity: number
+  status: string
+  owner_id: number
+  route_id: number
+  created_at: string
+  owner?: { name: string }
+  route?: { route_number: string }
+}
 
 export default function AdminOwnerRegistrationsPage() {
-  const registrations = [
-    {
-      id: 1,
-      ownerName: 'Lanka Express Co',
-      busNumber: 'NB-1234',
-      routeNumber: 'R-101',
-      submittedDate: '2024-01-15',
-      status: 'pending',
-      documents: ['License', 'Insurance', 'Route Permit']
-    },
-    {
-      id: 2,
-      ownerName: 'City Transport Ltd',
-      busNumber: 'NC-5678',
-      routeNumber: 'R-205',
-      submittedDate: '2024-01-12',
-      status: 'approved',
-      documents: ['License', 'Insurance', 'Route Permit', 'Safety Certificate']
-    },
-    {
-      id: 3,
-      ownerName: 'Metro Lines',
-      busNumber: 'NM-9012',
-      routeNumber: 'R-150',
-      submittedDate: '2024-01-10',
-      status: 'rejected',
-      documents: ['License', 'Insurance']
+  const [buses, setBuses] = useState<Bus[]>([])
+  const [stats, setStats] = useState({ pending: 0, approved: 0, rejected: 0 })
+  const [loading, setLoading] = useState(true)
+  const [showViewModal, setShowViewModal] = useState(false)
+  const [selectedBus, setSelectedBus] = useState<Bus | null>(null)
+  const token = useAuthStore(state => state.token)
+
+  useEffect(() => {
+    if (token) {
+      loadBuses()
     }
-  ]
+  }, [token])
+
+  const loadBuses = async () => {
+    if (!token) return
+    try {
+      const response = await fetch(`${API_BASE_URL}/buses`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/json'
+        }
+      })
+      if (response.ok) {
+        const data = await response.json()
+        setBuses(data)
+        setStats({
+          pending: data.filter((b: Bus) => b.status === 'pending').length,
+          approved: data.filter((b: Bus) => b.status === 'active').length,
+          rejected: data.filter((b: Bus) => b.status === 'rejected').length
+        })
+      }
+    } catch (error) {
+      console.error('Failed to load buses:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleStatusUpdate = async (busId: number, newStatus: string) => {
+    if (!token) return
+    try {
+      const bus = buses.find(b => b.id === busId)
+      if (!bus) return
+
+      const response = await fetch(`${API_BASE_URL}/buses/${busId}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({ 
+          number: bus.registration_number,
+          type: 'normal',
+          capacity: bus.capacity,
+          route_id: bus.route_id,
+          status: newStatus 
+        })
+      })
+      const result = await response.json()
+      if (response.ok) {
+        loadBuses()
+      } else {
+        console.error('Update failed:', result)
+        alert(result.message || 'Failed to update status')
+      }
+    } catch (error) {
+      console.error('Failed to update status:', error)
+      alert('Network error: Failed to update status')
+    }
+  }
+
+  if (loading) {
+    return <div className="text-center py-8">Loading...</div>
+  }
 
   return (
     <div className="space-y-6">
@@ -53,7 +116,7 @@ export default function AdminOwnerRegistrationsPage() {
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Pending</p>
-              <p className="text-2xl font-bold text-gray-900">12</p>
+              <p className="text-2xl font-bold text-gray-900">{stats.pending}</p>
             </div>
           </div>
         </Card>
@@ -64,7 +127,7 @@ export default function AdminOwnerRegistrationsPage() {
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Approved</p>
-              <p className="text-2xl font-bold text-gray-900">156</p>
+              <p className="text-2xl font-bold text-gray-900">{stats.approved}</p>
             </div>
           </div>
         </Card>
@@ -75,7 +138,7 @@ export default function AdminOwnerRegistrationsPage() {
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Rejected</p>
-              <p className="text-2xl font-bold text-gray-900">8</p>
+              <p className="text-2xl font-bold text-gray-900">{stats.rejected}</p>
             </div>
           </div>
         </Card>
@@ -100,7 +163,7 @@ export default function AdminOwnerRegistrationsPage() {
                   Status
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Documents
+                  Capacity
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Actions
@@ -108,60 +171,117 @@ export default function AdminOwnerRegistrationsPage() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {registrations.map((registration) => (
-                <tr key={registration.id}>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0 h-10 w-10">
-                        <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
-                          <TruckIcon className="h-6 w-6 text-blue-600" />
-                        </div>
-                      </div>
-                      <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">{registration.busNumber}</div>
-                        <div className="text-sm text-gray-500">Route: {registration.routeNumber}</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{registration.ownerName}</div>
-                    <div className="text-sm text-gray-500">Submitted: {registration.submittedDate}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                      registration.status === 'approved' 
-                        ? 'bg-green-100 text-green-800' 
-                        : registration.status === 'rejected'
-                        ? 'bg-red-100 text-red-800'
-                        : 'bg-yellow-100 text-yellow-800'
-                    }`}>
-                      {registration.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {registration.documents.length} documents
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                    <Button variant="secondary" size="sm">
-                      Review
-                    </Button>
-                    {registration.status === 'pending' && (
-                      <>
-                        <Button size="sm" className="bg-green-600 hover:bg-green-700">
-                          Approve
-                        </Button>
-                        <Button size="sm" variant="secondary" className="text-red-600 border-red-600 hover:bg-red-50">
-                          Reject
-                        </Button>
-                      </>
-                    )}
+              {buses.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="px-6 py-8 text-center text-gray-500">
+                    No bus registrations found
                   </td>
                 </tr>
-              ))}
+              ) : (
+                buses.map((bus) => (
+                  <tr key={bus.id}>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center">
+                        <div className="flex-shrink-0 h-10 w-10">
+                          <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                            <TruckIcon className="h-6 w-6 text-blue-600" />
+                          </div>
+                        </div>
+                        <div className="ml-4">
+                          <div className="text-sm font-medium text-gray-900">{bus.registration_number}</div>
+                          <div className="text-sm text-gray-500">Route: {bus.route?.route_number || 'N/A'}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-900">{bus.owner?.name || 'N/A'}</div>
+                      <div className="text-sm text-gray-500">Submitted: {new Date(bus.created_at).toLocaleDateString()}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                        bus.status === 'active' 
+                          ? 'bg-green-100 text-green-800' 
+                          : bus.status === 'rejected'
+                          ? 'bg-red-100 text-red-800'
+                          : 'bg-yellow-100 text-yellow-800'
+                      }`}>
+                        {bus.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {bus.capacity} seats
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <div className="flex gap-2">
+                        <Button size="sm" variant="secondary" onClick={() => { setSelectedBus(bus); setShowViewModal(true); }}>
+                          View
+                        </Button>
+                        {bus.status === 'pending' && (
+                          <>
+                            <Button size="sm" className="bg-green-600 hover:bg-green-700" onClick={() => handleStatusUpdate(bus.id, 'active')}>
+                              Approve
+                            </Button>
+                            <Button size="sm" variant="secondary" className="text-red-600 border-red-600 hover:bg-red-50" onClick={() => handleStatusUpdate(bus.id, 'rejected')}>
+                              Reject
+                            </Button>
+                          </>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
       </Card>
+
+      {/* View Bus Modal */}
+      {showViewModal && selectedBus && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <Card className="w-full max-w-2xl">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-bold">Bus Details</h2>
+                <button onClick={() => setShowViewModal(false)} className="text-gray-500 hover:text-gray-700">
+                  <XCircleIcon className="h-6 w-6" />
+                </button>
+              </div>
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm text-gray-500">Registration Number</p>
+                    <p className="font-medium">{selectedBus.registration_number}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Capacity</p>
+                    <p className="font-medium">{selectedBus.capacity} seats</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Status</p>
+                    <p className="font-medium">{selectedBus.status}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Owner</p>
+                    <p className="font-medium">{selectedBus.owner?.name || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Route</p>
+                    <p className="font-medium">{selectedBus.route?.route_number || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Submitted Date</p>
+                    <p className="font-medium">{new Date(selectedBus.created_at).toLocaleDateString()}</p>
+                  </div>
+                </div>
+                <div className="flex justify-end gap-2 mt-6">
+                  <Button onClick={() => setShowViewModal(false)} variant="secondary">Close</Button>
+                </div>
+              </div>
+            </div>
+          </Card>
+        </div>
+      )}
     </div>
   )
 }

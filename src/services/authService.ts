@@ -74,7 +74,7 @@ export async function loginWithEmail(emailOrPhone: string, password: string): Pr
 				id: 'admin', 
 				name: 'Administrator', 
 				email: ADMIN_EMAIL, 
-				role: 'ADMIN' 
+				role: 'admin' 
 			};
 			useAuthStore.getState().login(adminUser, 'admin-token');
 			return adminUser;

@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { 
@@ -8,43 +9,85 @@ import {
   CheckCircleIcon,
   XCircleIcon
 } from '@heroicons/react/24/outline'
+import { useAuthStore } from '@/store/authStore'
+import { API_BASE_URL } from '@/config/api'
+
+type Claim = {
+  id: number
+  user_id: number
+  item_name: string
+  description: string
+  bus_id: number
+  route_id: number
+  reported_date: string
+  status: string
+  contact_info: string
+  user?: { name: string }
+  bus?: { bus_number: string }
+  route?: { route_number: string }
+}
 
 export default function PassengerClaimsPage() {
-  const claims = [
-    {
-      id: 'LC001',
-      passenger: 'John Doe',
-      itemName: 'Black Laptop Bag',
-      description: 'Left on seat 15A, contains important documents',
-      busNumber: 'SB-001',
-      route: 'Colombo - Kandy',
-      reportedDate: '2024-01-15',
-      status: 'Pending',
-      contactInfo: '+94 77 123 4567'
-    },
-    {
-      id: 'LC002',
-      passenger: 'Sarah Wilson',
-      itemName: 'Blue Umbrella',
-      description: 'Small blue umbrella with wooden handle',
-      busNumber: 'SB-002',
-      route: 'Colombo - Galle',
-      reportedDate: '2024-01-14',
-      status: 'Found',
-      contactInfo: '+94 77 234 5678'
-    },
-    {
-      id: 'LC003',
-      passenger: 'Mike Johnson',
-      itemName: 'Mobile Phone',
-      description: 'Samsung Galaxy S21, black color with blue case',
-      busNumber: 'SB-003',
-      route: 'Kandy - Colombo',
-      reportedDate: '2024-01-13',
-      status: 'Claimed',
-      contactInfo: '+94 77 345 6789'
+  const [claims, setClaims] = useState<Claim[]>([])
+  const [stats, setStats] = useState({ total: 0, pending: 0, resolved: 0, closed: 0 })
+  const [loading, setLoading] = useState(true)
+  const token = useAuthStore(state => state.token)
+
+  useEffect(() => {
+    loadClaims()
+  }, [])
+
+  const loadClaims = async () => {
+    if (!token) return
+    try {
+      const response = await fetch(`${API_BASE_URL}/lost-found`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/json'
+        }
+      })
+      if (response.ok) {
+        const result = await response.json()
+        const dataArray = Array.isArray(result.data) ? result.data : []
+        setClaims(dataArray)
+        
+        setStats({
+          total: dataArray.length,
+          pending: dataArray.filter((c: Claim) => c.status === 'lost').length,
+          resolved: dataArray.filter((c: Claim) => c.status === 'found').length,
+          closed: dataArray.filter((c: Claim) => c.status === 'returned').length
+        })
+      }
+    } catch (error) {
+      console.error('Failed to load claims:', error)
+    } finally {
+      setLoading(false)
     }
-  ]
+  }
+
+  const handleUpdateStatus = async (id: number, status: string) => {
+    if (!token) return
+    try {
+      const response = await fetch(`${API_BASE_URL}/lost-found/${id}/status`, {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({ status })
+      })
+      if (response.ok) {
+        loadClaims()
+      }
+    } catch (error) {
+      console.error('Failed to update status:', error)
+    }
+  }
+
+  if (loading) {
+    return <div className="text-center py-8">Loading claims...</div>
+  }
 
   return (
     <div className="space-y-4 sm:space-y-6 overflow-x-hidden">
@@ -61,7 +104,7 @@ export default function PassengerClaimsPage() {
             </div>
             <div className="ml-3 min-w-0">
               <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Claims</p>
-              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">89</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">{stats.total}</p>
             </div>
           </div>
         </Card>
@@ -72,7 +115,7 @@ export default function PassengerClaimsPage() {
             </div>
             <div className="ml-3 min-w-0">
               <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Pending</p>
-              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">23</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">{stats.pending}</p>
             </div>
           </div>
         </Card>
@@ -83,7 +126,7 @@ export default function PassengerClaimsPage() {
             </div>
             <div className="ml-3 min-w-0">
               <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Resolved</p>
-              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">56</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">{stats.resolved}</p>
             </div>
           </div>
         </Card>
@@ -94,24 +137,29 @@ export default function PassengerClaimsPage() {
             </div>
             <div className="ml-3 min-w-0">
               <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Closed</p>
-              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">10</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">{stats.closed}</p>
             </div>
           </div>
         </Card>
       </div>
 
       <div className="space-y-3 sm:space-y-4">
-        {claims.map((claim) => (
+        {claims.length === 0 ? (
+          <Card className="p-8 text-center text-gray-500">
+            No claims found
+          </Card>
+        ) : (
+          claims.map((claim) => (
           <Card key={claim.id} className="p-3 sm:p-4 lg:p-6">
             <div className="flex justify-between items-start">
               <div className="flex-1">
                 <div className="flex items-center space-x-3 mb-2">
-                  <h3 className="font-semibold text-gray-900">{claim.itemName}</h3>
+                  <h3 className="font-semibold text-gray-900">{claim.item_name}</h3>
                   <span className="text-sm sm:text-base text-gray-500">#{claim.id}</span>
                   <span className={`px-2 py-1 text-xs rounded-full ${
-                    claim.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
-                    claim.status === 'Found' ? 'bg-blue-100 text-blue-800' :
-                    claim.status === 'Claimed' ? 'bg-green-100 text-green-800' :
+                    claim.status === 'lost' ? 'bg-yellow-100 text-yellow-800' :
+                    claim.status === 'found' ? 'bg-blue-100 text-blue-800' :
+                    claim.status === 'returned' ? 'bg-green-100 text-green-800' :
                     'bg-red-100 text-red-800'
                   }`}>
                     {claim.status}
@@ -120,44 +168,38 @@ export default function PassengerClaimsPage() {
                 <p className="text-gray-600 mb-3">{claim.description}</p>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 text-sm sm:text-base text-gray-500">
                   <div>
-                    <span className="font-medium">Passenger:</span> {claim.passenger}
+                    <span className="font-medium">Passenger:</span> {claim.user?.name || 'N/A'}
                   </div>
                   <div>
-                    <span className="font-medium">Bus:</span> {claim.busNumber}
+                    <span className="font-medium">Bus:</span> {claim.bus?.bus_number || 'N/A'}
                   </div>
                   <div>
-                    <span className="font-medium">Route:</span> {claim.route}
+                    <span className="font-medium">Route:</span> {claim.route?.route_number || 'N/A'}
                   </div>
                   <div>
-                    <span className="font-medium">Reported:</span> {claim.reportedDate}
+                    <span className="font-medium">Reported:</span> {claim.reported_date ? new Date(claim.reported_date).toLocaleDateString() : 'N/A'}
                   </div>
                 </div>
                 <div className="mt-2 text-sm sm:text-base text-gray-500">
-                  <span className="font-medium">Contact:</span> {claim.contactInfo}
+                  <span className="font-medium">Contact:</span> {claim.contact_info}
                 </div>
               </div>
               <div className="flex space-x-2 ml-4">
-                {claim.status === 'Pending' && (
+                {claim.status === 'lost' && (
                   <>
-                    <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
+                    <Button onClick={() => handleUpdateStatus(claim.id, 'found')} size="sm" className="bg-blue-600 hover:bg-blue-700">
                       Mark Found
                     </Button>
-                    <Button size="sm" variant="secondary">
-                      Contact
-                    </Button>
                   </>
                 )}
-                {claim.status === 'Found' && (
+                {claim.status === 'found' && (
                   <>
-                    <Button size="sm" className="bg-green-600 hover:bg-green-700">
-                      Mark Claimed
-                    </Button>
-                    <Button size="sm" variant="secondary">
-                      Contact
+                    <Button onClick={() => handleUpdateStatus(claim.id, 'returned')} size="sm" className="bg-green-600 hover:bg-green-700">
+                      Mark Returned
                     </Button>
                   </>
                 )}
-                {claim.status === 'Claimed' && (
+                {claim.status === 'returned' && (
                   <Button size="sm" variant="secondary" disabled>
                     Completed
                   </Button>
@@ -165,7 +207,7 @@ export default function PassengerClaimsPage() {
               </div>
             </div>
           </Card>
-        ))}
+        )))}
       </div>
     </div>
   )

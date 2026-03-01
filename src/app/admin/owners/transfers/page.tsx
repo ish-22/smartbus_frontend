@@ -1,3 +1,6 @@
+'use client'
+
+import { useState, useEffect } from 'react'
 import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { 
@@ -6,40 +9,24 @@ import {
   CheckCircleIcon,
   DocumentTextIcon
 } from '@heroicons/react/24/outline'
+import { useAuthStore } from '@/store/authStore'
+import { API_BASE_URL } from '@/config/api'
 
 export default function AdminOwnerTransfersPage() {
-  const transfers = [
-    {
-      id: 1,
-      busNumber: 'NB-1234',
-      fromOwner: 'Metro Bus Company',
-      toOwner: 'City Express Lines',
-      requestDate: '2024-01-15',
-      status: 'pending',
-      reason: 'Business restructuring',
-      documents: ['Transfer Agreement', 'NOC from Current Owner']
-    },
-    {
-      id: 2,
-      busNumber: 'NC-5678',
-      fromOwner: 'Highway Transport Co',
-      toOwner: 'Lanka Express Co',
-      requestDate: '2024-01-10',
-      status: 'approved',
-      reason: 'Fleet consolidation',
-      documents: ['Transfer Agreement', 'NOC from Current Owner', 'Insurance Transfer']
-    },
-    {
-      id: 3,
-      busNumber: 'NM-9012',
-      fromOwner: 'City Lines Ltd',
-      toOwner: 'Metro Bus Company',
-      requestDate: '2024-01-08',
-      status: 'under_review',
-      reason: 'Route optimization',
-      documents: ['Transfer Agreement']
+  const [transfers] = useState([])
+  const [stats] = useState({ pending: 0, under_review: 0, completed: 0 })
+  const [loading, setLoading] = useState(true)
+  const token = useAuthStore(state => state.token)
+
+  useEffect(() => {
+    if (token) {
+      setLoading(false)
     }
-  ]
+  }, [token])
+
+  if (loading) {
+    return <div className="text-center py-8">Loading...</div>
+  }
 
   return (
     <div className="space-y-6">
@@ -56,7 +43,7 @@ export default function AdminOwnerTransfersPage() {
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Pending</p>
-              <p className="text-2xl font-bold text-gray-900">3</p>
+              <p className="text-2xl font-bold text-gray-900">{stats.pending}</p>
             </div>
           </div>
         </Card>
@@ -67,7 +54,7 @@ export default function AdminOwnerTransfersPage() {
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Under Review</p>
-              <p className="text-2xl font-bold text-gray-900">5</p>
+              <p className="text-2xl font-bold text-gray-900">{stats.under_review}</p>
             </div>
           </div>
         </Card>
@@ -78,7 +65,7 @@ export default function AdminOwnerTransfersPage() {
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Completed</p>
-              <p className="text-2xl font-bold text-gray-900">28</p>
+              <p className="text-2xl font-bold text-gray-900">{stats.completed}</p>
             </div>
           </div>
         </Card>
@@ -111,59 +98,11 @@ export default function AdminOwnerTransfersPage() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {transfers.map((transfer) => (
-                <tr key={transfer.id}>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0 h-10 w-10">
-                        <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
-                          <ArrowRightOnRectangleIcon className="h-6 w-6 text-blue-600" />
-                        </div>
-                      </div>
-                      <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">{transfer.busNumber}</div>
-                        <div className="text-sm text-gray-500">{transfer.reason}</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">
-                      <div>From: {transfer.fromOwner}</div>
-                      <div>To: {transfer.toOwner}</div>
-                      <div className="text-gray-500">Requested: {transfer.requestDate}</div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                      transfer.status === 'approved' 
-                        ? 'bg-green-100 text-green-800' 
-                        : transfer.status === 'under_review'
-                        ? 'bg-blue-100 text-blue-800'
-                        : 'bg-yellow-100 text-yellow-800'
-                    }`}>
-                      {transfer.status.replace('_', ' ')}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {transfer.documents.length} documents
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                    <Button variant="secondary" size="sm">
-                      Review
-                    </Button>
-                    {transfer.status === 'pending' && (
-                      <>
-                        <Button size="sm" className="bg-green-600 hover:bg-green-700">
-                          Approve
-                        </Button>
-                        <Button size="sm" variant="secondary" className="text-red-600 border-red-600 hover:bg-red-50">
-                          Reject
-                        </Button>
-                      </>
-                    )}
-                  </td>
-                </tr>
-              ))}
+              <tr>
+                <td colSpan={5} className="px-6 py-8 text-center text-gray-500">
+                  No ownership transfer requests found. This feature is coming soon.
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>

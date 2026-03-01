@@ -1,50 +1,77 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { Card } from '@/components/ui/Card'
-
 import { 
   CalendarIcon,
   CurrencyDollarIcon,
   CheckCircleIcon,
   XCircleIcon
 } from '@heroicons/react/24/outline'
+import { useAuthStore } from '@/store/authStore'
+import { API_BASE_URL } from '@/config/api'
+
+type Booking = {
+  id: number
+  user_id: number
+  route_id: number
+  bus_id: number
+  booking_date: string
+  seats: number
+  total_fare: number
+  status: string
+  user?: { name: string }
+  route?: { route_number: string }
+  bus?: { bus_number: string }
+}
 
 export default function PassengerBookingsPage() {
-  const bookings = [
-    {
-      id: 'SB001',
-      passenger: 'John Doe',
-      route: 'Colombo - Kandy',
-      bus: 'SB-001',
-      date: '2024-01-15',
-      time: '08:30 AM',
-      seats: 2,
-      amount: 'LKR 500',
-      status: 'Confirmed'
-    },
-    {
-      id: 'SB002',
-      passenger: 'Sarah Wilson',
-      route: 'Colombo - Galle',
-      bus: 'SB-002',
-      date: '2024-01-14',
-      time: '09:00 AM',
-      seats: 1,
-      amount: 'LKR 300',
-      status: 'Completed'
-    },
-    {
-      id: 'SB003',
-      passenger: 'Mike Johnson',
-      route: 'Kandy - Colombo',
-      bus: 'SB-003',
-      date: '2024-01-13',
-      time: '02:00 PM',
-      seats: 3,
-      amount: 'LKR 750',
-      status: 'Cancelled'
+  const [bookings, setBookings] = useState<Booking[]>([])
+  const [stats, setStats] = useState({ total: 0, confirmed: 0, cancelled: 0, revenue: 0 })
+  const [loading, setLoading] = useState(true)
+  const token = useAuthStore(state => state.token)
+
+  useEffect(() => {
+    loadBookings()
+  }, [])
+
+  const loadBookings = async () => {
+    if (!token) return
+    try {
+      const response = await fetch(`${API_BASE_URL}/bookings`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/json'
+        }
+      })
+      if (response.ok) {
+        const data = await response.json()
+        console.log('Bookings API response:', data)
+        setBookings(data)
+        
+        const confirmed = data.filter((b: Booking) => b.status === 'confirmed').length
+        const cancelled = data.filter((b: Booking) => b.status === 'cancelled').length
+        const revenue = data.reduce((sum: number, b: Booking) => sum + (b.total_fare || 0), 0)
+        
+        setStats({
+          total: data.length,
+          confirmed,
+          cancelled,
+          revenue
+        })
+      } else {
+        console.error('Bookings API error:', response.status, await response.text())
+      }
+    } catch (error) {
+      console.error('Failed to load bookings:', error)
+    } finally {
+      setLoading(false)
     }
-  ]
+  }
+
+  if (loading) {
+    return <div className="text-center py-8">Loading bookings...</div>
+  }
 
   return (
     <div className="space-y-4 sm:space-y-6 overflow-x-hidden">
@@ -61,7 +88,7 @@ export default function PassengerBookingsPage() {
             </div>
             <div className="ml-3 min-w-0">
               <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Bookings</p>
-              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">2,567</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">{stats.total}</p>
             </div>
           </div>
         </Card>
@@ -72,7 +99,7 @@ export default function PassengerBookingsPage() {
             </div>
             <div className="ml-3 min-w-0">
               <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Confirmed</p>
-              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">2,234</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">{stats.confirmed}</p>
             </div>
           </div>
         </Card>
@@ -83,7 +110,7 @@ export default function PassengerBookingsPage() {
             </div>
             <div className="ml-3 min-w-0">
               <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Cancelled</p>
-              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">156</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">{stats.cancelled}</p>
             </div>
           </div>
         </Card>
@@ -94,7 +121,7 @@ export default function PassengerBookingsPage() {
             </div>
             <div className="ml-3 min-w-0">
               <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Revenue</p>
-              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">LKR 1.2M</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">LKR {stats.revenue.toLocaleString()}</p>
             </div>
           </div>
         </Card>
@@ -115,37 +142,44 @@ export default function PassengerBookingsPage() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {bookings.map((booking) => (
+              {bookings.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="px-6 py-8 text-center text-gray-500">
+                    No bookings found
+                  </td>
+                </tr>
+              ) : (
+                bookings.map((booking) => (
                 <tr key={booking.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
-                    {booking.id}
+                    #{booking.id}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-gray-900">
-                    {booking.passenger}
+                    {booking.user?.name || 'N/A'}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-gray-900">
-                    {booking.route}
+                    {booking.route?.route_number || 'N/A'}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-gray-900">
-                    {booking.date} {booking.time}
+                    {new Date(booking.booking_date).toLocaleString()}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-gray-900">
                     {booking.seats}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-gray-900">
-                    {booking.amount}
+                    LKR {booking.total_fare}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`px-2 py-1 text-xs rounded-full ${
-                      booking.status === 'Confirmed' ? 'bg-blue-100 text-blue-800' :
-                      booking.status === 'Completed' ? 'bg-green-100 text-green-800' :
+                      booking.status === 'confirmed' ? 'bg-blue-100 text-blue-800' :
+                      booking.status === 'completed' ? 'bg-green-100 text-green-800' :
                       'bg-red-100 text-red-800'
                     }`}>
                       {booking.status}
                     </span>
                   </td>
                 </tr>
-              ))}
+              )))}
             </tbody>
           </table>
         </div>

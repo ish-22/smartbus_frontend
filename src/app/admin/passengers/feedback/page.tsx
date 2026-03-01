@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/Button';
 import { feedbackAPI, type Feedback, type FeedbackStatus } from '@/services/api/feedback';
 import { useAuthStore } from '@/store/authStore';
 import { useUiStore } from '@/store/uiStore';
+import { API_BASE_URL } from '@/config/api';
 
 export default function AdminFeedbackPage() {
   const { token, user } = useAuthStore();
@@ -30,17 +31,22 @@ export default function AdminFeedbackPage() {
   }, [mounted, user, filter]);
 
   const loadData = async () => {
+    if (!token) return
     try {
       setLoading(true);
       
-      // Use direct PHP endpoint
-      const response = await fetch('http://127.0.0.1:8000/api/feedback.php');
+      const response = await fetch(`${API_BASE_URL}/feedback`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/json'
+        }
+      });
       if (response.ok) {
         const data = await response.json();
-        setFeedback(data.data || []);
+        console.log('Feedback API response:', data);
+        const feedbackData = Array.isArray(data) ? data : (data.data ? data.data : []);
+        setFeedback(feedbackData);
         
-        // Calculate basic stats from feedback data
-        const feedbackData = data.data || [];
         setStats({
           total: feedbackData.length,
           pending: feedbackData.filter((f: any) => f.status === 'pending').length,
@@ -48,50 +54,9 @@ export default function AdminFeedbackPage() {
           average_rating: feedbackData.length > 0 ? 
             feedbackData.reduce((sum: number, f: any) => sum + (f.rating || 0), 0) / feedbackData.length : 0
         });
-      } else {
-        // Fallback to sample data if server not running
-        setFeedback([
-          {
-            id: 1,
-            user_id: 2,
-            subject: 'Great Service!',
-            message: 'The bus service was excellent today.',
-            type: 'praise' as any,
-            rating: 5,
-            status: 'pending' as any,
-            created_at: new Date().toISOString(),
-            user: { id: 2, name: 'John Passenger' }
-          },
-          {
-            id: 2,
-            user_id: 2,
-            subject: 'Bus Delay Issue',
-            message: 'The bus was 20 minutes late this morning.',
-            type: 'complaint' as any,
-            rating: 2,
-            status: 'pending' as any,
-            created_at: new Date().toISOString(),
-            user: { id: 2, name: 'John Passenger' }
-          }
-        ]);
-        setStats({ total: 2, pending: 2, resolved: 0, average_rating: 3.5 });
       }
     } catch (error) {
       console.error('Load data error:', error);
-      // Show sample data on error
-      setFeedback([
-        {
-          id: 1,
-          user_id: 2,
-          subject: 'Sample Feedback',
-          message: 'This is sample feedback data.',
-          type: 'general' as any,
-          status: 'pending' as any,
-          created_at: new Date().toISOString(),
-          user: { id: 2, name: 'Sample User' }
-        }
-      ]);
-      setStats({ total: 1, pending: 1, resolved: 0, average_rating: 0 });
     } finally {
       setLoading(false);
     }
@@ -177,7 +142,14 @@ export default function AdminFeedbackPage() {
 
       {/* Feedback List */}
       <div className="space-y-4">
-        {feedback.map((item) => (
+        {feedback.length === 0 ? (
+          <Card className="p-8 text-center text-gray-500">
+            No feedback found
+          </Card>
+        ) : (
+          feedback
+            .filter(item => filter === 'all' || item.status === filter)
+            .map((item) => (
           <Card key={item.id} className="p-4">
             <div className="flex justify-between items-start">
               <div className="flex-1">
@@ -205,7 +177,8 @@ export default function AdminFeedbackPage() {
               </Button>
             </div>
           </Card>
-        ))}
+        )))
+        }
       </div>
 
       {/* Response Modal */}

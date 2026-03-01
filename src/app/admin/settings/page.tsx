@@ -15,6 +15,16 @@ import {
 export default function AdminSettingsPage() {
   const [activeTab, setActiveTab] = useState('general')
 
+  const handleSave = () => {
+    alert('Settings saved successfully!')
+  }
+
+  const handleReset = () => {
+    if (confirm('Are you sure you want to reset all settings?')) {
+      window.location.reload()
+    }
+  }
+
   const tabs = [
     { id: 'general', label: 'General', icon: CogIcon },
     { id: 'notifications', label: 'Notifications', icon: BellIcon },
@@ -196,8 +206,8 @@ export default function AdminSettingsPage() {
       {renderContent()}
 
       <div className="flex justify-end space-x-3">
-        <Button variant="secondary">Reset</Button>
-        <Button className="bg-red-600 hover:bg-red-700">Save Changes</Button>
+        <Button variant="secondary" onClick={handleReset}>Reset</Button>
+        <Button className="bg-red-600 hover:bg-red-700" onClick={handleSave}>Save Changes</Button>
       </div>
     </div>
   )

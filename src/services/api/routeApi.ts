@@ -95,3 +95,45 @@ export async function getStopsByRouteAPI(routeId: string): Promise<Stop[]> {
 
 	return response.json();
 }
+
+export async function createRouteAPI(data: { name: string; start_point?: string; end_point?: string; route_number?: string; metadata?: any }, token: string): Promise<Route> {
+	const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.ROUTES.LIST}`, {
+		method: 'POST',
+		headers: getAuthHeaders(token),
+		body: JSON.stringify(data),
+	});
+
+	if (!response.ok) {
+		const errorData = await response.json().catch(() => ({ message: 'Failed to create route' }));
+		throw new Error(errorData.message || 'Failed to create route');
+	}
+
+	return response.json();
+}
+
+export async function updateRouteAPI(id: number, data: { name?: string; start_point?: string; end_point?: string; route_number?: string; metadata?: any }, token: string): Promise<Route> {
+	const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.ROUTES.DETAIL(id.toString())}`, {
+		method: 'PUT',
+		headers: getAuthHeaders(token),
+		body: JSON.stringify(data),
+	});
+
+	if (!response.ok) {
+		const errorData = await response.json().catch(() => ({ message: 'Failed to update route' }));
+		throw new Error(errorData.message || 'Failed to update route');
+	}
+
+	return response.json();
+}
+
+export async function deleteRouteAPI(id: number, token: string): Promise<void> {
+	const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.ROUTES.DETAIL(id.toString())}`, {
+		method: 'DELETE',
+		headers: getAuthHeaders(token),
+	});
+
+	if (!response.ok) {
+		const errorData = await response.json().catch(() => ({ message: 'Failed to delete route' }));
+		throw new Error(errorData.message || 'Failed to delete route');
+	}
+}
