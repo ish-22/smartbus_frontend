@@ -13,6 +13,11 @@ export default function PassengerFeedbackPage() {
     setActiveTab('my');
   };
 
+  const handleTabChange = (tab: 'submit' | 'my' | 'all') => {
+    setActiveTab(tab);
+    setRefreshKey(prev => prev + 1);
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -28,7 +33,7 @@ export default function PassengerFeedbackPage() {
         ].map((tab) => (
           <button
             key={tab.key}
-            onClick={() => setActiveTab(tab.key as any)}
+            onClick={() => handleTabChange(tab.key as any)}
             className={`pb-2 px-1 border-b-2 font-medium ${
               activeTab === tab.key
                 ? 'border-red-500 text-red-600'
@@ -40,10 +45,10 @@ export default function PassengerFeedbackPage() {
         ))}
       </div>
 
-      <div key={refreshKey}>
+      <div key={`${activeTab}-${refreshKey}`}>
         {activeTab === 'submit' && <FeedbackForm onSuccess={handleFeedbackSubmitted} />}
-        {activeTab === 'my' && <FeedbackList showMy={true} />}
-        {activeTab === 'all' && <FeedbackList showMy={false} />}
+        {activeTab === 'my' && <FeedbackList key="my-list" showMy={true} />}
+        {activeTab === 'all' && <FeedbackList key="all-list" showMy={false} />}
       </div>
     </div>
   );

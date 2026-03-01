@@ -14,19 +14,29 @@ export default function FeedbackList({ showMy = false }: { showMy?: boolean }) {
 
   useEffect(() => {
     loadFeedback();
-  }, [filter, showMy]);
+  }, [filter, showMy, token]);
 
   const loadFeedback = async () => {
     if (!token) return;
     
     try {
       setLoading(true);
-      const data = showMy 
-        ? await feedbackAPI.getMy(token)
-        : await feedbackAPI.getAll(token, filter !== 'all' ? { type: filter } : {});
-      setFeedback(data.data || data);
+      let data;
+      
+      if (showMy) {
+        data = await feedbackAPI.getMy(token);
+      } else {
+        if (filter === 'all') {
+          data = await feedbackAPI.getAll(token, {});
+        } else {
+          data = await feedbackAPI.getAll(token, { type: filter });
+        }
+      }
+      
+      setFeedback(Array.isArray(data) ? data : (data.data || []));
     } catch (error) {
       console.error('Failed to load feedback:', error);
+      setFeedback([]);
     } finally {
       setLoading(false);
     }
@@ -57,14 +67,20 @@ export default function FeedbackList({ showMy = false }: { showMy?: boolean }) {
       {!showMy && (
         <div className="flex space-x-2 mb-4">
           {['all', 'complaint', 'suggestion', 'praise'].map((type) => (
-            <Button
+            <button
               key={type}
-              variant={filter === type ? 'primary' : 'secondary'}
-              size="sm"
-              onClick={() => setFilter(type)}
+              onClick={() => {
+                console.log('Filter clicked:', type);
+                setFilter(type);
+              }}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                filter === type
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
             >
               {type.charAt(0).toUpperCase() + type.slice(1)}
-            </Button>
+            </button>
           ))}
         </div>
       )}

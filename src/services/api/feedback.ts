@@ -38,8 +38,21 @@ const handleResponse = async (response: Response) => {
 export const feedbackAPI = {
   getAll: async (token: string, params?: { type?: string; status?: string }) => {
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/feedback.php');
-      return handleResponse(response);
+      const queryParams = new URLSearchParams();
+      if (params?.type && params.type !== 'all') {
+        queryParams.append('type', params.type);
+      }
+      if (params?.status) {
+        queryParams.append('status', params.status);
+      }
+      
+      const url = `http://127.0.0.1:8000/api/feedback.php${queryParams.toString() ? '?' + queryParams.toString() : ''}`;
+      console.log('Fetching feedback with URL:', url);
+      
+      const response = await fetch(url);
+      const result = await handleResponse(response);
+      console.log('Feedback result:', result);
+      return result;
     } catch (error) {
       console.error('Get all feedback error:', error);
       return { data: [] };

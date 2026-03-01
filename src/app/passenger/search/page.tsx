@@ -6,31 +6,36 @@ import { useAuth } from '@/hooks/useAuth';
 import { createBookingAPI } from '@/services/api/bookingApi';
 import { rewardAPI } from '@/services/api/rewards';
 import { bookingRewardAPI, BookingRewardData, DiscountCalculation } from '@/services/api/bookingRewards';
+import { busSearchAPI, Bus } from '@/services/api/busSearchApi';
+import { busSeatAPI, BusSeatData } from '@/services/api/busSeatApi';
+import SeatMap from '@/components/SeatMap';
+import QRTicketModal from '@/components/QRTicketModal';
+import { sendQRCodeEmail } from '@/services/emailService';
 import { MagnifyingGlassIcon, MapPinIcon, ClockIcon, GiftIcon } from '@heroicons/react/24/outline';
-
-interface Bus {
-  id: number;
-  name: string;
-  route: string;
-  from: string;
-  to: string;
-  time: string;
-  duration: string;
-  price: number;
-}
 
 export default function PassengerSearchPage() {
   const router = useRouter();
   const { user, token } = useAuth();
-  const [buses] = useState<Bus[]>([
-    { id: 1, name: 'Express 12A', route: 'Route 12A', from: 'Colombo Fort', to: 'Kandy', time: '08:30 AM', duration: '3h 30m', price: 250 },
-    { id: 2, name: 'Luxury 15B', route: 'Route 15B', from: 'Colombo Fort', to: 'Kandy', time: '10:00 AM', duration: '3h 45m', price: 280 },
-  ]);
+  const [buses, setBuses] = useState<Bus[]>([]);
+  const [searchParams, setSearchParams] = useState({ from: '', to: '', date: '' });
+  const [searchLoading, setSearchLoading] = useState(false);
   const [rewardData, setRewardData] = useState<BookingRewardData | null>(null);
   const [discountCalculation, setDiscountCalculation] = useState<DiscountCalculation | null>(null);
   const [loading, setLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [bookingMessage, setBookingMessage] = useState('');
+
+  const fetchBuses = async () => {
+    setSearchLoading(true);
+    try {
+      const data = await busSearchAPI.searchBuses(searchParams);
+      setBuses(data);
+    } catch (error) {
+      console.error('Failed to fetch buses:', error);
+    } finally {
+      setSearchLoading(false);
+    }
+  };
 
   const fetchRewardData = async () => {
     if (!token) return;
@@ -64,6 +69,11 @@ export default function PassengerSearchPage() {
 
   const [selectedBus, setSelectedBus] = useState<Bus | null>(null);
   const [showBookingForm, setShowBookingForm] = useState(false);
+  const [showQRModal, setShowQRModal] = useState(false);
+  const [bookingResult, setBookingResult] = useState<any>(null);
+  const [seatData, setSeatData] = useState<BusSeatData | null>(null);
+  const [selectedSeat, setSelectedSeat] = useState<string | null>(null);
+  const [seatLoading, setSeatLoading] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<'cash' | 'credit_card' | 'debit_card' | 'digital_wallet'>('cash');
   const [pointsToUse, setPointsToUse] = useState(0);
   const [selectedOfferId, setSelectedOfferId] = useState<number | null>(null);
@@ -74,25 +84,47 @@ export default function PassengerSearchPage() {
     holderName: ''
   });
   const [walletType, setWalletType] = useState('paypal');
+  const [email, setEmail] = useState('');
 
-  const handleBookNow = (bus: Bus) => {
+  const handleBookNow = async (bus: Bus) => {
     if (!token) {
       alert('Please log in to book a ticket.');
       return;
     }
     setSelectedBus(bus);
+    setSelectedSeat(null);
     setPointsToUse(0);
     setSelectedOfferId(null);
     setDiscountCalculation(null);
+    setEmail(user?.email || '');
     setShowBookingForm(true);
-    // Reset any previously selected offer that might be redeemed
+    
+    // Fetch available seats
+    setSeatLoading(true);
+    try {
+      const seats = await busSeatAPI.getAvailableSeats(bus.id, searchParams.date, bus.trip_number);
+      setSeatData(seats);
+    } catch (error) {
+      console.error('Failed to fetch seats:', error);
+    } finally {
+      setSeatLoading(false);
+    }
+    
     if (rewardData && selectedOfferId && Array.isArray(rewardData.redeemed_offers) && rewardData.redeemed_offers.includes(selectedOfferId)) {
       setSelectedOfferId(null);
     }
   };
 
   const handleConfirmBooking = async () => {
-    if (!selectedBus || !token) return;
+    if (!selectedBus || !token || !selectedSeat) {
+      alert('Please select a seat before booking.');
+      return;
+    }
+
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      alert('Please enter a valid email address.');
+      return;
+    }
 
     // Validate points before submitting
     if (pointsToUse > 0 && rewardData && pointsToUse > rewardData.user_points) {
@@ -110,9 +142,11 @@ export default function PassengerSearchPage() {
     try {
       const bookingData: any = {
         bus_id: selectedBus.id,
-        seat_number: `A${Math.floor(Math.random() * 20) + 1}`,
+        seat_number: selectedSeat,
         fare: selectedBus.price,
-        payment_method: paymentMethod
+        trip_number: selectedBus.trip_number,
+        payment_method: paymentMethod,
+        email: email
       };
 
       if (pointsToUse > 0) {
@@ -136,15 +170,43 @@ export default function PassengerSearchPage() {
 
       const response = await createBookingAPI(bookingData, token);
       
+      const ticketId = `TKT-${String(response.data.id).padStart(6, '0')}`;
+      
+      // Backend will send email via EmailJS
+      // Frontend just shows QR modal
+      
       setShowBookingForm(false);
       setSelectedBus(null);
       
-      // Redirect to bookings page to see confirmation
-      router.push('/passenger/bookings');
+      // Show QR code modal
+      setBookingResult({
+        ticketId: ticketId,
+        passengerName: user?.name || 'Passenger',
+        busName: selectedBus.name,
+        seat: selectedSeat,
+        fare: response.final_amount || selectedBus.price
+      });
+      setShowQRModal(true);
+      
+      alert('Booking confirmed! QR code has been sent to your email.');
     } catch (error) {
       console.error('Failed to create booking:', error);
       const errorMessage = error instanceof Error ? error.message : 'Failed to create booking. Please try again.';
       alert(errorMessage);
+      
+      // Refresh seat availability if seat was already booked
+      if (errorMessage.includes('already booked')) {
+        setSeatLoading(true);
+        try {
+          const seats = await busSeatAPI.getAvailableSeats(selectedBus.id, searchParams.date, selectedBus.trip_number);
+          setSeatData(seats);
+          setSelectedSeat(null);
+        } catch (err) {
+          console.error('Failed to refresh seats:', err);
+        } finally {
+          setSeatLoading(false);
+        }
+      }
     } finally {
       setLoading(false);
     }
@@ -152,6 +214,7 @@ export default function PassengerSearchPage() {
 
   useEffect(() => {
     setMounted(true);
+    fetchBuses();
   }, []);
 
   useEffect(() => {
@@ -205,6 +268,8 @@ export default function PassengerSearchPage() {
             <input
               type="text"
               placeholder="Enter departure location"
+              value={searchParams.from}
+              onChange={(e) => setSearchParams({...searchParams, from: e.target.value})}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -213,6 +278,8 @@ export default function PassengerSearchPage() {
             <input
               type="text"
               placeholder="Enter destination"
+              value={searchParams.to}
+              onChange={(e) => setSearchParams({...searchParams, to: e.target.value})}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -221,20 +288,27 @@ export default function PassengerSearchPage() {
             <input
               type="date"
               title="Select travel date"
+              value={searchParams.date}
+              onChange={(e) => setSearchParams({...searchParams, date: e.target.value})}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
             />
           </div>
         </div>
-        <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg flex items-center justify-center">
+        <button onClick={fetchBuses} disabled={searchLoading} className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg flex items-center justify-center disabled:bg-gray-400">
           <MagnifyingGlassIcon className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
-          Search Buses
+          {searchLoading ? 'Searching...' : 'Search Buses'}
         </button>
       </div>
 
       <div className="space-y-3 sm:space-y-4">
         <h2 className="text-lg font-semibold text-gray-900">Available Buses</h2>
-        {buses.map((bus) => (
-          <div key={bus.id} className="bg-white rounded-lg shadow p-4">
+        {searchLoading ? (
+          <div className="text-center py-8 text-gray-500">Loading buses...</div>
+        ) : buses.length === 0 ? (
+          <div className="text-center py-8 text-gray-500">No buses available</div>
+        ) : (
+          buses.map((bus) => (
+          <div key={`${bus.id}-${bus.trip_number}`} className="bg-white rounded-lg shadow p-4">
             <div className="flex items-center justify-between">
               <div className="flex-1">
                 <h3 className="text-lg font-semibold text-gray-900">{bus.name}</h3>
@@ -263,7 +337,8 @@ export default function PassengerSearchPage() {
               </div>
             </div>
           </div>
-        ))}
+          ))
+        )}
       </div>
 
       {/* Enhanced Booking Form Modal */}
@@ -283,6 +358,29 @@ export default function PassengerSearchPage() {
                 )}
                 {!discountCalculation && (
                   <p className="font-semibold">Total: Rs. {selectedBus.price}</p>
+                )}
+              </div>
+
+              {/* Seat Selection */}
+              <div>
+                <label className="block text-sm font-medium mb-2">Select Your Seat</label>
+                {seatLoading ? (
+                  <div className="text-center py-4 text-gray-500">Loading seats...</div>
+                ) : seatData ? (
+                  <>
+                    <SeatMap
+                      capacity={seatData.capacity}
+                      bookedSeats={seatData.booked_seats}
+                      selectedSeat={selectedSeat}
+                      onSeatSelect={setSelectedSeat}
+                    />
+                    {selectedSeat && (
+                      <p className="text-sm text-green-600 mt-2 font-medium">Selected Seat: {selectedSeat}</p>
+                    )}
+                    <p className="text-xs text-gray-500 mt-1">{seatData.available_count} seats available</p>
+                  </>
+                ) : (
+                  <p className="text-sm text-red-500">Failed to load seats</p>
                 )}
               </div>
 
@@ -331,6 +429,20 @@ export default function PassengerSearchPage() {
                   )}
                 </div>
               )}
+
+              {/* Email Input */}
+              <div>
+                <label className="block text-sm font-medium mb-1">Email Address *</label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your email"
+                  className="w-full border rounded px-3 py-2"
+                  required
+                />
+                <p className="text-xs text-gray-500 mt-1">QR code will be sent to this email</p>
+              </div>
 
               {/* Payment Method */}
               <div>
@@ -419,7 +531,7 @@ export default function PassengerSearchPage() {
               <div className="flex gap-3 mt-6">
                 <button
                   onClick={handleConfirmBooking}
-                  disabled={loading || 
+                  disabled={loading || !selectedSeat ||
                     (pointsToUse > 0 && rewardData && pointsToUse > rewardData.user_points) ||
                     (selectedOfferId && rewardData && Array.isArray(rewardData.redeemed_offers) && rewardData.redeemed_offers.includes(selectedOfferId))
                   }
@@ -437,6 +549,21 @@ export default function PassengerSearchPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* QR Ticket Modal */}
+      {showQRModal && bookingResult && (
+        <QRTicketModal
+          ticketId={bookingResult.ticketId}
+          passengerName={bookingResult.passengerName}
+          busName={bookingResult.busName}
+          seat={bookingResult.seat}
+          fare={bookingResult.fare}
+          onClose={() => {
+            setShowQRModal(false);
+            router.push('/passenger/bookings');
+          }}
+        />
       )}
     </div>
   );
