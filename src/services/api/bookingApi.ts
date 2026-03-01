@@ -121,3 +121,38 @@ export async function completeBookingAPI(id: string, token: string): Promise<{
 
 	return response.json();
 }
+
+export type DriverPassenger = {
+	id: number;
+	name: string;
+	seat: string;
+	from: string;
+	to: string;
+	ticketId: string;
+	status: string;
+};
+
+export type DriverPassengerStats = {
+	total: number;
+	boarded: number;
+	pending: number;
+};
+
+export type DriverPassengersResponse = {
+	stats: DriverPassengerStats;
+	passengers: DriverPassenger[];
+};
+
+export async function getDriverPassengersAPI(token: string): Promise<DriverPassengersResponse> {
+	const response = await fetch(`${API_BASE_URL}/drivers/me/passengers`, {
+		method: 'GET',
+		headers: getAuthHeaders(token),
+	});
+
+	if (!response.ok) {
+		const error = await response.json().catch(() => ({ message: 'Failed to fetch driver passengers' }));
+		throw new Error(error.message || 'Failed to fetch driver passengers');
+	}
+
+	return response.json();
+}

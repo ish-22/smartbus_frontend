@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { 
@@ -7,34 +8,69 @@ import {
   CheckCircleIcon,
   QrCodeIcon
 } from '@heroicons/react/24/outline'
+import { useAuthStore } from '@/store/authStore'
+import { 
+  getDriverPassengersAPI, 
+  type DriverPassenger, 
+  type DriverPassengerStats 
+} from '@/services/api/bookingApi'
 
 export default function DriverPassengersPage() {
-  const passengers = [
-    {
-      id: 1,
-      name: 'John Doe',
-      seat: '15A',
-      from: 'Colombo',
-      to: 'Kandy',
-      ticketId: 'SB001',
-      status: 'Boarded'
-    },
-    {
-      id: 2,
-      name: 'Sarah Wilson',
-      seat: '12B',
-      from: 'Kelaniya',
-      to: 'Kandy',
-      ticketId: 'SB002',
-      status: 'Pending'
+  const { user, token } = useAuthStore()
+  const [passengers, setPassengers] = useState<DriverPassenger[]>([])
+  const [stats, setStats] = useState<DriverPassengerStats>({
+    total: 0,
+    boarded: 0,
+    pending: 0
+  })
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const loadPassengers = async () => {
+      if (!user?.id || !token || user.role !== 'driver') {
+        setPassengers([])
+        setStats({ total: 0, boarded: 0, pending: 0 })
+        setLoading(false)
+        return
+      }
+
+      try {
+        const data = await getDriverPassengersAPI(token)
+        setPassengers(data.passengers || [])
+        setStats(data.stats || { total: 0, boarded: 0, pending: 0 })
+        setError(null)
+      } catch (err) {
+        console.error('Failed to load driver passengers:', err)
+        setError('Failed to load passengers for your current trip.')
+        setPassengers([])
+        setStats({ total: 0, boarded: 0, pending: 0 })
+      } finally {
+        setLoading(false)
+      }
     }
-  ]
+
+    loadPassengers()
+  }, [user, token])
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-height-screen">
+        <div className="text-gray-600">Loading passengers...</div>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-4 sm:space-y-6 overflow-x-hidden">
       <div>
         <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">Passenger Management</h1>
         <p className="text-sm sm:text-base text-gray-600 mt-1">Current trip passenger list</p>
+        {error && (
+          <p className="text-xs sm:text-sm text-red-600 mt-1">
+            {error}
+          </p>
+        )}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
@@ -45,7 +81,9 @@ export default function DriverPassengersPage() {
             </div>
             <div className="ml-3 min-w-0">
               <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Passengers</p>
-              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">45</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">
+                {stats.total}
+              </p>
             </div>
           </div>
         </Card>
@@ -56,7 +94,9 @@ export default function DriverPassengersPage() {
             </div>
             <div className="ml-3 min-w-0">
               <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Boarded</p>
-              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">38</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">
+                {stats.boarded}
+              </p>
             </div>
           </div>
         </Card>
@@ -67,7 +107,9 @@ export default function DriverPassengersPage() {
             </div>
             <div className="ml-3 min-w-0">
               <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Pending</p>
-              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">7</p>
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">
+                {stats.pending}
+              </p>
             </div>
           </div>
         </Card>

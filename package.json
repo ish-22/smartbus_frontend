@@ -10,13 +10,18 @@
     "convert-tailwind": "node tailwind-converter.js"
   },
   "dependencies": {
+    "@aws-sdk/client-location": "^3.1000.0",
     "@heroicons/react": "^2.0.18",
     "@stripe/stripe-js": "^2.4.0",
     "@tailwindcss/line-clamp": "^0.4.4",
+    "@types/leaflet": "^1.9.21",
     "clsx": "^2.0.0",
+    "leaflet": "^1.9.4",
+    "maplibre-gl": "^5.19.0",
     "next": "15.5.4",
     "react": "^19",
     "react-dom": "^19",
+    "react-leaflet": "^5.0.0",
     "socket.io-client": "^4.7.5",
     "tailwind-merge": "^2.0.0",
     "zustand": "^5.0.8"
