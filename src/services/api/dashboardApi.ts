@@ -87,3 +87,26 @@ export async function getPassengerDashboardStats(token: string): Promise<Passeng
   return response.json();
 }
 
+export interface OwnerAnalyticsData {
+  monthly_revenue: number;
+  active_buses: number;
+  total_trips: number;
+  today_revenue: number;
+  today_trips: number;
+  total_bookings: number;
+}
+
+export async function getOwnerAnalyticsAPI(token: string): Promise<OwnerAnalyticsData> {
+  const response = await fetch(`${API_BASE_URL}/dashboard/owner/analytics`, {
+    method: 'GET',
+    headers: getHeaders(token),
+  });
+
+  if (!response.ok) {
+    const text = await response.text().catch(() => '');
+    throw new Error(text || 'Failed to fetch owner analytics');
+  }
+
+  return response.json();
+}
+

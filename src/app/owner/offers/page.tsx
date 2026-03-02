@@ -1,47 +1,59 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuthStore } from '@/store/authStore';
+import { useUiStore } from '@/store/uiStore';
 import { adminCompensationAPI, AdminCompensation } from '@/services/api/adminCompensations';
 
 export default function OwnerOffersPage() {
-  const { user, token } = useAuth();
+  const { user, token } = useAuthStore();
+  const { showToast } = useUiStore();
   const [compensations, setCompensations] = useState<AdminCompensation[]>([]);
   const [stats, setStats] = useState({ pending_count: 0, paid_count: 0, pending_amount: 0, paid_amount: 0 });
   const [loading, setLoading] = useState(true);
   const [mounted, setMounted] = useState(false);
-
-  const fetchCompensations = async () => {
-    if (!token) return;
-    setLoading(true);
-    try {
-      const response = await adminCompensationAPI.getOwnerCompensations(token);
-      setCompensations(response.data || []);
-      setStats(response.stats);
-    } catch (error) {
-      console.error('Failed to fetch compensations:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
   useEffect(() => {
-    if (mounted && token) {
-      fetchCompensations();
+    if (!mounted) return;
+
+    const load = async () => {
+      if (!token) {
+        showToast({ type: 'error', message: 'Authentication required' });
+        setLoading(false);
+        return;
+      }
+      
+      if (user?.role !== 'owner') {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        setLoading(true);
+        const response = await adminCompensationAPI.getOwnerCompensations(token);
+        setCompensations(response.data || []);
+        setStats(response.stats || { pending_count: 0, paid_count: 0, pending_amount: 0, paid_amount: 0 });
+      } catch (error) {
+        const message = error instanceof Error ? error.message : 'Failed to fetch compensations';
+        showToast({ type: 'error', message });
+        console.error('Failed to fetch compensations:', error);
+      } finally {
+        setLoading(false);
+      }
     }
-  }, [mounted, token]);
+
+    load();
+  }, [mounted, token, user?.role, showToast])
 
   if (!mounted) {
     return <div className="p-6">Loading...</div>;
   }
 
-  if (!user || !token || user.role !== 'owner') {
+  if (!user || user.role !== 'owner') {
     return <div className="p-6">Access denied. Owner only.</div>;
   }
 
@@ -55,19 +67,27 @@ export default function OwnerOffersPage() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <div className="bg-yellow-50 p-4 rounded-lg shadow">
           <div className="text-yellow-600 text-sm">Pending</div>
-          <div className="text-2xl font-bold text-yellow-600">{stats.pending_count}</div>
+          <div className="text-2xl font-bold text-yellow-600">
+            {loading ? '...' : stats.pending_count}
+          </div>
         </div>
         <div className="bg-green-50 p-4 rounded-lg shadow">
           <div className="text-green-600 text-sm">Paid</div>
-          <div className="text-2xl font-bold text-green-600">{stats.paid_count}</div>
+          <div className="text-2xl font-bold text-green-600">
+            {loading ? '...' : stats.paid_count}
+          </div>
         </div>
         <div className="bg-red-50 p-4 rounded-lg shadow">
           <div className="text-red-600 text-sm">Pending Amount</div>
-          <div className="text-2xl font-bold text-red-600">Rs. {stats.pending_amount}</div>
+          <div className="text-2xl font-bold text-red-600">
+            {loading ? '...' : `Rs. ${stats.pending_amount}`}
+          </div>
         </div>
         <div className="bg-blue-50 p-4 rounded-lg shadow">
           <div className="text-blue-600 text-sm">Paid Amount</div>
-          <div className="text-2xl font-bold text-blue-600">Rs. {stats.paid_amount}</div>
+          <div className="text-2xl font-bold text-blue-600">
+            {loading ? '...' : `Rs. ${stats.paid_amount}`}
+          </div>
         </div>
       </div>
 
@@ -129,8 +149,8 @@ export default function OwnerOffersPage() {
         <ul className="text-blue-700 space-y-1">
           <li>• Admin compensates you when passengers use reward points for discounts</li>
           <li>• Admin pays you when passengers earn bonus points on your buses</li>
-          <li>• Admin covers offer discounts so you don't lose revenue</li>
-          <li>• This ensures you're not financially impacted by the reward system</li>
+          <li>• Admin covers offer discounts so you do not lose revenue</li>
+          <li>• This ensures you are not financially impacted by the reward system</li>
         </ul>
       </div>
     </div>
