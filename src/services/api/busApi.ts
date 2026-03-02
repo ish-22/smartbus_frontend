@@ -11,6 +11,9 @@ export type Bus = {
 	owner_id?: number;
 	model?: string;
 	status?: 'active' | 'maintenance' | 'inactive';
+	seatsAvailable?: number;
+	currentLocation?: { lat: number; lng: number };
+	lastUpdatedAt?: string;
 	route?: {
 		id: number;
 		name: string;

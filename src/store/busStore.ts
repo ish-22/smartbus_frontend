@@ -1,5 +1,6 @@
 import { create } from 'zustand';
-import type { Bus, Route } from '@/types/bus';
+import type { Bus } from '@/services/api/busApi';
+import type { Route } from '@/types/bus';
 import { getBusesAPI } from '@/services/api/busApi';
 import { getRoutesAPI } from '@/services/api/routeApi';
 import { useAuthStore } from '@/store/authStore';

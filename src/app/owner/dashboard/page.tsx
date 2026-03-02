@@ -6,6 +6,7 @@ import { TruckIcon, UserIcon, CurrencyDollarIcon, ChartBarIcon, WrenchScrewdrive
 import { useAuthStore } from '@/store/authStore';
 import { getOwnerDashboardStats, type OwnerDashboardStats } from '@/services/api/dashboardApi';
 import { getBusesAPI, type Bus } from '@/services/api/busApi';
+import { SchedulesAndTracking } from '@/components/driver/SchedulesAndTracking';
 import Link from 'next/link';
 
 export default function OwnerDashboard() {
@@ -317,20 +318,8 @@ export default function OwnerDashboard() {
         )}
       </Card>
 
-      {/* Schedules & GPS Tracking Section (Future-ready) */}
-      <Card className="p-4 sm:p-6">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h2 className="text-lg sm:text-xl font-bold text-gray-900">Schedules & Tracking</h2>
-            <p className="text-sm text-gray-600 mt-1">View bus schedules and GPS tracking</p>
-          </div>
-        </div>
-        <div className="text-center py-8 border-2 border-dashed border-gray-300 rounded-lg">
-          <ClockIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-          <p className="text-gray-600 mb-2">Schedules feature coming soon</p>
-          <p className="text-sm text-gray-500">GPS tracking integration will be available here</p>
-        </div>
-      </Card>
+      {/* Schedules & GPS Tracking Section - Real-time tracking */}
+      <SchedulesAndTracking />
       
       <div className="space-y-4 sm:space-y-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
