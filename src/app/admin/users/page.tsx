@@ -30,7 +30,7 @@ export default function AdminUsersPage() {
   const loadUserStats = async () => {
     if (!token) return
     try {
-      const response = await fetch(`${API_BASE_URL}/users/stats`, {
+      const response = await fetch(`${API_BASE_URL}/dashboard/admin/stats`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Accept': 'application/json'
@@ -38,7 +38,14 @@ export default function AdminUsersPage() {
       })
       if (response.ok) {
         const data = await response.json()
-        setStats(data)
+        setStats({
+          passengers: data.total_passengers || 0,
+          drivers: data.total_drivers || 0,
+          owners: data.total_owners || 0,
+          admins: data.total_admins || 0
+        })
+      } else {
+        console.error('API Error:', response.status, await response.text())
       }
     } catch (error) {
       console.error('Failed to load user stats:', error)
