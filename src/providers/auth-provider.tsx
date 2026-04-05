@@ -1,6 +1,7 @@
 'use client'
 
-import { createContext, useContext, useState, ReactNode } from 'react'
+import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
+import { useAuthStore } from '@/store/authStore'
 
 interface User {
   id: string
@@ -21,6 +22,22 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return
+    }
+
+    try {
+      const storedUser = localStorage.getItem('sb-user')
+      if (storedUser) {
+        const parsedUser = JSON.parse(storedUser) as User
+        setUser(parsedUser)
+      }
+    } catch (error) {
+      console.error('Failed to load stored auth user:', error)
+    }
+  }, [])
 
   const login = async (emailOrPhone: string, password: string) => {
     setIsLoading(true)
@@ -68,6 +85,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       // Set cookie for middleware
       document.cookie = `userRole=${data.user.role}; path=/; max-age=86400`
+
+      // Keep the shared Zustand auth state in sync so route guards and
+      // other pages immediately see the authenticated session.
+      useAuthStore.getState().login(authUser, data.token)
       
       setUser({
         id: data.user.id.toString(),
@@ -92,6 +113,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem('sb-user-role')
     localStorage.removeItem('sb-user-name')
     document.cookie = 'userRole=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT'
+    useAuthStore.getState().logout()
     setUser(null)
   }
 
