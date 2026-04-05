@@ -3,28 +3,40 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
-import { createBookingAPI } from '@/services/api/bookingApi';
-import { rewardAPI } from '@/services/api/rewards';
+import { createBookingAPI, type CreateBookingRequest } from '@/services/api/bookingApi';
 import { bookingRewardAPI, BookingRewardData, DiscountCalculation } from '@/services/api/bookingRewards';
 import { busSearchAPI, Bus } from '@/services/api/busSearchApi';
 import { busSeatAPI, BusSeatData } from '@/services/api/busSeatApi';
 import SeatMap from '@/components/SeatMap';
 import QRTicketModal from '@/components/QRTicketModal';
-import { sendQRCodeEmail } from '@/services/emailService';
 import { MagnifyingGlassIcon, MapPinIcon, ClockIcon, GiftIcon } from '@heroicons/react/24/outline';
+
+type BookingResult = {
+  ticketId: string;
+  passengerName: string;
+  busName: string;
+  seat: string;
+  fare: number;
+};
+
+type PaymentMethod = 'cash' | 'credit_card' | 'debit_card' | 'digital_wallet';
+
+function getDefaultTravelDate(): string {
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  return tomorrow.toISOString().split('T')[0];
+}
 
 export default function PassengerSearchPage() {
   const router = useRouter();
   const { user, token } = useAuth();
   const [buses, setBuses] = useState<Bus[]>([]);
-  const [searchParams, setSearchParams] = useState({ from: '', to: '', date: '' });
+  const [searchParams, setSearchParams] = useState({ from: '', to: '', date: getDefaultTravelDate() });
   const [searchLoading, setSearchLoading] = useState(false);
   const [rewardData, setRewardData] = useState<BookingRewardData | null>(null);
   const [discountCalculation, setDiscountCalculation] = useState<DiscountCalculation | null>(null);
   const [loading, setLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [bookingMessage, setBookingMessage] = useState('');
-
   const fetchBuses = async () => {
     setSearchLoading(true);
     try {
@@ -70,11 +82,11 @@ export default function PassengerSearchPage() {
   const [selectedBus, setSelectedBus] = useState<Bus | null>(null);
   const [showBookingForm, setShowBookingForm] = useState(false);
   const [showQRModal, setShowQRModal] = useState(false);
-  const [bookingResult, setBookingResult] = useState<any>(null);
+  const [bookingResult, setBookingResult] = useState<BookingResult | null>(null);
   const [seatData, setSeatData] = useState<BusSeatData | null>(null);
   const [selectedSeat, setSelectedSeat] = useState<string | null>(null);
   const [seatLoading, setSeatLoading] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState<'cash' | 'credit_card' | 'debit_card' | 'digital_wallet'>('cash');
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('cash');
   const [pointsToUse, setPointsToUse] = useState(0);
   const [selectedOfferId, setSelectedOfferId] = useState<number | null>(null);
   const [cardDetails, setCardDetails] = useState({
@@ -99,10 +111,12 @@ export default function PassengerSearchPage() {
     setEmail(user?.email || '');
     setShowBookingForm(true);
     
+    const travelDate = searchParams.date || getDefaultTravelDate();
+
     // Fetch available seats
     setSeatLoading(true);
     try {
-      const seats = await busSeatAPI.getAvailableSeats(bus.id, searchParams.date, bus.trip_number);
+      const seats = await busSeatAPI.getAvailableSeats(bus.id, travelDate, bus.trip_number);
       setSeatData(seats);
     } catch (error) {
       console.error('Failed to fetch seats:', error);
@@ -138,12 +152,15 @@ export default function PassengerSearchPage() {
       return;
     }
 
+    const travelDate = searchParams.date || getDefaultTravelDate();
+
     setLoading(true);
     try {
-      const bookingData: any = {
+      const bookingData: CreateBookingRequest = {
         bus_id: selectedBus.id,
         seat_number: selectedSeat,
         fare: selectedBus.price,
+        travel_date: travelDate,
         trip_number: selectedBus.trip_number,
         payment_method: paymentMethod,
         email: email
@@ -172,8 +189,7 @@ export default function PassengerSearchPage() {
       
       const ticketId = `TKT-${String(response.data.id).padStart(6, '0')}`;
       
-      // Backend will send email via EmailJS
-      // Frontend just shows QR modal
+      // Backend sends the booking ticket email via PHPMailer.
       
       setShowBookingForm(false);
       setSelectedBus(null);
@@ -188,7 +204,7 @@ export default function PassengerSearchPage() {
       });
       setShowQRModal(true);
       
-      alert('Booking confirmed! QR code has been sent to your email.');
+      alert('Booking confirmed! Your ticket has been sent to your email.');
     } catch (error) {
       console.error('Failed to create booking:', error);
       const errorMessage = error instanceof Error ? error.message : 'Failed to create booking. Please try again.';
@@ -198,7 +214,7 @@ export default function PassengerSearchPage() {
       if (errorMessage.includes('already booked')) {
         setSeatLoading(true);
         try {
-          const seats = await busSeatAPI.getAvailableSeats(selectedBus.id, searchParams.date, selectedBus.trip_number);
+          const seats = await busSeatAPI.getAvailableSeats(selectedBus.id, travelDate, selectedBus.trip_number);
           setSeatData(seats);
           setSelectedSeat(null);
         } catch (err) {
@@ -251,15 +267,6 @@ export default function PassengerSearchPage() {
           </div>
         )}
       </div>
-
-      {bookingMessage && (
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-          <div className="flex items-center">
-            <GiftIcon className="h-5 w-5 text-green-600 mr-2" />
-            <span className="text-green-800 font-medium">{bookingMessage}</span>
-          </div>
-        </div>
-      )}
 
       <div className="bg-white rounded-lg shadow p-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-6">
@@ -449,7 +456,7 @@ export default function PassengerSearchPage() {
                 <label className="block text-sm font-medium mb-1">Payment Method</label>
                 <select
                   value={paymentMethod}
-                  onChange={(e) => setPaymentMethod(e.target.value as any)}
+                  onChange={(e) => setPaymentMethod(e.target.value as PaymentMethod)}
                   className="w-full border rounded px-3 py-2"
                 >
                   <option value="cash">Cash</option>

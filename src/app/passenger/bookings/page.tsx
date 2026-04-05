@@ -84,8 +84,15 @@ export default function PassengerBookingsPage() {
     return <div className="p-6">Please log in to access this page.</div>;
   }
 
-  const activeBookings = bookings.filter(b => b.status === 'confirmed');
-  const completedBookings = bookings.filter(b => b.status === 'completed');
+  const sortLatestFirst = (left: Booking, right: Booking) =>
+    new Date(right.created_at).getTime() - new Date(left.created_at).getTime();
+
+  const activeBookings = bookings
+    .filter((b) => b.status === 'confirmed')
+    .sort(sortLatestFirst);
+  const completedBookings = bookings
+    .filter((b) => b.status === 'completed')
+    .sort(sortLatestFirst);
   const displayedActiveBookings = showAllActive ? activeBookings : activeBookings.slice(0, 5);
   const hasMoreActive = activeBookings.length > 5;
 

@@ -17,10 +17,22 @@ export type Booking = {
 	payment_date?: string;
 	created_at: string;
 	updated_at: string;
-	user?: any;
-	bus?: any;
-	route?: any;
+	user?: Record<string, unknown>;
+	bus?: Record<string, unknown>;
+	route?: Record<string, unknown>;
 	total_amount?: number;
+};
+
+export type BookingResponse = {
+	success: boolean;
+	message: string;
+	data: Booking;
+	payment: Record<string, unknown> | null;
+	original_fare: number;
+	total_discount: number;
+	final_amount: number;
+	points_used: number;
+	offer_applied: boolean;
 };
 
 export type CreateBookingRequest = {
@@ -28,8 +40,10 @@ export type CreateBookingRequest = {
 	route_id?: number;
 	seat_number: string;
 	fare: number;
+	travel_date: string;
 	trip_number?: number;
 	payment_method: 'cash' | 'credit_card' | 'debit_card' | 'digital_wallet';
+	email: string;
 	points_to_use?: number;
 	// Card payment fields
 	card_number?: string;
@@ -61,7 +75,10 @@ export async function getBookingsAPI(token: string): Promise<Booking[]> {
 	return response.json();
 }
 
-export async function createBookingAPI(data: CreateBookingRequest, token: string): Promise<Booking> {
+export async function createBookingAPI(
+	data: CreateBookingRequest,
+	token: string
+): Promise<BookingResponse> {
 	const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.BOOKINGS.CREATE}`, {
 		method: 'POST',
 		headers: getAuthHeaders(token),
